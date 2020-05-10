@@ -10,6 +10,7 @@ import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/widgets/delete_post_button.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';

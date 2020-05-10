@@ -38,7 +38,7 @@ class MateList extends StatelessWidget {
         onRefresh: onRetry,
         child: Scrollbar(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 52),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 52),
             child: AnimationLimiter(
               child: PageView.builder(
                 controller: pageController,

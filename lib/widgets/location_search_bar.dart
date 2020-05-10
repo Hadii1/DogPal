@@ -55,7 +55,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
     return Column(
       children: <Widget>[
         Card(
-          color: Color(0xfffffffa),
+          color: yellowishColor,
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -63,7 +63,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
           child: TypeAheadField(
             animationDuration: Duration(milliseconds: 600),
             suggestionsBoxDecoration: SuggestionsBoxDecoration(
-              color: Color(0xfffffffa),
+              color: yellowishColor,
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.5,
               ),
@@ -143,7 +143,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                 labelText: 'Search Cities',
                 labelStyle: TextStyle(fontFamily: 'OpenSans'),
                 filled: true,
-                fillColor: Color(0xffFAFAF3),
+                fillColor: yellowishColor,
                 prefixIcon: Icon(
                   Icons.search,
                 ),
