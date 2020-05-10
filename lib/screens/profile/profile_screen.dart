@@ -602,7 +602,7 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final localStorage = Provider.of<LocalStorage>(context, listen: false);
 
-    final User user = localStorage.getUser();
+    final user = localStorage.getUser();
 
     return Material(
       elevation: 2,
@@ -621,9 +621,15 @@ class _ProfileHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        localStorage.isAuthenticated()
-                            ? user.firstName ?? user.username ?? ''
-                            : 'Anonymous',
+                        (() {
+                          if (localStorage.isAuthenticated()) {
+                            return user != null
+                                ? user.firstName ?? user.username ?? ''
+                                : '';
+                          } else {
+                            return 'Anonymous';
+                          }
+                        })(),
                         softWrap: true,
                         style: TextStyle(
                           fontSize: ScreenUtil().setSp(66),
@@ -638,7 +644,7 @@ class _ProfileHeader extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
                       child: localStorage.isAuthenticated()
                           ? Text(
-                              user.email ?? '',
+                              user == null ? '' : user.email ?? '',
                               style: dogBreedStyle.copyWith(
                                 fontSize: ScreenUtil().setSp(50),
                                 fontFamily: 'Montserrat',
