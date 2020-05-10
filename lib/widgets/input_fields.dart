@@ -203,7 +203,7 @@ class _AgePickerState extends State<AgePicker> {
       return _years == 1 ? '$_years.$_months year' : '$_years.$_months years';
     } else {
       //both zero
-      return 'Age : ';
+      return ' Age ';
     }
   }
 }
@@ -232,7 +232,7 @@ class _AgeFieldState extends State<AgeField> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        label: Text( _age ?? 'Age : '),
+        label: Text( _age ?? ' Age '),
         onPressed: () async {
           showDialog(
               context: context,
