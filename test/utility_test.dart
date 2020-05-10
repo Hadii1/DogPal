@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_pal/utils/dog_util.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dog_pal/utils/extensions_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 
 void main() {
-
   group('Dog breeds suggestions', () {
     test('Suggestions number', () {
       List<String> suggestions = DogUtil.getSuggestions('Affenpinscher');
@@ -30,75 +28,6 @@ void main() {
     });
   });
 
-  test('Degree to Radian', () {
-    double a = 37.2342314;
-    double aRadian = a.toRadian();
-    expect(aRadian, 0.649859932);
-    //0.6498599323778
-
-    //-0.211783923757
-    double g = -12.134325;
-    double gRadian = g.toRadian();
-    expect(gRadian, -0.211783924);
-  });
-
-  test('Distance from lat and lng', () {
-    double lat1 = 33.8547;
-    double lng1 = 35.8623;
-    double lat2 = 38.9637;
-    double lng2 = 35.2433;
-
-    int distance = getDistance(
-      lat1: lat1,
-      lat2: lat2,
-      lng1: lng1,
-      lng2: lng2,
-    );
-
-    expect(distance, 571);
-
-    double llat1 = 50.0359;
-    double llng1 = -5.4253;
-    double llat2 = 58.3838;
-    double llng2 = -3.0412;
-
-    int ddistance = getDistance(
-      lat1: llat1,
-      lat2: llat2,
-      lng1: llng1,
-      lng2: llng2,
-    );
-
-    expect(ddistance, 941);
-
-    double lllat1 = 30.031259;
-    double lllng1 = -22.421253;
-    double lllat2 = 43.233838;
-    double lllng2 = 12.321412;
-
-    int dddistance = getDistance(
-      lat1: lllat1,
-      lat2: lllat2,
-      lng1: lllng1,
-      lng2: lllng2,
-    );
-
-    expect(dddistance, 3398);
-
-    double llllat1 = 30.031259;
-    double llllng1 = -22.421253;
-    double llllat2 = 30.031259;
-    double llllng2 = -22.421253;
-
-    int ddddistance = getDistance(
-      lat1: llllat1,
-      lat2: llllat2,
-      lng1: llllng1,
-      lng2: llllng2,
-    );
-
-    expect(ddddistance, 0);
-  });
 
   group('Time difference', () {
     Timestamp fakeCurrentTime =

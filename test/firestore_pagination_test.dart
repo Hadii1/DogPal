@@ -10,8 +10,23 @@ import 'package:dog_pal/models/user.dart';
 
 /*/*/* 
 
-The querying strategy is written in a comment above the actual class
-(The document limit we use for queries is 40)
+
+      
+      We first search the town, get it's documents,
+      if they're too few add them to a list and start another
+      query based on city, if not enough we do the same based 
+      on district and then merge. We keep last document ref for 
+      pagination and load more data each time the user scrolls ~60%
+      of screen height.
+      This method will yield duplicate data and unnecessary reads
+      because the city query will probably contain the town documents
+      once again, same for district query which will contain the
+      town and city documents too. This can be solved using lexigographic
+      comparison of strings which I might do later depending on the app success
+      but at the moment this seems premature for an app that yet has no users base.
+  
+
+    #The document limit we use for queries is 40
 
 */*/*/
 

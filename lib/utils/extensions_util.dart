@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'constants_util.dart';
-import 'dart:math' as _Math;
 
 extension ErrorCatching on PlatformException {
   String getAuthError() => _getErrorMsg(this);
@@ -58,14 +57,6 @@ String _getErrorMsg(PlatformException e) {
   }
 }
 
-extension AngleConversion on double {
-  double toRadian() => _convertToRadians(this);
-}
-
-double _convertToRadians(double degree) {
-  return double.parse((degree * (_Math.pi / 180)).toStringAsFixed(9));
-}
-
 extension DeleteDuplicated on List<DocumentSnapshot> {
   List<DocumentSnapshot> deDup() => _removeDuplicated(this);
 }
@@ -73,7 +64,7 @@ extension DeleteDuplicated on List<DocumentSnapshot> {
 List<DocumentSnapshot> _removeDuplicated(List<DocumentSnapshot> list) {
   Set seen = Set();
   List<DocumentSnapshot> finalList = [];
-  
+
   for (DocumentSnapshot doc in list) {
     if (!seen.contains(doc.documentID)) {
       seen.add(doc.documentID);

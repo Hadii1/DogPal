@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as _Math;
-import 'extensions_util.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 enum DataState {
@@ -83,27 +81,6 @@ String getMonth(int month) {
   }
 
   return null;
-}
-
-int getDistance({
-  double lat1,
-  double lng1,
-  double lat2,
-  double lng2,
-}) {
-  double deltaLat = (lat1 - lat2).toRadian();
-  double deltaLng = (lng1 - lng2).toRadian();
-
-  var a = _Math.pow(_Math.sin(deltaLat / 2), 2) +
-      _Math.pow(_Math.sin(deltaLng / 2), 2) *
-          _Math.cos(lat1.toRadian()) *
-          _Math.cos(lat2.toRadian());
-
-  var c = 2 * _Math.atan2(_Math.sqrt(a), _Math.sqrt(1 - a));
-
-  var d = (6371e3 * c) / 1000;
-
-  return d.round() == 0 ? 1 : d.round(); // in Km
 }
 
 String getTimeDifference(
