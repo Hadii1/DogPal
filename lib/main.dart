@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
             elevation: 0.8,
             iconTheme: IconThemeData(color: blackishColor),
             textTheme: TextTheme(
-              title: TextStyle(
+              headline6: TextStyle(
                 color: Colors.black87,
                 fontSize: 20,
                 fontFamily: 'OpenSans',

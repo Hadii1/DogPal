@@ -230,10 +230,13 @@ class ProfileBloc implements BlocBase {
           _dataStateCtrl.sink.add(UserDataState.loadingWithData);
         }
 
-        Map<String, String> favsMap = _localStorage.getFavorites();
+        List<String> adoptFavs =
+            _localStorage.getFavorites(FavoriteType.adoption);
+        List<String> mateFavs =
+            _localStorage.getFavorites(FavoriteType.mating);
 
         List<DocumentSnapshot> newPosts =
-            await _firestoreService.fetchUserFavorites(favsMap);
+            await _firestoreService.fetchAllUserFavs(adoptFavs, mateFavs);
 
         favs = newPosts;
 
@@ -266,23 +269,23 @@ class ProfileBloc implements BlocBase {
     }
   }
 
-  List<DogPost> filterFavs(String type) {
+  List<DogPost> filterFavs(FavoriteType type) {
     List<DocumentSnapshot> list = favs.where(
       (doc) {
-        return doc.data[PostsConsts.POST_TYPE] == type &&
+        return doc.data[PostsConsts.POST_TYPE] == type.toString() &&
             _localStorage
-                .getFavorites()
-                .containsKey(doc.data[PostsConsts.POST_ID]);
+                .getFavorites(type)
+                .contains(doc.data[PostsConsts.POST_ID]);
       },
     ).toList();
 
-    if (type == 'adopt') {
+    if (type == FavoriteType.adoption) {
       return list.map(
         (e) {
           return AdoptPost.fromDocument(e.data);
         },
       ).toList();
-    } else if (type == 'mate') {
+    } else if (type == FavoriteType.mating) {
       return list.map(
         (e) {
           return MatePost.fromMap(e.data);

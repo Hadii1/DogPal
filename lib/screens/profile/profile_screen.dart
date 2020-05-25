@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/profile_bloc.dart';
-import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/navigators/profile_navigator.dart';
 import 'package:dog_pal/screens/login.dart';
 import 'package:dog_pal/utils/general_functions.dart';
@@ -171,7 +170,7 @@ class ProfileWidget extends StatelessWidget {
                             ),
                             _ProfileItem(
                               hideDivier: true,
-                              iconData: MdiIcons.fileDocumentBoxOutline,
+                              iconData: MdiIcons.fileDocumentEditOutline,
                               text: 'Privacy Policy',
                               onPressed: () => Navigator.of(context).pushNamed(
                                   ProfileRoutes.PRIVACY_POLICY_SCREEN),
@@ -671,7 +670,7 @@ class _ProfileHeader extends StatelessWidget {
                       },
                       child: Text(
                         localStorage.isAuthenticated()
-                            ? 'Joined in ${getMonth(user.dataJoined.month)} - ${user.dataJoined.year}'
+                            ? 'Joined in ${getMonth(DateTime.parse(user.dataJoined).month)} - ${DateTime.parse(user.dataJoined).year}'
                             : 'Sign in to unlock you profile',
                         softWrap: true,
                         style: TextStyle(

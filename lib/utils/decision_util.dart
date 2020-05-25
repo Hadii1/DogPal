@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     var _bloc = Provider.of<LocalStorage>(context, listen: false);
 
-    _bloc.initializeHive().then((_) {
+    _bloc.initLocalStorage().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _width = 75;

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/app_secrets.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:flutter/services.dart';
@@ -154,11 +155,9 @@ class LocationUtil {
   }
 
   //A convenience function to directly get the city and district
-  Future<Map<String, String>> getInfoFromPosition() async {
+  Future<UserLocationData> getInfoFromPosition() async {
     Position position = await getLocation(
-      Platform.isIOS
-          ? LocationAccuracy.medium
-          : LocationAccuracy.high, //avoiding a library bug
+      LocationAccuracy.high,
     ).timeout(
       Duration(seconds: 10),
       onTimeout: () => null,
@@ -198,13 +197,12 @@ class LocationUtil {
       if (town == null && city == null && district == null) {
         return null;
       } else {
-        return {
-          UserConsts.TOWN: town,
-          UserConsts.CITY: city,
-          UserConsts.DISTRICT: district,
-          UserConsts.LOCATION_DISPLAY:
-              town ?? city ?? district, // what to display for the user
-        };
+        return UserLocationData(
+          userCity: city,
+          userDistrict: district,
+          userTown: town,
+          userDisplay: town ?? city ?? district,
+        );
       }
     }
   }

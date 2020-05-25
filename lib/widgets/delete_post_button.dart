@@ -130,13 +130,7 @@ class _DeletePostButtonState extends State<DeletePostButton> {
           ),
         );
 
-        //Remove from the user favorites if exists
-        if (_localStorage.getFavorites().containsKey(_post.id)) {
-          _localStorage.editFavorites(_post.id, _post.type);
-
-          firestoreUtil.saveUserFavs(
-              _localStorage.getFavorites(), _localStorage.getUser().uid);
-        }
+        //TODO: Cloud Function to delete from all user favorites
 
         //delete images in storage
         firestoreUtil.deleteImages(_post.dog.imagesUrls.cast<String>());

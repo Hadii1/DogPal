@@ -6,6 +6,7 @@ import 'package:dog_pal/screens/dogs_screen.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/custom_animated_list.dart';
+import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/fade_in_widget.dart';
@@ -168,7 +169,7 @@ class _MatePostsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mateFavs = bloc.filterFavs('mate');
+    final mateFavs = bloc.filterFavs(FavoriteType.mating);
     return mateFavs.isNotEmpty
         ? CustomAnimatedList(
             list: mateFavs,
@@ -224,10 +225,10 @@ class _AdoptPostsWidget extends StatelessWidget {
   final ProfileBloc bloc;
 
   Widget build(BuildContext context) {
-    final List<DogPost> adoptFavs = bloc.filterFavs('adopt');
+    final List<DogPost> adoptFavs = bloc.filterFavs(FavoriteType.adoption);
     return adoptFavs.isNotEmpty
         ? CustomAnimatedList(
-            list: bloc.filterFavs('adopt'),
+            list: adoptFavs,
             onScrollPositionChanged: (value) => bloc.adoptFavsScrollPos = value,
             scrollPosition: bloc.adoptFavsScrollPos,
             child: (int index, GlobalKey<AnimatedListState> key) {

@@ -94,11 +94,10 @@ class AddLostDogBloc implements BlocBase {
         id: reference.documentID,
         type: 'lost',
         description: description,
-        district: _localStorage.getPostLocationData()[UserConsts.DISTRICT],
-        locationDisplay:
-            _localStorage.getPostLocationData()[UserConsts.LOCATION_DISPLAY],
-        city: _localStorage.getPostLocationData()[UserConsts.CITY],
-        town: _localStorage.getPostLocationData()[UserConsts.TOWN],
+        town: _localStorage.getPostLocationData().postTown,
+        city: _localStorage.getPostLocationData().postCity,
+        district: _localStorage.getPostLocationData().postDistrict,
+        locationDisplay: _localStorage.getPostLocationData().postDisplay,
         dateAdded: Timestamp.now(),
       );
 

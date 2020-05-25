@@ -1,4 +1,5 @@
 import 'package:dog_pal/bloc/post_location_bloc.dart';
+import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -84,11 +85,11 @@ class LocationWidgetDialog extends State<PostLocation> {
   }
 
   Widget _locationName() {
-    Map<String, String> postLocData =
+    PostLocationData postLocData =
         Provider.of<LocalStorage>(context, listen: false).getPostLocationData();
     return StreamBuilder<String>(
       stream: _bloc.cityName,
-      initialData: postLocData[UserConsts.LOCATION_DISPLAY],
+      initialData: postLocData.postDisplay,
       builder: (_, AsyncSnapshot<String> snapshot) {
         return Padding(
           padding: const EdgeInsets.only(top: 150),

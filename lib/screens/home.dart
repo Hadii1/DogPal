@@ -11,7 +11,6 @@ import 'package:dog_pal/navigators/profile_navigator.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
 import 'package:dog_pal/screens/mate/mate_details_screen.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -326,9 +325,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
     //to search for the last post added we edit the location we're searching in to the post location
 
-    bloc.town = _localStorage.getPostLocationData()[UserConsts.TOWN];
-    bloc.city = _localStorage.getPostLocationData()[UserConsts.CITY];
-    bloc.district = _localStorage.getPostLocationData()[UserConsts.DISTRICT];
+    bloc.town = _localStorage.getPostLocationData().postTown;
+    bloc.city = _localStorage.getPostLocationData().postCity;
+    bloc.district = _localStorage.getPostLocationData().postDistrict;
 
     bloc.getPosts();
   }

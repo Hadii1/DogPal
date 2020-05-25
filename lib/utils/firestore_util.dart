@@ -25,6 +25,9 @@ class FirestoreService {
   StorageReference _storageRef;
 
   static Firestore getInstance() {
+    if (_db == null) {
+      _db = Firestore.instance;
+    }
     return _db;
   }
 
@@ -155,30 +158,43 @@ class FirestoreService {
     return snapshot.data;
   }
 
-  Future<void> saveUserFavs(Map<String, String> favs, String userId) async {
-    await _db
-        .collection(FirestoreConsts.USER_COLLECTION)
-        .document(userId)
-        .setData({UserConsts.FAVORITE: favs}, merge: true);
+  Future<void> saveUserFavs({
+    @required String userId,
+    List<String> adoptfavs,
+    List<String> mateFavs,
+  }) async {
+    if (adoptfavs != null) {
+      _db
+          .collection(FirestoreConsts.USER_COLLECTION)
+          .document(userId)
+          .updateData({UserConsts.FAVORITE_ADOPTION: adoptfavs});
+    }
+
+    if (mateFavs != null) {
+      _db
+          .collection(FirestoreConsts.USER_COLLECTION)
+          .document(userId)
+          .updateData({UserConsts.FAVORITE_MATING: mateFavs});
+    }
   }
 
-  Future<List<DocumentSnapshot>> fetchUserFavorites(
-      Map<String, String> map) async {
+  Future<List<DocumentSnapshot>> fetchAllUserFavs(
+    List<String> adoptFavs,
+    List<String> mateFavs,
+  ) async {
     List<DocumentSnapshot> documents = [];
-    for (MapEntry a in map.entries) {
-      DocumentReference ref;
+    for (String a in adoptFavs) {
+      DocumentSnapshot snapshot =
+          await _db.collection(FirestoreConsts.ADOPTION_DOGS).document(a).get();
 
-      switch (a.value) {
-        case 'adopt':
-          ref = _db.collection(FirestoreConsts.ADOPTION_DOGS).document(a.key);
-          break;
-
-        case 'mate':
-          ref = _db.collection(FirestoreConsts.MATE_DOGS).document(a.key);
-          break;
+      if (snapshot.exists) {
+        documents.add(snapshot);
       }
+    }
 
-      DocumentSnapshot snapshot = await ref.get();
+    for (String a in mateFavs) {
+      DocumentSnapshot snapshot =
+          await _db.collection(FirestoreConsts.MATE_DOGS).document(a).get();
 
       if (snapshot.exists) {
         documents.add(snapshot);

@@ -1,3 +1,5 @@
+
+
 class FirestoreConsts {
   static const int DOCS_LIMIT = 40;
   static const String USER_COLLECTION = 'Users';
@@ -43,7 +45,8 @@ class UserConsts {
   static const String USER_PHOTO = 'Photo';
   static const String USER_UID = 'Uid';
   static const String PHONE_NUMBER = 'phone number';
-  static const String FAVORITE = 'favorite posts';
+  static const String FAVORITE_ADOPTION = 'favorite adoption';
+  static const String FAVORITE_MATING = 'favorite mating';
   static const String LOCATION_DISPLAY = 'location display';
   static const String TOWN = 'User town';
   static const String CITY = 'User city';
@@ -56,13 +59,6 @@ class GeneralConstants {
       'Kindly enable location access for more efficient use of the app';
 
   static const String IMAGE_PERMISSION_ERROR = 'Please enable storage access.';
-
-  static const Map<dynamic, dynamic> defaultLocation = {
-    UserConsts.TOWN: 'Scottsdale',
-    UserConsts.CITY: 'Maricopa County',
-    UserConsts.DISTRICT: 'Arizona',
-    UserConsts.LOCATION_DISPLAY: 'Scottsdale',
-  };
 }
 
 class AuthErrors {

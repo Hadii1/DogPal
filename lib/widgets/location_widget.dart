@@ -1,6 +1,5 @@
 import 'package:dog_pal/bloc/post_location_bloc.dart';
 import 'package:dog_pal/screens/post_location.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +10,6 @@ class LocationField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _localStorage = Provider.of<LocalStorage>(context, listen: false);
-    Map<String, String> _lastPostLoc = _localStorage.getPostLocationData();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
@@ -32,7 +29,9 @@ class LocationField extends StatelessWidget {
                 fullscreenDialog: true,
                 builder: (_) {
                   return Provider(
-                    create: (_) => PostLocationBloc(_localStorage),
+                    create: (_) => PostLocationBloc(
+                      Provider.of<LocalStorage>(context, listen: false),
+                    ),
                     child: PostLocation(),
                   );
                 },
@@ -42,7 +41,9 @@ class LocationField extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  _lastPostLoc[UserConsts.LOCATION_DISPLAY],
+                  Provider.of<LocalStorage>(context, listen: false)
+                      .getPostLocationData()
+                      .postDisplay,
                   softWrap: true,
                 ),
               ],

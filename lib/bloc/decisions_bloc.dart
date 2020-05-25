@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
@@ -19,7 +19,7 @@ enum DecisionState {
 class DecisionsBloc implements BlocBase {
   DecisionsBloc(this._localStorage);
 
-  LocalStorage _localStorage;
+  LocalDataRepositroy _localStorage;
   LocationUtil _locationUtil = LocationUtil();
 
   StreamController<DecisionState> _stateCtrl = StreamController.broadcast();
@@ -92,7 +92,7 @@ class DecisionsBloc implements BlocBase {
       _stateCtrl.sink.add(DecisionState.fetchingLocation);
 
       try {
-        Map<String, String> locationData =
+        UserLocationData locationData =
             await _locationUtil.getInfoFromPosition().timeout(
           Duration(seconds: 10),
           onTimeout: () {
@@ -101,11 +101,11 @@ class DecisionsBloc implements BlocBase {
         );
 
         if (locationData != null) {
-          _localStorage.saveUserLocationData(locationData);
+          _localStorage.setUserLocationData(locationData);
 
           locationNotification = SnackBar(
             content: Text(
-              'Showing results in ${locationData[UserConsts.TOWN] ?? locationData[UserConsts.CITY] ?? locationData[UserConsts.DISTRICT]}',
+              'Showing results in ${locationData.userTown ?? locationData.userCity ?? locationData.userDistrict}',
             ),
           );
         } else {

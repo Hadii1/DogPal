@@ -130,20 +130,24 @@ class _AdoptCardState extends State<AdoptCard> {
                               //Save locally
                               _localStorage.editFavorites(
                                 widget.post.id,
-                                'adopt',
+                                FavoriteType.adoption,
                               );
+
+                              User user = _localStorage.getUser();
+
+                              user.favAdoptionPosts = _localStorage
+                                  .getFavorites(FavoriteType.adoption);
+
+                              _localStorage.editUser(user);
 
                               setState(() {}); // to animate the icon
 
                               //Save to network
                               if (_localStorage.isAuthenticated()) {
-                                User user = _localStorage.getUser();
-
-                                user.favoritePosts =
-                                    _localStorage.getFavorites();
-
-                                FirestoreService()
-                                    .saveUserFavs(user.favoritePosts, user.uid);
+                                FirestoreService().saveUserFavs(
+                                  userId: user.uid,
+                                  adoptfavs: user.favAdoptionPosts,
+                                );
                               }
 
                               if (widget.onFavPressed != null) {
@@ -164,8 +168,8 @@ class _AdoptCardState extends State<AdoptCard> {
                           child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 300),
                             child: _localStorage
-                                    .getFavorites()
-                                    .containsKey(widget.post.id)
+                                    .getFavorites(FavoriteType.adoption)
+                                    .contains(widget.post.id)
                                 ? Container(
                                     child: Icon(
                                       Icons.favorite,

@@ -35,7 +35,7 @@ class AuthBloc implements BlocBase {
 
   bool _isLogging = false;
 
-  LocalStorage _localStorage;
+  LocalDataRepositroy _localStorage;
 
   @override
   void dispose() {
@@ -107,9 +107,10 @@ class AuthBloc implements BlocBase {
           email: user.email ?? _authService.userEmail,
           uid: user.uid,
           firstName: _authService.firstName,
-          dataJoined: DateTime.now(),
+          dataJoined: DateTime.now().toString(),
           photo: user.photoUrl ?? '',
-          favoritePosts: _localStorage.getFavorites(),
+          favAdoptionPosts: _localStorage.getFavorites(FavoriteType.adoption),
+          favMatingPost: _localStorage.getFavorites(FavoriteType.mating),
           phoneNumber: '',
         );
       } else {
@@ -123,10 +124,12 @@ class AuthBloc implements BlocBase {
           uid: user.uid,
           photo: user.photoUrl,
           dataJoined: oldUser.dataJoined ?? DateTime.now(),
-          favoritePosts: oldUser.favoritePosts
-            ..addEntries(
-              _localStorage.getFavorites().entries,
+          favAdoptionPosts: oldUser.favAdoptionPosts
+            ..addAll(
+              _localStorage.getFavorites(FavoriteType.adoption),
             ),
+          favMatingPost: oldUser.favMatingPost
+            ..addAll(_localStorage.getFavorites(FavoriteType.mating)),
           phoneNumber: oldUser.phoneNumber ?? user.phoneNumber ?? '',
         );
       }
@@ -136,7 +139,7 @@ class AuthBloc implements BlocBase {
         localUser.uid,
       );
 
-      _localStorage.saveUserDetails(localUser);
+      _localStorage.editUser(localUser);
 
       _shouldLoad.sink.add(false);
     } on PlatformException catch (e, s) {

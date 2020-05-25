@@ -24,6 +24,7 @@ import 'package:dog_pal/widgets/no_connection_widget.dart';
 import 'package:dog_pal/widgets/no_data_widget.dart';
 import 'package:dog_pal/widgets/unknown_error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
@@ -76,7 +77,7 @@ class _DogsScreenState extends State<DogsScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: AnimatedHeader(
-            height: 50,
+            height: 170.sp,
             scrollController: _bloc.pageController,
             didPressSuggestion: _bloc.isSuggestionPressed,
             child: FloatingActionButton(
@@ -234,6 +235,7 @@ class _DogsScreenState extends State<DogsScreen> {
         break;
       case PostType.mate:
         _bloc = Provider.of<MateBloc>(context, listen: false);
+        break;
     }
   }
 

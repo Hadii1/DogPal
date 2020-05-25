@@ -93,11 +93,10 @@ class AddMateDogBloc implements BlocBase {
 
       matePost = MatePost(
         id: reference.documentID,
-        town: _localStorage.getPostLocationData()[UserConsts.TOWN],
-        city: _localStorage.getPostLocationData()[UserConsts.CITY],
-        district: _localStorage.getPostLocationData()[UserConsts.DISTRICT],
-        locationDisplay:
-            _localStorage.getPostLocationData()[UserConsts.LOCATION_DISPLAY],
+        town: _localStorage.getPostLocationData().postTown,
+        city: _localStorage.getPostLocationData().postCity,
+        district: _localStorage.getPostLocationData().postDistrict,
+        locationDisplay: _localStorage.getPostLocationData().postDisplay,
         dateAdded: Timestamp.fromDate(DateTime.now()),
         description: description,
         type: 'mate',

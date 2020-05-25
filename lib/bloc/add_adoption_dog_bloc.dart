@@ -58,7 +58,7 @@ class AddAdoptionDogBloc implements BlocBase {
 
   final AppBloc _appBloc;
 
-  final LocalStorage _localStorage;
+  final LocalDataRepositroy _localStorage;
 
   final FirestoreService _firestoreService = FirestoreService();
 
@@ -100,11 +100,10 @@ class AddAdoptionDogBloc implements BlocBase {
       post = AdoptPost(
         dog: adoptionDog,
         id: reference.documentID,
-        town: _localStorage.getPostLocationData()[UserConsts.TOWN],
-        city: _localStorage.getPostLocationData()[UserConsts.CITY],
-        district: _localStorage.getPostLocationData()[UserConsts.DISTRICT],
-        locationDisplay:
-            _localStorage.getPostLocationData()[UserConsts.LOCATION_DISPLAY],
+        town: _localStorage.getPostLocationData().postTown,
+        city: _localStorage.getPostLocationData().postCity,
+        district: _localStorage.getPostLocationData().postDistrict,
+        locationDisplay: _localStorage.getPostLocationData().postDisplay,
         dateAdded: Timestamp.now(),
         description: description,
         type: 'adopt',

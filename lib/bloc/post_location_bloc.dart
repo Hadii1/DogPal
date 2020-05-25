@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
@@ -10,11 +11,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 class PostLocationBloc implements BlocBase {
   PostLocationBloc(this._localStorage) {
-    _city = _localStorage.getPostLocationData()[UserConsts.CITY];
-    _town = _localStorage.getPostLocationData()[UserConsts.TOWN];
-    _district = _localStorage.getPostLocationData()[UserConsts.DISTRICT];
-    _display =
-        _localStorage.getPostLocationData()[UserConsts.LOCATION_DISPLAY];
+    _city = _localStorage.getPostLocationData().postCity;
+    _town = _localStorage.getPostLocationData().postTown;
+    _district = _localStorage.getPostLocationData().postDistrict;
+    _display = _localStorage.getPostLocationData().postDisplay;
   }
 
   String _city;
@@ -22,7 +22,7 @@ class PostLocationBloc implements BlocBase {
   String _district;
   String _display;
 
-  final LocalStorage _localStorage;
+  final LocalDataRepositroy _localStorage;
 
   StreamController<bool> _shouldLoadCtrl = StreamController.broadcast();
   Stream<bool> get shouldLoad => _shouldLoadCtrl.stream;
@@ -64,17 +64,17 @@ class PostLocationBloc implements BlocBase {
           if (permissionGranted) {
             LocationUtil locationUtil = LocationUtil();
 
-            Map<String, String> info = await locationUtil
+            UserLocationData data = await locationUtil
                 .getInfoFromPosition()
                 .timeout(Duration(seconds: 12), onTimeout: () => null);
 
-            if (info == null) {
+            if (data == null) {
               _errorCtrl.sink.add('An error occured on our side. Try again.');
             } else {
-              _town = info[UserConsts.TOWN];
-              _city = info[UserConsts.CITY];
-              _district = info[UserConsts.DISTRICT];
-              _display = info[UserConsts.LOCATION_DISPLAY];
+              _town = data.userTown;
+              _city = data.userCity;
+              _district = data.userDistrict;
+              _display = data.userDisplay;
 
               _cityNameCtrl.sink.add(_display ?? _town ?? _city ?? _district);
             }
@@ -97,11 +97,11 @@ class PostLocationBloc implements BlocBase {
   }
 
   void savePostLocation() {
-    _localStorage.savePostLocationData({
-      UserConsts.TOWN: _town,
-      UserConsts.CITY: _city,
-      UserConsts.DISTRICT: _district,
-      UserConsts.LOCATION_DISPLAY: _display,
-    });
+    _localStorage.setPostLocationData(PostLocationData(
+      postCity: _city,
+      postDistrict: _district,
+      postTown: _town,
+      postDisplay: _display,
+    ));
   }
 }

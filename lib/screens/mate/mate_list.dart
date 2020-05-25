@@ -174,18 +174,25 @@ class _MateCardState extends State<MateCard> {
                         onTap: () {
                           try {
                             //Save locally
-                            _localStorage.editFavorites(widget.post.id, 'mate');
+                            _localStorage.editFavorites(
+                              widget.post.id,
+                              FavoriteType.mating,
+                            );
+
+                            User user = _localStorage.getUser();
+
+                            user.favMatingPost =
+                                _localStorage.getFavorites(FavoriteType.mating);
+
+                            _localStorage.editUser(user);
 
                             setState(() {});
 
                             //Save to network
                             if (_localStorage.isAuthenticated()) {
-                              User user = _localStorage.getUser();
-
-                              user.favoritePosts = _localStorage.getFavorites();
-
-                              FirestoreService()
-                                  .saveUserFavs(user.favoritePosts, user.uid);
+                              FirestoreService().saveUserFavs(
+                                  userId: user.uid,
+                                  mateFavs: user.favMatingPost);
                             }
 
                             if (widget.onFavPressed != null) {
@@ -201,8 +208,8 @@ class _MateCardState extends State<MateCard> {
                         child: AnimatedSwitcher(
                           duration: Duration(milliseconds: 200),
                           child: _localStorage
-                                  .getFavorites()
-                                  .containsKey(widget.post.id)
+                                  .getFavorites(FavoriteType.mating)
+                                  .contains(widget.post.id)
                               ? Container(
                                   child: Icon(
                                     Icons.favorite,

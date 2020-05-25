@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dog_pal/models/dog_post_mode.dart';
+import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
@@ -13,9 +13,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 abstract class DogPostsBloc implements BlocBase {
   DogPostsBloc(this._localStorage) {
-    town = _localStorage.getLocationData()[UserConsts.TOWN];
-    city = _localStorage.getLocationData()[UserConsts.CITY];
-    district = _localStorage.getLocationData()[UserConsts.DISTRICT];
+    town = _localStorage.getUserLocationData().userTown;
+    city = _localStorage.getUserLocationData().userCity;
+    district = _localStorage.getUserLocationData().userDistrict;
 
     pageController.addListener(
       () {
@@ -29,7 +29,7 @@ abstract class DogPostsBloc implements BlocBase {
       filters = i;
     });
   }
-  final LocalStorage _localStorage;
+  final LocalDataRepositroy _localStorage;
 
   final PageController pageController = PageController();
   final TextEditingController cityNameController = TextEditingController();
@@ -96,7 +96,7 @@ abstract class DogPostsBloc implements BlocBase {
           bool permissionGranted = await checkAndAskPermission(
               permission: Permission.locationWhenInUse);
           if (permissionGranted) {
-            Map<String, String> locationData =
+            UserLocationData locationData =
                 await LocationUtil().getInfoFromPosition().timeout(
                       Duration(seconds: 14),
                       onTimeout: () => null,
@@ -105,10 +105,10 @@ abstract class DogPostsBloc implements BlocBase {
             if (locationData == null) {
               stateCtrl.sink.add(DataState.locationUnknownError);
             } else {
-              town = locationData[UserConsts.TOWN];
-              city = locationData[UserConsts.CITY];
-              district = locationData[UserConsts.DISTRICT];
-              _localStorage.saveUserLocationData(locationData);
+              town = locationData.userTown;
+              city = locationData.userCity;
+              district = locationData.userDistrict;
+              _localStorage.setUserLocationData(locationData);
 
               _locationCtrl.sink.add(town ?? city ?? district);
 
