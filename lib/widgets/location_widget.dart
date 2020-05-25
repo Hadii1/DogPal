@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LocationField extends StatelessWidget {
-  const LocationField();
+  const LocationField(this.locationDisplay);
+  final String locationDisplay;
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +42,7 @@ class LocationField extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  Provider.of<LocalStorage>(context, listen: false)
-                      .getPostLocationData()
-                      .postDisplay,
+                  locationDisplay,
                   softWrap: true,
                 ),
               ],

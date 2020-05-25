@@ -42,7 +42,7 @@ class PostLocationBloc implements BlocBase {
     _cityNameCtrl.close();
   }
 
-  void searchBarLocationSelected(
+  void onSuggesstionSelected(
       String town, String city, String district, String display) {
     _cityNameCtrl.sink.add(display);
 
@@ -52,7 +52,7 @@ class PostLocationBloc implements BlocBase {
     _display = display;
   }
 
-  Future<void> currentLocationPressed() async {
+  Future<void> onCurrentLocationPressed() async {
     if (!_isFetchingLocation) {
       _isFetchingLocation = true;
       _shouldLoadCtrl.sink.add(true);
@@ -96,12 +96,14 @@ class PostLocationBloc implements BlocBase {
     _shouldLoadCtrl.sink.add(false);
   }
 
-  void savePostLocation() {
-    _localStorage.setPostLocationData(PostLocationData(
-      postCity: _city,
-      postDistrict: _district,
-      postTown: _town,
-      postDisplay: _display,
-    ));
+  void onVerifyPressed() {
+    _localStorage.setPostLocationData(
+      PostLocationData(
+        postCity: _city,
+        postDistrict: _district,
+        postTown: _town,
+        postDisplay: _display,
+      ),
+    );
   }
 }

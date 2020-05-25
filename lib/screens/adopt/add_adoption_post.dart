@@ -1,5 +1,6 @@
 import 'package:dog_pal/bloc/add_adoption_dog_bloc.dart';
 import 'package:dog_pal/utils/general_functions.dart';
+import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/breed_filter_widget.dart';
@@ -186,7 +187,11 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                               onChanged: (String value) =>
                                   _bloc.description = value,
                             ),
-                            LocationField(),
+                            LocationField(
+                              Provider.of<LocalStorage>(context, listen: false)
+                                  .getPostLocationData()
+                                  .postDisplay,
+                            ),
                             PhoneField(
                               onChanged: (number) =>
                                   _bloc.adoptionDog.owner.phoneNumber = number,

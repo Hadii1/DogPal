@@ -232,8 +232,7 @@ class ProfileBloc implements BlocBase {
 
         List<String> adoptFavs =
             _localStorage.getFavorites(FavoriteType.adoption);
-        List<String> mateFavs =
-            _localStorage.getFavorites(FavoriteType.mating);
+        List<String> mateFavs = _localStorage.getFavorites(FavoriteType.mating);
 
         List<DocumentSnapshot> newPosts =
             await _firestoreService.fetchAllUserFavs(adoptFavs, mateFavs);
@@ -270,29 +269,36 @@ class ProfileBloc implements BlocBase {
   }
 
   List<DogPost> filterFavs(FavoriteType type) {
-    List<DocumentSnapshot> list = favs.where(
-      (doc) {
-        return doc.data[PostsConsts.POST_TYPE] == type.toString() &&
-            _localStorage
-                .getFavorites(type)
-                .contains(doc.data[PostsConsts.POST_ID]);
-      },
-    ).toList();
-
     if (type == FavoriteType.adoption) {
+      List<DocumentSnapshot> list = favs.where(
+        (doc) {
+          return doc.data[PostsConsts.POST_TYPE] == 'adopt' &&
+              _localStorage
+                  .getFavorites(type)
+                  .contains(doc.data[PostsConsts.POST_ID]);
+        },
+      ).toList();
+
       return list.map(
         (e) {
           return AdoptPost.fromDocument(e.data);
         },
       ).toList();
-    } else if (type == FavoriteType.mating) {
+    } else {
+      List<DocumentSnapshot> list = favs.where(
+        (doc) {
+          return doc.data[PostsConsts.POST_TYPE] == 'mate' &&
+              _localStorage
+                  .getFavorites(type)
+                  .contains(doc.data[PostsConsts.POST_ID]);
+        },
+      ).toList();
+
       return list.map(
         (e) {
           return MatePost.fromMap(e.data);
         },
       ).toList();
-    } else {
-      return null;
     }
   }
 

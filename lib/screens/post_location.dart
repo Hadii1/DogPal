@@ -123,7 +123,7 @@ class LocationWidgetDialog extends State<PostLocation> {
       child: FlatButton(
         color: Color(0xff2F4858),
         onPressed: () {
-          _bloc.savePostLocation();
+          _bloc.onVerifyPressed();
           Navigator.pop(context);
         },
         child: Padding(
@@ -174,7 +174,7 @@ class LocationWidgetDialog extends State<PostLocation> {
               ),
               onPressed: () async {
                 _locationFieldCtrl.clear();
-                _bloc.currentLocationPressed();
+                _bloc.onCurrentLocationPressed();
               },
             ),
           );
@@ -204,10 +204,9 @@ class LocationWidgetDialog extends State<PostLocation> {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: LocationSeachBar(
-        autoFocus: true,
         cityController: TextEditingController(),
         onSuggestionSelected: (town, city, district, item) {
-          _bloc.searchBarLocationSelected(town, city, district, item);
+          _bloc.onSuggesstionSelected(town, city, district, item);
         },
       ),
     );

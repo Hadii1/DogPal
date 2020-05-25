@@ -12,7 +12,6 @@ class LocationSeachBar extends StatefulWidget {
   const LocationSeachBar({
     @required this.onSuggestionSelected,
     @required this.cityController,
-    this.autoFocus,
   });
   final Function(
     String town,
@@ -22,8 +21,6 @@ class LocationSeachBar extends StatefulWidget {
   ) onSuggestionSelected;
 
   final TextEditingController cityController;
-
-  final bool autoFocus;
 
   @override
   _LocationSeachBarState createState() => _LocationSeachBarState();
@@ -115,7 +112,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
             textFieldConfiguration: TextFieldConfiguration(
               controller: _nameCtrl,
               autocorrect: false,
-              autofocus: widget.autoFocus ?? false,
+              autofocus: false,
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w500,

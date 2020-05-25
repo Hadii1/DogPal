@@ -273,7 +273,7 @@ class OwnerInformation extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: '• Email\n',
+                        text: '• Email :\n',
                         style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                       TextSpan(
@@ -281,7 +281,7 @@ class OwnerInformation extends StatelessWidget {
                       ),
                       if (user.phoneNumber != null &&
                           user.phoneNumber.isNotEmpty)
-                        TextSpan(text: '• Phone\n'),
+                        TextSpan(text: '• Phone :\n'),
                       if (user.phoneNumber != null &&
                           user.phoneNumber.isNotEmpty)
                         TextSpan(text: '  ${user.phoneNumber}'),
@@ -312,6 +312,7 @@ class OwnerInformation extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
                         user.username,
+                        textAlign: TextAlign.center,
                         style: normalTextStyle,
                       ),
                     ),
