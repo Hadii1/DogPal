@@ -105,5 +105,9 @@ void main() {
         localStorage.getPostLocationData(), localStorage.defaultPostLocation);
     expect(
         localStorage.getUserLocationData(), localStorage.defaultUserLocation);
+
+    //empty favorite lists if null
+    expect(localStorage.getFavorites(FavoriteType.adoption), hasLength(0));
+    expect(localStorage.getFavorites(FavoriteType.mating), hasLength(0));
   });
 }

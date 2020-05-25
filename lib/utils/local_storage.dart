@@ -71,16 +71,22 @@ class LocalStorage implements LocalDataRepositroy {
     if (_prefs.getString(USER) == null) {
       return null;
     } else {
-      return User.fromMap(Map<String, dynamic>.from(json.decode(
-        _prefs.getString(USER),
-      )));
+      return User.fromMap(
+        Map<String, dynamic>.from(
+          json.decode(
+            _prefs.getString(USER),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Future<void> editFavorites(String id, FavoriteType type) async {
-    List<String> favs = _prefs.getStringList(
-        type == FavoriteType.adoption ? FAVORITE_ADOPTION : FAVORITE_MATING);
+    List<String> favs = _prefs.getStringList(type == FavoriteType.adoption
+            ? FAVORITE_ADOPTION
+            : FAVORITE_MATING) ??
+        [];
 
     if (favs.contains(id)) {
       favs.removeWhere((element) => element == id);
@@ -118,7 +124,7 @@ class LocalStorage implements LocalDataRepositroy {
 
   @override
   Future<void> setUserLocationData(UserLocationData data) async {
-    _prefs.setString(USER, json.encode(UserLocationData.toJson(data)));
+    _prefs.setString(USER_LOCATION, json.encode(UserLocationData.toJson(data)));
   }
 
   @override

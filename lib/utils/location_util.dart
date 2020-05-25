@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/app_secrets.dart';
 import 'package:dog_pal/utils/constants_util.dart';

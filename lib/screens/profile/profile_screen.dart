@@ -669,9 +669,13 @@ class _ProfileHeader extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        localStorage.isAuthenticated()
-                            ? 'Joined in ${getMonth(DateTime.parse(user.dataJoined).month)} - ${DateTime.parse(user.dataJoined).year}'
-                            : 'Sign in to unlock you profile',
+                        (() {
+                          if (localStorage.isAuthenticated()) {
+                            return 'Joined in ${getMonth(DateTime.parse(user.dataJoined).month)} - ${DateTime.parse(user.dataJoined).year}';
+                          } else {
+                            return 'Sign in to unlock you profile';
+                          }
+                        }()),
                         softWrap: true,
                         style: TextStyle(
                           fontSize: ScreenUtil().setSp(42),
