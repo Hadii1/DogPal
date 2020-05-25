@@ -154,12 +154,19 @@ class LocationUtil {
 
   //A convenience function to directly get the city and district
   Future<UserLocationData> getInfoFromPosition() async {
+    //We try lower accuracy in case the first fails
     Position position = await getLocation(
-      LocationAccuracy.high,
-    ).timeout(
-      Duration(seconds: 10),
-      onTimeout: () => null,
-    );
+          LocationAccuracy.high,
+        ).timeout(
+          Duration(seconds: 5),
+          onTimeout: () => null,
+        ) ??
+        await getLocation(
+          LocationAccuracy.medium,
+        ).timeout(
+          Duration(seconds: 5),
+          onTimeout: () => null,
+        );
 
     if (position == null) {
       return null;

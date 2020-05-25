@@ -132,6 +132,16 @@ class AuthBloc implements BlocBase {
             ..addAll(_localStorage.getFavorites(FavoriteType.mating)),
           phoneNumber: oldUser.phoneNumber ?? user.phoneNumber ?? '',
         );
+
+        //add online favs to local favs
+
+        for (String a in localUser.favAdoptionPosts) {
+          _localStorage.editFavorites(a, FavoriteType.adoption);
+        }
+
+        for (String a in localUser.favMatingPost) {
+          _localStorage.editFavorites(a, FavoriteType.mating);
+        }
       }
 
       await FirestoreService().saveUserData(
