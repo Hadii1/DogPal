@@ -6,20 +6,20 @@ Color yellowishColor = Color(0xfffffffa);
 
 TextStyle normalTextStyle = TextStyle(
   color: Colors.black87,
-  fontSize: ScreenUtil().setSp(46),
+  fontSize: ScreenUtil().setSp(45),
   fontFamily: 'Comfortaa'
 );
 
 TextStyle detailsHeader = TextStyle(
   color: blackishColor,
-  fontSize: ScreenUtil().setSp(56),
+  fontSize: ScreenUtil().setSp(60),
   fontWeight: FontWeight.w700,
   fontFamily: 'Montserrat',
 );
 
 TextStyle subHeaderStyle = TextStyle(
     color: blackishColor,
-    fontSize: ScreenUtil().setSp(48),
+    fontSize: ScreenUtil().setSp(55),
     fontFamily: 'OpenSans');
 
 

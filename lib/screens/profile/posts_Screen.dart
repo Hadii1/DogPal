@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/mate_post.dart';
@@ -7,10 +9,12 @@ import 'package:dog_pal/screens/lost/lost_dogs_list.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
 import 'package:dog_pal/screens/profile/favorites_screen.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/no_connection_widget.dart';
 import 'package:dog_pal/widgets/unknown_error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +61,18 @@ class _PostsScreenState extends State<PostsScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Your Posts'),
+          title: Text(
+            'Your Posts',
+            style: TextStyle(fontSize: 65.sp),
+          ),
+          leading: InkWell(
+            onTap: () => Navigator.of(context).pop(),
+            child: Icon(
+              Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+              size: 75.sp,
+              color: blackishColor,
+            ),
+          ),
           bottom: TabBar(
             tabs: <Widget>[
               Tab(

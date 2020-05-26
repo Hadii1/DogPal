@@ -14,13 +14,13 @@ class PostLocationBloc implements BlocBase {
     _city = _localStorage.getPostLocationData().postCity;
     _town = _localStorage.getPostLocationData().postTown;
     _district = _localStorage.getPostLocationData().postDistrict;
-    _display = _localStorage.getPostLocationData().postDisplay;
+    locationDisplay = _localStorage.getPostLocationData().postDisplay;
   }
 
   String _city;
   String _town;
   String _district;
-  String _display;
+  String locationDisplay;
 
   final LocalDataRepositroy _localStorage;
 
@@ -49,7 +49,7 @@ class PostLocationBloc implements BlocBase {
     _city = city;
     _town = town;
     _district = district;
-    _display = display;
+    locationDisplay = display;
   }
 
   Future<void> onCurrentLocationPressed() async {
@@ -74,9 +74,9 @@ class PostLocationBloc implements BlocBase {
               _town = data.userTown;
               _city = data.userCity;
               _district = data.userDistrict;
-              _display = data.userDisplay;
+              locationDisplay = data.userDisplay;
 
-              _cityNameCtrl.sink.add(_display ?? _town ?? _city ?? _district);
+              _cityNameCtrl.sink.add(locationDisplay ?? _town ?? _city ?? _district);
             }
           } else {
             _errorCtrl.sink.add(GeneralConstants.LOCATION_PERMISSION_ERROR);
@@ -102,7 +102,7 @@ class PostLocationBloc implements BlocBase {
         postCity: _city,
         postDistrict: _district,
         postTown: _town,
-        postDisplay: _display,
+        postDisplay: locationDisplay,
       ),
     );
   }

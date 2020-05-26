@@ -9,6 +9,7 @@ import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum DecisionState {
   unAuthenticated,
@@ -106,6 +107,7 @@ class DecisionsBloc implements BlocBase {
           locationNotification = SnackBar(
             content: Text(
               'Showing results in ${locationData.userTown ?? locationData.userCity ?? locationData.userDistrict}',
+              style: TextStyle(fontSize: 45.sp),
             ),
           );
         } else {

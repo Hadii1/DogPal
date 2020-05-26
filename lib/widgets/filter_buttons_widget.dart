@@ -36,21 +36,24 @@ class FilterButtons extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  OutlineButton(
-                    splashColor: Colors.transparent,
-                    onPressed: () => _showFilterSheet(context),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5),
-                    highlightedBorderColor: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      snapshot.data == 0
-                          ? 'Filter'
-                          : 'Filters: ${snapshot.data}',
-                      style: TextStyle(
-                        color: blackishColor,
-                        fontSize: ScreenUtil().setSp(42),
+                  SizedBox(
+                    height: 120.sp,
+                    child: OutlineButton(
+                      splashColor: Colors.transparent,
+                      onPressed: () => _showFilterSheet(context),
+                      borderSide: BorderSide(color: Colors.grey, width: 0.5),
+                      highlightedBorderColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        snapshot.data == 0
+                            ? 'Filter'
+                            : 'Filters: ${snapshot.data}',
+                        style: TextStyle(
+                          color: blackishColor,
+                          fontSize: ScreenUtil().setSp(42),
+                        ),
                       ),
                     ),
                   ),
@@ -61,38 +64,46 @@ class FilterButtons extends StatelessWidget {
                       crossFadeState: snapshot.data == 0
                           ? CrossFadeState.showSecond
                           : CrossFadeState.showFirst,
-                      firstChild: OutlineButton(
-                        splashColor: Colors.transparent,
-                        onPressed: onClearPressed,
-                        highlightedBorderColor: Theme.of(context).primaryColor,
-                        borderSide: BorderSide(color: Colors.grey, width: 0.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            color: blackishColor,
-                            fontSize: ScreenUtil().setSp(42),
+                      firstChild: SizedBox(
+                        height: 120.sp,
+                        child: OutlineButton(
+                          splashColor: Colors.transparent,
+                          onPressed: onClearPressed,
+                          highlightedBorderColor:
+                              Theme.of(context).primaryColor,
+                          borderSide:
+                              BorderSide(color: Colors.grey, width: 0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            'Clear',
+                            style: TextStyle(
+                              color: blackishColor,
+                              fontSize: ScreenUtil().setSp(42),
+                            ),
                           ),
                         ),
                       ),
                       secondChild: SizedBox.shrink(),
                     ),
                   ),
-                  OutlineButton(
-                    splashColor: Colors.transparent,
-                    onPressed: onNearbyPressed,
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5),
-                    highlightedBorderColor: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      'Nearby',
-                      style: TextStyle(
-                        color: blackishColor,
-                        fontSize: ScreenUtil().setSp(42),
+                  SizedBox(
+                    height: 120.sp,
+                    child: OutlineButton(
+                      splashColor: Colors.transparent,
+                      onPressed: onNearbyPressed,
+                      borderSide: BorderSide(color: Colors.grey, width: 0.5),
+                      highlightedBorderColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        'Nearby',
+                        style: TextStyle(
+                          color: blackishColor,
+                          fontSize: ScreenUtil().setSp(42),
+                        ),
                       ),
                     ),
                   ),

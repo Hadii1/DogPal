@@ -5,6 +5,7 @@ import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 
@@ -72,7 +73,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                 child: ListTile(
                   title: Text(
                     prediction.description,
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 50.sp),
                     softWrap: true,
                   ),
                   leading: Icon(
@@ -87,7 +88,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                 title: Text(
                   error is SocketException ? 'No Internet Connection' : 'Error',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 60.sp,
                     color: Theme.of(context).errorColor,
                   ),
                 ),
@@ -116,6 +117,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
               style: TextStyle(
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w500,
+                fontSize: 50.sp,
                 color: blackishColor,
               ),
               decoration: InputDecoration(

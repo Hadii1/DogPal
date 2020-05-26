@@ -14,17 +14,18 @@ class DescriptionField extends StatelessWidget {
       child: TextField(
         autocorrect: true,
         autofocus: false,
-        maxLength: 800,
+        maxLength: 1000,
         onChanged: (value) => onChanged(value),
         keyboardType: TextInputType.text,
         maxLines: 4,
         style: TextStyle(fontFamily: 'OpenSans'),
         decoration: InputDecoration(
+          counter: SizedBox.shrink(),
           labelText: 'Description',
           helperMaxLines: 2,
           helperText: 'Any information you\'d like to add',
           labelStyle: TextStyle(
-            fontFamily: 'OpenSans',
+            fontSize: 50.sp,
           ),
         ),
       ),
@@ -45,36 +46,40 @@ class NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-      child: Form(
-        key: nameKey,
-        child: TextFormField(
-          autocorrect: false,
-          autofocus: false,
-          validator: (input) {
-            if (input.isEmpty) return ("kindly add the dog's name");
-            return null;
-          },
-          onChanged: (name) => onChanged(name),
-          keyboardType: TextInputType.text,
-          textCapitalization: TextCapitalization.words,
-          maxLength: 12,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(width: 0.4, color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            filled: true,
-            counter: SizedBox.shrink(),
-            fillColor: Colors.grey[200],
-            labelText: 'Dog name',
-            labelStyle: TextStyle(
-              fontFamily: 'OpenSans',
-              fontSize: ScreenUtil().setSp(40),
+      child: SizedBox(
+        height: 200.sp,
+        child: Form(
+          key: nameKey,
+          child: TextFormField(
+            autocorrect: false,
+            autofocus: false,
+            validator: (input) {
+              if (input.isEmpty) return ("kindly add the dog's name");
+              return null;
+            },
+            onChanged: (name) => onChanged(name),
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.words,
+            maxLength: 12,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.4,
+                  color: Theme.of(context).primaryColor,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              filled: true,
+              counter: SizedBox.shrink(),
+              fillColor: Colors.grey[200],
+              labelText: 'Dog name',
+              labelStyle: TextStyle(
+                fontSize: 45.sp,
+              ),
             ),
           ),
         ),
@@ -93,41 +98,56 @@ class PhoneField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
-      child: TextField(
-        autocorrect: false,
-        autofocus: false,
-        inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-        keyboardType: TextInputType.phone,
-        onChanged: (number) => onChanged(number),
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.phone),
-          helperMaxLines: 5,
-          helperText:
-              'If not filled, your email address will be the primary way of contact.',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              width: 0.1,
-              color: Theme.of(context).primaryColor,
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 170.sp,
+            child: TextField(
+              autocorrect: false,
+              autofocus: false,
+              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+              keyboardType: TextInputType.phone,
+              onChanged: (number) => onChanged(number),
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.phone),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 0.1,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 0.3,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 0.7,
+                      color: Theme.of(context).primaryColor,
+                    )),
+                labelText: 'Phone Number',
+                labelStyle: TextStyle(
+                  fontSize: ScreenUtil().setSp(45),
+                ),
+              ),
             ),
           ),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                width: 0.3,
-              )),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                width: 0.7,
-                color: Theme.of(context).primaryColor,
-              )),
-          labelText: 'Phone Number',
-          labelStyle: TextStyle(
-            fontFamily: 'OpenSans',
-            fontSize: ScreenUtil().setSp(40),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'If not filled, your email address will be the only way of contact',
+              style: TextStyle(
+                fontSize: 40.sp,
+                fontWeight: FontWeight.w300,
+                color: Colors.grey,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -227,41 +247,64 @@ class _AgeFieldState extends State<AgeField> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-      child: ActionChip(
-        backgroundColor: Colors.grey[200],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: () async => _showDialog(),
+        child: SizedBox(
+          height: 150.sp,
+          width: MediaQuery.of(context).size.width * 0.25,
+          child: IgnorePointer(
+            child: TextField(
+              textAlign: TextAlign.center,
+              readOnly: true,
+              decoration: InputDecoration(
+                filled: true,
+                labelText: _age ?? ' Age ',
+                labelStyle: TextStyle(
+                  fontSize: 45.sp,
+                  color: _age == null ? Colors.black54 : Colors.black,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                fillColor: Colors.grey[200],
+              ),
+            ),
+          ),
         ),
-        label: Text( _age ?? ' Age '),
-        onPressed: () async {
-          showDialog(
-              context: context,
-              builder: (_) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
-                  content: AgePicker(
-                    onChaged: (value) {
-                      setState(() {
-                        _age = value;
-                      });
-                      widget.onChanged(value);
-                    },
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'Confirm',
-                        style: TextStyle(color: Theme.of(context).accentColor),
-                      ),
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true).pop(),
-                    )
-                  ],
-                );
-              });
-        },
       ),
+    );
+  }
+
+  _showDialog() {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(12),
+            ),
+          ),
+          content: AgePicker(
+            onChaged: (value) {
+              setState(() {
+                _age = value;
+              });
+              widget.onChanged(value);
+            },
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Confirm',
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+            )
+          ],
+        );
+      },
     );
   }
 }

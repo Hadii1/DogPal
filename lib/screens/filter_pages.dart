@@ -73,12 +73,13 @@ class AdoptFilterSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-            child: RaisedButton(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: FlatButton(
               onPressed: () {
                 _bloc.getPosts();
                 Navigator.pop(context);
               },
+              color: Theme.of(context).primaryColor,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text('Apply'),
@@ -135,12 +136,13 @@ class MateFilterPage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                child: RaisedButton(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: FlatButton(
                   onPressed: () {
                     _bloc.getPosts();
                     Navigator.pop(context);
                   },
+                  color: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Text('Apply'),
@@ -161,49 +163,45 @@ class LostFilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            _buildTitle(),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: ListView(
-                children: <Widget>[
-                  BreedFilterWidget(
-                    orientation: WidgetOrientation.vertical,
-                    initalBreed: _bloc.breed,
-                    onChanged: (breed) => _bloc.breed = breed,
-                  ),
-                  Divider(),
-                  GenderFilter(
-                    onChanged: (value) => _bloc.gender = value,
-                    initialValue: _bloc.gender,
-                  ),
-                  Divider(),
-                  CoatColor(
-                    onChanged: (colors) => _bloc.coatColors = colors,
-                    initialColors: _bloc.coatColors,
-                  ),
-                ],
+      SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              _buildTitle(),
+              BreedFilterWidget(
+                orientation: WidgetOrientation.vertical,
+                initalBreed: _bloc.breed,
+                onChanged: (breed) => _bloc.breed = breed,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-              child: RaisedButton(
-                onPressed: () {
-                  _bloc.getPosts();
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text('Apply'),
+              Divider(),
+              GenderFilter(
+                onChanged: (value) => _bloc.gender = value,
+                initialValue: _bloc.gender,
+              ),
+              Divider(),
+              CoatColor(
+                onChanged: (colors) => _bloc.coatColors = colors,
+                initialColors: _bloc.coatColors,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: FlatButton(
+                  onPressed: () {
+                    _bloc.getPosts();
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text('Apply'),
+                  ),
+                  color: Theme.of(context).primaryColor,
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       )
     ]);

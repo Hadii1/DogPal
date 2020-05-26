@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/profile_bloc.dart';
@@ -345,16 +346,17 @@ class TermsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
+        leading: InkWell(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(
+            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+            size: 75.sp,
+            color: blackishColor,
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          color: blackishColor,
         ),
         title: Text(
           'TERMS & CONDITIONS',
-          style: TextStyle(color: Colors.black87),
+          style: TextStyle(color: Colors.black87, fontSize: 65.sp),
         ),
       ),
       body: Scrollbar(
@@ -381,13 +383,17 @@ class CredentialsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Credentials'),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
+        title: Text(
+          'Credentials',
+          style: TextStyle(fontSize: 65.sp),
+        ),
+        leading: InkWell(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(
+            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+            size: 75.sp,
+            color: blackishColor,
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          color: blackishColor,
         ),
       ),
       body: Padding(
@@ -402,10 +408,7 @@ class CredentialsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 24.0),
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(
-                          fontSize: ScreenUtil().setSp(44),
-                          color: Colors.black87,
-                        ),
+                        style: normalTextStyle,
                         text:
                             '''This project is developed and maintained on personal efforts. As it is with most individual software projects, the project makes use of many open source libraries and graphical content that was given for the world to enjoy. Here we mention some of these uses: ''',
                       ),
@@ -413,27 +416,23 @@ class CredentialsScreen extends StatelessWidget {
                   ),
                   RichText(
                     text: TextSpan(
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: ScreenUtil().setSp(42),
+                      style: normalTextStyle,
+                      children: [
+                        TextSpan(
+                            text:
+                                '• The tips to consider before adding your dog to mating was written by'),
+                        TextSpan(
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                          text: ' Dobie Houson.',
                         ),
-                        children: [
-                          TextSpan(
-                              text:
-                                  '• The tips to consider before adding your dog to mating was written by'),
-                          TextSpan(
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              text: ' Dobie Houson.'),
-                        ]),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: ScreenUtil().setSp(42),
-                        ),
+                        style: normalTextStyle,
                         children: [
                           TextSpan(
                               text:
@@ -455,87 +454,78 @@ class CredentialsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: RichText(
-                      text: TextSpan(
+                      text: TextSpan(style: normalTextStyle, children: [
+                        TextSpan(
+                            text:
+                                '• The cautious dog and the good doggy images were designed by:'),
+                        TextSpan(
                           style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: ScreenUtil().setSp(42),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
                           ),
-                          children: [
-                            TextSpan(
-                                text:
-                                    '• The cautious dog and the good doggy images were designed by:'),
-                            TextSpan(
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => _launchUrl(
-                                    context, 'https://www.freepik.com/stories'),
-                              text: ' Stories / Freepik .',
-                            ),
-                          ]),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _launchUrl(
+                                context, 'https://www.freepik.com/stories'),
+                          text: ' Stories / Freepik .',
+                        ),
+                      ]),
                     ),
                   ),
                   RichText(
                     text: TextSpan(
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: ScreenUtil().setSp(42),
+                      style: normalTextStyle,
+                      children: [
+                        TextSpan(
+                            text:
+                                '• The image shown while fetching location was designed by'),
+                        TextSpan(
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => _launchUrl(context,
+                                'https://www.freepik.com/rawpixel-com'),
+                          text: ' rawpixel / Freepik .',
                         ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: RichText(
+                      text: TextSpan(
+                        style: normalTextStyle,
                         children: [
                           TextSpan(
                               text:
-                                  '• The image shown while fetching location was designed by'),
+                                  '• Gratitude and appreciation for google and especially the'),
                           TextSpan(
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.blue,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => _launchUrl(context,
-                                  'https://www.freepik.com/rawpixel-com'),
-                            text: ' rawpixel / Freepik .',
+                              ..onTap = () =>
+                                  _launchUrl(context, 'https://dart.dev/'),
+                            text: ' Dart ',
                           ),
-                        ]),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: RichText(
-                      text: TextSpan(
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: ScreenUtil().setSp(42),
+                          TextSpan(text: ' and '),
+                          TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () =>
+                                  _launchUrl(context, 'https://flutter.dev/'),
+                            text: ' Flutter ',
                           ),
-                          children: [
-                            TextSpan(
-                                text:
-                                    '• Gratitude and appreciation for google and especially the'),
-                            TextSpan(
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () =>
-                                    _launchUrl(context, 'https://dart.dev/'),
-                              text: ' Dart ',
-                            ),
-                            TextSpan(text: ' and '),
-                            TextSpan(
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () =>
-                                    _launchUrl(context, 'https://flutter.dev/'),
-                              text: ' Flutter ',
-                            ),
-                            TextSpan(
-                                text:
-                                    'teams for their great framework that we used for building this project.'),
-                          ]),
+                          TextSpan(
+                              text:
+                                  'teams for their great framework that we used for building this project.'),
+                        ],
+                      ),
                     ),
                   )
                 ],
@@ -570,13 +560,17 @@ class PrivacyPolicyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Privacy Policy'),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
+        title: Text(
+          'Privacy Policy',
+          style: TextStyle(fontSize: 65.sp),
+        ),
+        leading: InkWell(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(
+            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+            size: 75.sp,
+            color: blackishColor,
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          color: blackishColor,
         ),
       ),
       body: SingleChildScrollView(
@@ -671,7 +665,10 @@ class _ProfileHeader extends StatelessWidget {
                       child: Text(
                         (() {
                           if (localStorage.isAuthenticated()) {
-                            return 'Joined in ${getMonth(DateTime.parse(user.dataJoined).month)} - ${DateTime.parse(user.dataJoined).year}';
+                            if (user != null) {
+                              return 'Joined in ${getMonth(DateTime.parse(user.dataJoined).month)} - ${DateTime.parse(user.dataJoined).year}';
+                            } else
+                              return '';
                           } else {
                             return 'Sign in to unlock you profile';
                           }
@@ -739,6 +736,7 @@ class _ProfileItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
+      splashColor: Colors.transparent,
       child: Column(
         children: <Widget>[
           Row(

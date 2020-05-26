@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
@@ -62,7 +63,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Favorites'),
+          title: Text(
+            'Favorites',
+            style: TextStyle(fontSize: 65.sp),
+          ),
+          leading: InkWell(
+            onTap: () => Navigator.of(context).pop(),
+            child: Icon(
+              Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+              size: 75.sp,
+              color: blackishColor,
+            ),
+          ),
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
@@ -276,6 +288,8 @@ class EmptyPage extends StatelessWidget {
           children: <Widget>[
             Image.asset(
               getRandomDogImage(),
+              width: 500.w,
+              height: 500.h,
               fit: BoxFit.contain,
             ),
             Padding(

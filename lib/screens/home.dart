@@ -15,6 +15,7 @@ import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -213,8 +214,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   BottomNavigationBar _buildNavigationBar() {
     return BottomNavigationBar(
+      selectedFontSize: 45.sp,
+      unselectedFontSize: 35.sp,
       elevation: 12,
-      selectedIconTheme: IconThemeData(size: 26),
+      selectedIconTheme: IconThemeData(size: 85.sp),
+      iconSize: 75.sp,
       currentIndex: _bottomNavIndex,
       showUnselectedLabels: true,
       type: BottomNavigationBarType.shifting,

@@ -76,25 +76,49 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: AnimationConfiguration.toStaggeredList(
-              childAnimationBuilder: (widget) => SlideAnimation(
-                verticalOffset: 80,
-                duration: Duration(seconds: 1),
-                child: widget,
+          Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.05,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: AnimationConfiguration.toStaggeredList(
+                childAnimationBuilder: (widget) => SlideAnimation(
+                  verticalOffset: 80,
+                  duration: Duration(milliseconds: 500),
+                  child: widget,
+                ),
+                children: [
+                  _welcomeText(),
+                  _ImageShow(),
+                ],
               ),
-              children: [
-                _welcomeText(),
-                _ImageShow(),
-                _fbButton(),
-                _gmailButton(),
-                _termsWidget(),
-                _laterWidget(),
-              ],
             ),
           ),
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.08,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: AnimationConfiguration.toStaggeredList(
+                childAnimationBuilder: (widget) => SlideAnimation(
+                  horizontalOffset: 80,
+                  duration: Duration(milliseconds: 800),
+                  child: widget,
+                ),
+                children: [
+                  _fbButton(),
+                  _gmailButton(),
+                  _termsWidget(),
+                  _laterWidget(),
+                ],
+              ),
+            ),
+          ),
+
           //Loading widget
           StreamBuilder<bool>(
             initialData: false,
@@ -133,7 +157,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _fbButton() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _size.width * 0.1),
+      padding: EdgeInsets.only(
+        left: _size.width * 0.1,
+        right: _size.width * 0.1,
+        top: 24.h,
+      ),
       child: OutlineButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         color: blackishColor,
@@ -156,7 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _gmailButton() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _size.width * 0.1),
+      padding:
+          EdgeInsets.symmetric(horizontal: _size.width * 0.1, vertical: 24.h),
       child: OutlineButton(
         borderSide: BorderSide(color: blackishColor, width: 0.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -201,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _termsWidget() {
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.only(top: 16),
+      padding: EdgeInsets.only(top: 64.h),
       child: RichText(
         text: TextSpan(
           style: TextStyle(
@@ -279,14 +308,20 @@ class __ImageShowState extends State<_ImageShow> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.4,
       child: PageView(
         controller: _controller,
         scrollDirection: Axis.horizontal,
         children: <Widget>[
-          Image.asset('assets/cute_dog.png'),
-          Image.asset('assets/cute_dog_2.png'),
-          Image.asset('assets/cute_dog_3.png'),
+          Image.asset(
+            'assets/cute_dog.png',
+          ),
+          Image.asset(
+            'assets/cute_dog_2.png',
+          ),
+          Image.asset(
+            'assets/cute_dog_3.png',
+          ),
         ],
       ),
     );

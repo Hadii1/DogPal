@@ -3,11 +3,24 @@ import 'package:dog_pal/screens/post_location.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class LocationField extends StatelessWidget {
-  const LocationField(this.locationDisplay);
-  final String locationDisplay;
+class LocationField extends StatefulWidget {
+  @override
+  _LocationFieldState createState() => _LocationFieldState();
+}
+
+class _LocationFieldState extends State<LocationField> {
+  String _locationDisplay;
+
+  @override
+  void initState() {
+    _locationDisplay = Provider.of<LocalStorage>(context, listen: false)
+        .getPostLocationData()
+        .postDisplay;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,25 +38,31 @@ class LocationField extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (_) {
-                  return Provider(
-                    create: (_) => PostLocationBloc(
-                      Provider.of<LocalStorage>(context, listen: false),
+            onPressed: () async {
+              _locationDisplay = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (_) {
+                        return Provider(
+                          create: (_) => PostLocationBloc(
+                            Provider.of<LocalStorage>(context, listen: false),
+                          ),
+                          child: PostLocation(),
+                        );
+                      },
                     ),
-                    child: PostLocation(),
-                  );
-                },
-              ),
-            ),
+                  ) ??
+                  _locationDisplay ??
+                  '';
+
+              setState(() {});
+            },
             label: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  locationDisplay,
-                  softWrap: true,
+                  _locationDisplay,
+                  style: TextStyle(fontSize: 40.sp),
                 ),
               ],
             ),

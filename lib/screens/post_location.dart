@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dog_pal/bloc/post_location_bloc.dart';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/constants_util.dart';
@@ -58,27 +60,34 @@ class LocationWidgetDialog extends State<PostLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Post Location'),
-        leading: IconButton(
-          icon: Icon(
-            Icons.close,
+        title: Text(
+          'Post Location',
+          style: TextStyle(
+            fontSize: 65.sp,
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          color: blackishColor,
+        ),
+        leading: InkWell(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(
+            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+            size: 75.sp,
+            color: blackishColor,
+          ),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(21),
         child: SingleChildScrollView(
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                _searchBar(),
-                _currentLocationButton(),
-                _progressIndicator(),
-                _locationName(),
-                _verifyButton()
-              ]),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _searchBar(),
+              _currentLocationButton(),
+              _progressIndicator(),
+              _locationName(),
+              _verifyButton()
+            ],
+          ),
         ),
       ),
     );
@@ -92,24 +101,30 @@ class LocationWidgetDialog extends State<PostLocation> {
       initialData: postLocData.postDisplay,
       builder: (_, AsyncSnapshot<String> snapshot) {
         return Padding(
-          padding: const EdgeInsets.only(top: 150),
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
           child: Row(
             children: <Widget>[
               Text(
                 'City:',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  fontSize: 50.sp,
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Text(
-                        snapshot.data,
-                        softWrap: true,
-                      ))),
+                padding: const EdgeInsets.only(left: 8),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Text(
+                    snapshot.data,
+                    style: TextStyle(
+                      fontSize: 50.sp,
+                    ),
+                    softWrap: true,
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -119,15 +134,15 @@ class LocationWidgetDialog extends State<PostLocation> {
 
   Widget _verifyButton() {
     return Container(
-      padding: const EdgeInsets.only(top: 26),
+      padding: const EdgeInsets.all(24),
       child: FlatButton(
         color: Color(0xff2F4858),
         onPressed: () {
           _bloc.onVerifyPressed();
-          Navigator.pop(context);
+          Navigator.pop(context, _bloc.locationDisplay);
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          padding: const EdgeInsets.all(12),
           child: Text(
             'Verify',
             style: TextStyle(
@@ -146,31 +161,37 @@ class LocationWidgetDialog extends State<PostLocation> {
         builder: (context, snapshot) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: FlatButton.icon(
-              icon: Icon(
-                Icons.location_on,
-                color: Colors.white,
-              ),
+            child: FlatButton(
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
-              label: Container(
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: snapshot.data
-                    ? SpinKitThreeBounce(
-                        color: Colors.white,
-                        size: 25,
-                      )
-                    : Center(
-                        child: Text(
-                          'Use Current Location',
-                          style: TextStyle(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                  ),
+                  Expanded(
+                      child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 250),
+                    child: snapshot.data
+                        ? SpinKitThreeBounce(
                             color: Colors.white,
-                            fontSize: ScreenUtil().setSp(46),
+                            size: 25,
+                          )
+                        : Text(
+                            'Use Current Location',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 45.sp,
+                            ),
                           ),
-                        ),
-                      ),
+                  )),
+                ],
               ),
               onPressed: () async {
                 _locationFieldCtrl.clear();

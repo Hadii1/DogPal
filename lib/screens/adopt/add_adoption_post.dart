@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:dog_pal/bloc/add_adoption_dog_bloc.dart';
 import 'package:dog_pal/utils/general_functions.dart';
-import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/breed_filter_widget.dart';
@@ -14,7 +14,6 @@ import 'package:dog_pal/widgets/location_widget.dart';
 import 'package:dog_pal/widgets/size_filter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class AddAdoptPostScreen extends StatefulWidget {
@@ -64,189 +63,168 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
         if (!node.hasPrimaryFocus) {
           node.unfocus();
         }
-        print('tapped');
-        // FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Add Adoption Dog'),
+            title: Text(
+              'Add Adoption Dog',
+              style: TextStyle(fontSize: 65.sp),
+            ),
+            leading: InkWell(
+              onTap: () => Navigator.of(context).pop(),
+              child: Icon(
+                Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+                size: 75.sp,
+                color: blackishColor,
+              ),
+            ),
           ),
           body: Scrollbar(
-            child: Stack(
-              children: <Widget>[
-                SingleChildScrollView(
-                  controller: _pageScroller,
-                  child: Column(
-                    children: <Widget>[
-                      ImageSlide(
-                        allowedPhotos: 6,
-                        initalPhotos: _bloc.assetList,
-                        onChanged: (images) => _bloc.assetList = images,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            NameField(
-                              nameKey: _nameKey,
-                              onChanged: (name) =>
-                                  _bloc.adoptionDog.dogName = name,
-                            ),
-                            AgeField(
-                              onChanged: (age) => _bloc.adoptionDog.age = age,
-                              initialAge: _bloc.adoptionDog.age,
-                            ),
-                            BreedFilterWidget(
-                              orientation: WidgetOrientation.horizontal,
-                              initalBreed: _bloc.adoptionDog.breed,
-                              onChanged: (String breed) =>
-                                  _bloc.adoptionDog.breed = breed,
-                            ),
-                            Divider(),
-                            GenderFilter(
-                              onChanged: (String gender) =>
-                                  _bloc.adoptionDog.gender = gender,
-                              initialValue: _bloc.adoptionDog.gender,
-                            ),
-                            Divider(),
-                            CoatColor(
-                              onChanged: (List<String> colors) =>
-                                  _bloc.adoptionDog.coatColors = colors,
-                            ),
-                            Divider(),
-                            SizeFilter(
-                              onChanged: (String size) =>
-                                  _bloc.adoptionDog.size = size,
-                              initialValue: 'Medium',
-                            ),
-                            Divider(),
-                            FilterChoiceChip(
-                              initialValue: _bloc.adoptionDog.energyLevel,
-                              onChanged: (String value) =>
-                                  _bloc.adoptionDog.energyLevel = value,
-                              title: 'Energy Level:',
-                              values: ['Calm', 'Regular', 'Energetic'],
-                            ),
-                            Divider(),
-                            FilterChoiceChip(
-                              initialValue: _bloc.adoptionDog.barkTendencies,
-                              onChanged: (String value) =>
-                                  _bloc.adoptionDog.barkTendencies = value,
-                              title: 'Barking Tendency:',
-                              values: ['Rarely', 'Moderate', 'Vocalist'],
-                            ),
-                            Divider(),
-                            FilterChoiceChip(
-                              initialValue: _bloc.adoptionDog.sheddingLevel,
-                              onChanged: (value) =>
-                                  _bloc.adoptionDog.sheddingLevel = value,
-                              title: 'Shedding Level:',
-                              values: ['Little', 'Moderate', 'A lot'],
-                            ),
-                            Divider(),
-                            FilterChoiceChip(
-                              initialValue: _bloc.adoptionDog.trainingLevel,
-                              onChanged: (String value) =>
-                                  _bloc.adoptionDog.trainingLevel = value,
-                              values: ['None', 'Basic', 'Advanced'],
-                              title: 'Training Level:',
-                            ),
-                            Divider(),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: FilterCheckBox(
-                                label: 'Pet Friendly',
-                                initialValue: _bloc.adoptionDog.petFriendly,
-                                onChanged: (bool value) =>
-                                    _bloc.adoptionDog.petFriendly = value,
-                              ),
-                            ),
-                            FilterCheckBox(
-                              label: 'Appartment Friendly',
-                              initialValue:
-                                  _bloc.adoptionDog.appartmentFriendly,
-                              onChanged: (bool value) =>
-                                  _bloc.adoptionDog.appartmentFriendly = value,
-                            ),
-                            FilterCheckBox(
-                              label: 'Vaccinated',
-                              initialValue: _bloc.adoptionDog.vaccinated,
-                              onChanged: (bool value) =>
-                                  _bloc.adoptionDog.vaccinated = value,
-                            ),
-                            FilterCheckBox(
-                              label: 'Pedigree',
-                              initialValue: _bloc.adoptionDog.pedigree,
-                              onChanged: (bool value) =>
-                                  _bloc.adoptionDog.pedigree = value,
-                            ),
-                            Divider(),
-                            DescriptionField(
-                              onChanged: (String value) =>
-                                  _bloc.description = value,
-                            ),
-                            LocationField(
-                              Provider.of<LocalStorage>(context, listen: false)
-                                  .getPostLocationData()
-                                  .postDisplay,
-                            ),
-                            PhoneField(
-                              onChanged: (number) =>
-                                  _bloc.adoptionDog.owner.phoneNumber = number,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 24),
-                              child: RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Add',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.5,
-                                      fontSize: ScreenUtil().setSp(54),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () => _validateValues(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            child: SingleChildScrollView(
+              controller: _pageScroller,
+              child: Column(
+                children: <Widget>[
+                  ImageSlide(
+                    allowedPhotos: 6,
+                    initalPhotos: _bloc.assetList,
+                    onChanged: (images) => _bloc.assetList = images,
                   ),
-                ),
-                Center(
-                  child: StreamBuilder<PostAdditionState>(
-                      stream: _bloc.state,
-                      builder: (_, snapshot) {
-                        return AnimatedCrossFade(
-                          duration: Duration(milliseconds: 300),
-                          crossFadeState:
-                              snapshot.data == PostAdditionState.loading
-                                  ? CrossFadeState.showFirst
-                                  : CrossFadeState.showSecond,
-                          firstChild: Container(
-                            color: yellowishColor.withOpacity(0.5),
-                            child: SpinKitThreeBounce(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        NameField(
+                          nameKey: _nameKey,
+                          onChanged: (name) => _bloc.adoptionDog.dogName = name,
+                        ),
+                        AgeField(
+                          onChanged: (age) => _bloc.adoptionDog.age = age,
+                          initialAge: _bloc.adoptionDog.age,
+                        ),
+                        BreedFilterWidget(
+                          orientation: WidgetOrientation.horizontal,
+                          initalBreed: _bloc.adoptionDog.breed,
+                          onChanged: (String breed) =>
+                              _bloc.adoptionDog.breed = breed,
+                        ),
+                        Divider(),
+                        GenderFilter(
+                          onChanged: (String gender) =>
+                              _bloc.adoptionDog.gender = gender,
+                          initialValue: _bloc.adoptionDog.gender,
+                        ),
+                        Divider(),
+                        CoatColor(
+                          onChanged: (List<String> colors) =>
+                              _bloc.adoptionDog.coatColors = colors,
+                        ),
+                        Divider(),
+                        SizeFilter(
+                          onChanged: (String size) =>
+                              _bloc.adoptionDog.size = size,
+                          initialValue: 'Medium',
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.adoptionDog.energyLevel,
+                          onChanged: (String value) =>
+                              _bloc.adoptionDog.energyLevel = value,
+                          title: 'Energy Level:',
+                          values: ['Calm', 'Regular', 'Energetic'],
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.adoptionDog.barkTendencies,
+                          onChanged: (String value) =>
+                              _bloc.adoptionDog.barkTendencies = value,
+                          title: 'Barking Tendency:',
+                          values: ['Rarely', 'Moderate', 'Vocalist'],
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.adoptionDog.sheddingLevel,
+                          onChanged: (value) =>
+                              _bloc.adoptionDog.sheddingLevel = value,
+                          title: 'Shedding Level:',
+                          values: ['Little', 'Moderate', 'A lot'],
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.adoptionDog.trainingLevel,
+                          onChanged: (String value) =>
+                              _bloc.adoptionDog.trainingLevel = value,
+                          values: ['None', 'Basic', 'Advanced'],
+                          title: 'Training Level:',
+                        ),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: FilterCheckBox(
+                            label: 'Pet Friendly',
+                            initialValue: _bloc.adoptionDog.petFriendly,
+                            onChanged: (bool value) =>
+                                _bloc.adoptionDog.petFriendly = value,
                           ),
-                          secondChild: SizedBox.shrink(),
-                        );
-                      }),
-                ),
-              ],
+                        ),
+                        FilterCheckBox(
+                          label: 'Appartment Friendly',
+                          initialValue: _bloc.adoptionDog.appartmentFriendly,
+                          onChanged: (bool value) =>
+                              _bloc.adoptionDog.appartmentFriendly = value,
+                        ),
+                        FilterCheckBox(
+                          label: 'Vaccinated',
+                          initialValue: _bloc.adoptionDog.vaccinated,
+                          onChanged: (bool value) =>
+                              _bloc.adoptionDog.vaccinated = value,
+                        ),
+                        FilterCheckBox(
+                          label: 'Pedigree',
+                          initialValue: _bloc.adoptionDog.pedigree,
+                          onChanged: (bool value) =>
+                              _bloc.adoptionDog.pedigree = value,
+                        ),
+                        Divider(),
+                        DescriptionField(
+                          onChanged: (String value) =>
+                              _bloc.description = value,
+                        ),
+                        LocationField(),
+                        PhoneField(
+                          onChanged: (number) =>
+                              _bloc.adoptionDog.owner.phoneNumber = number,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16, horizontal: 24),
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Add',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.5,
+                                  fontSize: ScreenUtil().setSp(54),
+                                ),
+                              ),
+                            ),
+                            onPressed: () => _validateValues(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           )),
     );

@@ -139,7 +139,7 @@ class _BreedsDialogState extends State<BreedsDialog> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Specify Breed'),
+        title: Text('Specify Breed', style: TextStyle(fontSize: 60.sp)),
         leading: IconButton(
           icon: Icon(
             Icons.close,
@@ -203,9 +203,9 @@ class _BreedsDialogState extends State<BreedsDialog> {
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 0),
+      padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 2),
       child: SizedBox(
-        height: 60,
+        height: 200.h,
         child: Card(
           elevation: 1,
           color: Color(0xfffffffa),
@@ -215,14 +215,19 @@ class _BreedsDialogState extends State<BreedsDialog> {
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w500,
                 color: blackishColor,
+                fontSize: 55.sp,
               ),
               controller: _controller,
               autofocus: true,
               decoration: (InputDecoration(
                 labelText: 'Search Breeds',
-                labelStyle: TextStyle(fontFamily: 'OpenSans'),
+                labelStyle: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 55.sp,
+                ),
                 prefixIcon: Icon(
                   Icons.search,
+                  size: 85.sp,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),

@@ -45,8 +45,16 @@ class _DogsScreenState extends State<DogsScreen> {
   void initState() {
     _initializeBloc();
     _bloc.locationChanges.listen((name) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Showing results near $name')));
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Showing results near $name',
+            style: TextStyle(
+              fontSize: 45.sp,
+            ),
+          ),
+        ),
+      );
     });
     _bloc.getPosts();
     super.initState();
@@ -77,7 +85,7 @@ class _DogsScreenState extends State<DogsScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: AnimatedHeader(
-            height: 170.sp,
+            height: 150.sp,
             scrollController: _bloc.pageController,
             didPressSuggestion: _bloc.isSuggestionPressed,
             child: FloatingActionButton(

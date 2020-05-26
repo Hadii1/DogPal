@@ -1,6 +1,5 @@
 import 'package:dog_pal/bloc/add_mate_dog_bloc.dart';
 import 'package:dog_pal/utils/general_functions.dart';
-import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/breed_filter_widget.dart';
@@ -137,11 +136,7 @@ class _AddMateDogScreenState extends State<AddMateDogScreen> {
                           DescriptionField(
                             onChanged: (desc) => _bloc.description = desc,
                           ),
-                          LocationField(
-                            Provider.of<LocalStorage>(context, listen: false)
-                                .getPostLocationData()
-                                .postDisplay,
-                          ),
+                          LocationField(),
                           Divider(),
                           PhoneField(
                             onChanged: (number) =>
