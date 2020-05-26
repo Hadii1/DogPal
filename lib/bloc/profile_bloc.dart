@@ -14,6 +14,7 @@ import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:flutter/services.dart';
+import 'package:sentry/sentry.dart';
 
 enum ProfileScreenState {
   loading,
@@ -121,10 +122,25 @@ class ProfileBloc implements BlocBase {
       _screenStateCtrl.sink.add(ProfileScreenState.loading);
       try {
         if (await isOnline()) {
+          // log to see how many users are deleting accounts
+          sentry.capture(
+            event: Event(
+              loggerName: 'User Delete Account',
+              userContext: User(
+                username: _localStorage.getUser().username,
+                email: _localStorage.getUser().email,
+                id: _localStorage.getUser().uid,
+                extras: {
+                  'Deleted at': DateTime.now().toString(),
+                },
+              ),
+            ),
+          );
+
+          // delete data and sign out
+
           await _firestoreService.deleteUserData(uid);
-
           await _authService.signOut();
-
           _localStorage.setAuthentication(false);
 
           //if successful it triggers the authStateStream above
