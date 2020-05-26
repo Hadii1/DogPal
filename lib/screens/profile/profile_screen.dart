@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -161,6 +162,12 @@ class ProfileWidget extends StatelessWidget {
                               iconData: MdiIcons.messageOutline,
                               text: 'Contact Us',
                               onPressed: () async => _contactUsPressed(context),
+                            ),
+                            _ProfileItem(
+                              hideDivier: true,
+                              iconData: MdiIcons.starOutline,
+                              text: 'Rate Us',
+                              onPressed: () async => LaunchReview.launch(),
                             ),
                             _ProfileItem(
                               hideDivier: true,
@@ -734,41 +741,41 @@ class _ProfileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      splashColor: Colors.transparent,
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(4),
+              child: Text(
                 text,
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(52),
                     fontWeight: FontWeight.w300,
                     color: blackishColor),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 6.0),
-                child: Icon(
-                  iconData,
-                  size: 24,
-                  color: blackishColor.withAlpha(230),
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 6.0),
+              child: Icon(
+                iconData,
+                size: 24,
+                color: blackishColor.withAlpha(230),
               ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: hideDivier
-                ? Container(
-                    padding: const EdgeInsets.all(8),
-                  )
-                : Divider(),
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          child: hideDivier
+              ? Container(
+                  padding: const EdgeInsets.all(8),
+                )
+              : Divider(),
+        ),
+      ],
     );
   }
 }
