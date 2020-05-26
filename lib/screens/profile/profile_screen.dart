@@ -94,7 +94,7 @@ class ProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localStorage = Provider.of<LocalStorage>(context, listen: false);
-    final profileBloc = Provider.of<ProfileBloc>(context, listen: false);
+    final _profileBloc = Provider.of<ProfileBloc>(context, listen: false);
     return Fader(
       child: SingleChildScrollView(
         child: Stack(
@@ -196,7 +196,7 @@ class ProfileWidget extends StatelessWidget {
                                     iconData: Icons.keyboard_return,
                                     text: 'Sign Out',
                                     onPressed: () =>
-                                        profileBloc.signOutPressed(),
+                                        _profileBloc.signOutPressed(),
                                   )
                                 : _ProfileItem(
                                     hideDivier: true,
@@ -222,52 +222,9 @@ class ProfileWidget extends StatelessWidget {
                                     hideDivier: true,
                                     iconData: Icons.delete,
                                     text: 'Delete Account',
-                                    onPressed: () async {
-                                      showDialog<bool>(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (_) {
-                                            return AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(12))),
-                                              title: Text('Warning'),
-                                              content: Text(
-                                                  'Are you sure you want to delete all your posts and data?'),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                    child: Text(
-                                                      'Confirm',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .accentColor),
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(context,
-                                                              rootNavigator:
-                                                                  true)
-                                                          .pop();
-                                                      profileBloc
-                                                          .deleteAccountPressed();
-                                                    }),
-                                                FlatButton(
-                                                  child: Text(
-                                                    'Cancel',
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .accentColor),
-                                                  ),
-                                                  onPressed: () => Navigator.of(
-                                                          context,
-                                                          rootNavigator: true)
-                                                      .pop(),
-                                                )
-                                              ],
-                                            );
-                                          });
-                                    })
+                                    onPressed: () =>
+                                        _deleteAccount(context, _profileBloc),
+                                  )
                                 : SizedBox.shrink()
                           ],
                         ),
@@ -280,6 +237,40 @@ class ProfileWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _deleteAccount(BuildContext context, ProfileBloc bloc) {
+    showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12))),
+          title: Text('Warning'),
+          content:
+              Text('Are you sure you want to delete all your posts and data?'),
+          actions: <Widget>[
+            FlatButton(
+                child: Text(
+                  'Confirm',
+                  style: TextStyle(color: Theme.of(context).accentColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  bloc.deleteAccountPressed();
+                }),
+            FlatButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+            )
+          ],
+        );
+      },
     );
   }
 
