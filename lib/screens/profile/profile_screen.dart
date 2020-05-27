@@ -734,29 +734,31 @@ class _ProfileItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            InkWell(
-              onTap: onPressed,
-              borderRadius: BorderRadius.circular(4),
-              child: Text(
+        InkWell(
+          onTap: onPressed,
+          focusColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
                 text,
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(52),
                     fontWeight: FontWeight.w300,
                     color: blackishColor),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 6.0),
-              child: Icon(
-                iconData,
-                size: 24,
-                color: blackishColor.withAlpha(230),
+              Padding(
+                padding: const EdgeInsets.only(right: 6.0),
+                child: Icon(
+                  iconData,
+                  size: 24,
+                  color: blackishColor.withAlpha(230),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Container(
           padding: const EdgeInsets.all(8.0),

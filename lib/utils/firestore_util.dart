@@ -178,11 +178,22 @@ class FirestoreService {
     }
   }
 
-  Future<List<DocumentSnapshot>> fetchAllUserFavs(
-    List<String> adoptFavs,
-    List<String> mateFavs,
-  ) async {
+  Future<List<DocumentSnapshot>> fetchAllUserFavs(String userId) async {
     List<DocumentSnapshot> documents = [];
+
+    DocumentSnapshot snapshot = await _db
+        .collection(FirestoreConsts.USER_COLLECTION)
+        .document(userId)
+        .get(source: Source.server);
+
+    List<String> adoptFavs =
+        (snapshot.data[UserConsts.FAVORITE_ADOPTION] as List<dynamic>)
+            .cast<String>();
+
+    List<String> mateFavs =
+        (snapshot.data[UserConsts.FAVORITE_MATING] as List<dynamic>)
+            .cast<String>();
+
     for (String a in adoptFavs) {
       DocumentSnapshot snapshot =
           await _db.collection(FirestoreConsts.ADOPTION_DOGS).document(a).get();

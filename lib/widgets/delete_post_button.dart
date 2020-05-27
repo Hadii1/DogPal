@@ -129,8 +129,7 @@ class _DeletePostButtonState extends State<DeletePostButton> {
             ),
           ),
         );
-
-        //TODO: Cloud Function to delete from all user favorites
+ 
 
         //delete images in storage
         firestoreUtil.deleteImages(_post.dog.imagesUrls.cast<String>());

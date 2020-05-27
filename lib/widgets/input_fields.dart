@@ -172,43 +172,49 @@ class _AgePickerState extends State<AgePicker> {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('Years'),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: NumberPicker.integer(
-                  initialValue: _years,
-                  minValue: 0,
-                  maxValue: 30,
-                  onChanged: (value) {
-                    setState(() {});
-                    _years = value;
-                    _age = getAgeText();
-                    widget.onChaged(_age);
-                  }),
-            )
-          ],
+        Flexible(
+          flex: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Years'),
+              Padding(
+                padding: EdgeInsets.only(top: 6.0.h),
+                child: NumberPicker.integer(
+                    initialValue: _years,
+                    minValue: 0,
+                    maxValue: 30,
+                    onChanged: (value) {
+                      setState(() {});
+                      _years = value;
+                      _age = getAgeText();
+                      widget.onChaged(_age);
+                    }),
+              )
+            ],
+          ),
         ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('Months'),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: NumberPicker.integer(
-                  initialValue: _months,
-                  minValue: 0,
-                  maxValue: 11,
-                  onChanged: (value) {
-                    setState(() {});
-                    _months = value;
-                    _age = getAgeText();
-                    widget.onChaged(_age);
-                  }),
-            )
-          ],
+        Flexible(
+          flex: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Months'),
+              Padding(
+                padding: EdgeInsets.only(top: 6.0.h),
+                child: NumberPicker.integer(
+                    initialValue: _months,
+                    minValue: 0,
+                    maxValue: 11,
+                    onChanged: (value) {
+                      setState(() {});
+                      _months = value;
+                      _age = getAgeText();
+                      widget.onChaged(_age);
+                    }),
+              )
+            ],
+          ),
         )
       ],
     );

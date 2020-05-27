@@ -6,6 +6,7 @@ import 'package:dog_pal/navigators/mate_navigator.dart';
 import 'package:dog_pal/screens/mate/mate_details_screen.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
+import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
@@ -106,15 +107,16 @@ class _MateCardState extends State<MateCard> {
               height: double.maxFinite,
               heroTag: widget.heroTag,
               showIndicator: false,
-              onPressed: (int index) =>
-                  Navigator.of(context).pushNamed(MateRoutes.MATE_DOG_WALL,
-                      arguments: MateDetailsArgs(
-                        post: widget.post,
-                        onDeletePressed: widget.onDeletePressed,
-                        activeImageIndex: index,
-                        heroTag: widget.heroTag,
-                        bloc: Provider.of<MateBloc>(context, listen: false),
-                      )),
+              onPressed: (int index) => Navigator.of(context).pushNamed(
+                MateRoutes.MATE_DOG_WALL,
+                arguments: MateDetailsArgs(
+                  post: widget.post,
+                  onDeletePressed: widget.onDeletePressed,
+                  activeImageIndex: index,
+                  heroTag: widget.heroTag,
+                  bloc: Provider.of<MateBloc>(context, listen: false),
+                ),
+              ),
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -140,7 +142,7 @@ class _MateCardState extends State<MateCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        padding: EdgeInsets.symmetric(vertical: 12.0.sp),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,7 +153,7 @@ class _MateCardState extends State<MateCard> {
                                 letterSpacing: 0.4,
                                 color: yellowishColor,
                                 fontFamily: 'Montserrat',
-                                fontSize: ScreenUtil().setSp(80),
+                                fontSize: 75.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -161,7 +163,7 @@ class _MateCardState extends State<MateCard> {
                                     widget.post.dog.breed,
                                     style: TextStyle(
                                       color: yellowishColor,
-                                      fontSize: ScreenUtil().setSp(65),
+                                      fontSize: 60.sp,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: 'Montserrat',
                                     ),
@@ -174,10 +176,12 @@ class _MateCardState extends State<MateCard> {
                         onTap: () {
                           try {
                             //Save locally
-                            _localStorage.editFavorites(
+                            _localStorage.toggleFavorites(
                               widget.post.id,
                               FavoriteType.mating,
                             );
+
+                            //update the local and online user object with the new favs list
 
                             User user = _localStorage.getUser();
 
@@ -186,7 +190,7 @@ class _MateCardState extends State<MateCard> {
 
                             _localStorage.editUser(user);
 
-                            setState(() {});
+                            setState(() {}); // to animate the icon
 
                             //Save to network
                             if (_localStorage.isAuthenticated()) {
@@ -198,11 +202,13 @@ class _MateCardState extends State<MateCard> {
                             if (widget.onFavPressed != null) {
                               widget.onFavPressed();
                             }
-                          } on PlatformException catch (e) {
-                            print(e.message ?? e.code);
+                          } on PlatformException catch (e, s) {
+                            sentry.captureException(
+                                exception: e, stackTrace: s);
                           } on SocketException {
                             Scaffold.of(context).showSnackBar(
-                                errorSnackBar('Poor Internet Connection'));
+                              errorSnackBar('Poor Internet Connection'),
+                            );
                           }
                         },
                         child: AnimatedSwitcher(

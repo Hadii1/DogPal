@@ -246,12 +246,10 @@ class ProfileBloc implements BlocBase {
           _dataStateCtrl.sink.add(UserDataState.loadingWithData);
         }
 
-        List<String> adoptFavs =
-            _localStorage.getFavorites(FavoriteType.adoption);
-        List<String> mateFavs = _localStorage.getFavorites(FavoriteType.mating);
-
         List<DocumentSnapshot> newPosts =
-            await _firestoreService.fetchAllUserFavs(adoptFavs, mateFavs);
+            await _firestoreService.fetchAllUserFavs(
+          _localStorage.getUser().uid,
+        );
 
         favs = newPosts;
 

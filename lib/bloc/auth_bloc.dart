@@ -129,18 +129,20 @@ class AuthBloc implements BlocBase {
               _localStorage.getFavorites(FavoriteType.adoption),
             ),
           favMatingPost: oldUser.favMatingPost
-            ..addAll(_localStorage.getFavorites(FavoriteType.mating)),
+            ..addAll(
+              _localStorage.getFavorites(FavoriteType.mating),
+            ),
           phoneNumber: oldUser.phoneNumber ?? user.phoneNumber ?? '',
         );
 
         //add online favs to local favs
 
         for (String a in localUser.favAdoptionPosts) {
-          _localStorage.editFavorites(a, FavoriteType.adoption);
+          _localStorage.addFavorite(a, FavoriteType.adoption);
         }
 
         for (String a in localUser.favMatingPost) {
-          _localStorage.editFavorites(a, FavoriteType.mating);
+          _localStorage.addFavorite(a, FavoriteType.mating);
         }
       }
 

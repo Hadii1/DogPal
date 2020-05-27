@@ -6,6 +6,7 @@ import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/navigators/adopt_navigator.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
+import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
@@ -128,11 +129,12 @@ class _AdoptCardState extends State<AdoptCard> {
                           onTap: () {
                             try {
                               //Save locally
-                              _localStorage.editFavorites(
+                              _localStorage.toggleFavorites(
                                 widget.post.id,
                                 FavoriteType.adoption,
                               );
-
+                              
+                              //update the online user object with the new favs list
                               User user = _localStorage.getUser();
 
                               user.favAdoptionPosts = _localStorage
@@ -153,12 +155,9 @@ class _AdoptCardState extends State<AdoptCard> {
                               if (widget.onFavPressed != null) {
                                 widget.onFavPressed();
                               }
-                            } on PlatformException catch (e) {
-                              Scaffold.of(context).showSnackBar(
-                                errorSnackBar(
-                                    'Something went wrong while deleting the image'),
-                              );
-                              print(e.message ?? e.code);
+                            } on PlatformException catch (e, s) {
+                              sentry.captureException(
+                                  exception: e, stackTrace: s);
                             } on SocketException {
                               Scaffold.of(context).showSnackBar(
                                 errorSnackBar('Poor Internet Connection'),
