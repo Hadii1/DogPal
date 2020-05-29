@@ -1,17 +1,10 @@
-import 'dart:io';
-
 import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
-import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/navigators/adopt_navigator.dart';
-import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
-import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/styles.dart';
-import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -19,18 +12,18 @@ import 'package:provider/provider.dart';
 
 import 'adoption_dog_details.dart';
 
-class AdoptionDogsList extends StatelessWidget {
-  const AdoptionDogsList({
+class AdoptionList extends StatelessWidget {
+  const AdoptionList({
     @required this.posts,
     @required this.scrollController,
     @required this.onRefresh,
-    this.onFavPressed,
+    @required this.onFavPressed,
   });
 
   final List<AdoptPost> posts;
   final ScrollController scrollController;
   final Function onRefresh;
-  final Function() onFavPressed;
+  final Function(AdoptPost post) onFavPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +65,12 @@ class AdoptionDogsList extends StatelessWidget {
 class AdoptCard extends StatefulWidget {
   const AdoptCard({
     @required this.post,
-    this.onFavPressed,
+    @required this.onFavPressed,
     this.onDeletePressed,
     this.heroTag,
   });
   final AdoptPost post;
-  final Function() onFavPressed;
+  final Function(AdoptPost post) onFavPressed;
   final Function onDeletePressed;
   final String heroTag;
 /*/*/*  The heroTag is used because this widget is used more than once
@@ -127,42 +120,9 @@ class _AdoptCardState extends State<AdoptCard> {
                         padding: const EdgeInsets.all(8.0),
                         child: InkWell(
                           onTap: () {
-                            try {
-                              //Save locally
-                              _localStorage.toggleFavorites(
-                                widget.post.id,
-                                FavoriteType.adoption,
-                              );
-                              
-                              //update the online user object with the new favs list
-                              User user = _localStorage.getUser();
-
-                              user.favAdoptionPosts = _localStorage
-                                  .getFavorites(FavoriteType.adoption);
-
-                              _localStorage.editUser(user);
-
-                              setState(() {}); // to animate the icon
-
-                              //Save to network
-                              if (_localStorage.isAuthenticated()) {
-                                FirestoreService().saveUserFavs(
-                                  userId: user.uid,
-                                  adoptfavs: user.favAdoptionPosts,
-                                );
-                              }
-
-                              if (widget.onFavPressed != null) {
-                                widget.onFavPressed();
-                              }
-                            } on PlatformException catch (e, s) {
-                              sentry.captureException(
-                                  exception: e, stackTrace: s);
-                            } on SocketException {
-                              Scaffold.of(context).showSnackBar(
-                                errorSnackBar('Poor Internet Connection'),
-                              );
-                            }
+                            setState(() {
+                              widget.onFavPressed(widget.post);
+                            });
                           },
                           child: AnimatedSwitcher(
                             duration: Duration(milliseconds: 300),

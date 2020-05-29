@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/location_data.dart';
+import 'package:dog_pal/models/mate_post.dart';
+import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
+import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
@@ -34,8 +38,8 @@ abstract class DogPostsBloc implements BlocBase {
   final PageController pageController = PageController();
   final TextEditingController cityNameController = TextEditingController();
 
-  StreamController<String> _locationCtrl = StreamController.broadcast();
-  Stream<String> get locationChanges => _locationCtrl.stream;
+  StreamController<String> notificationCtrl = StreamController.broadcast();
+  Stream<String> get blocNotifications => notificationCtrl.stream;
 
   //When a suggestion is pressed we want to show the fab and filter buttons
   //so we hook this stream to the animated header widget and re-render it
@@ -68,7 +72,55 @@ abstract class DogPostsBloc implements BlocBase {
   void dispose() {
     stateCtrl.close();
     _didPressSuggestion.close();
-    _locationCtrl.close();
+    notificationCtrl.close();
+  }
+
+  void onFavoritePressed(DogPost post) async {
+    FavoriteType type;
+    if (post.runtimeType == MatePost) {
+      type = FavoriteType.mating;
+    } else if (post.runtimeType == AdoptPost) {
+      type = FavoriteType.adoption;
+    } else {
+      throw PlatformException(code: '${post.runtimeType} is Not allowed');
+    }
+
+    try {
+      //Save locally
+      _localStorage.toggleFavorites(
+        post.id,
+        type,
+      );
+
+      //update the local and online user object with the new favs list
+
+      User user = _localStorage.getUser();
+
+      if (type == FavoriteType.adoption) {
+        user.favAdoptionPosts = _localStorage.getFavorites(type);
+      } else {
+        user.favMatingPosts = _localStorage.getFavorites(type);
+      }
+
+      _localStorage.editUser(user);
+
+      //Save to network
+      if (_localStorage.isAuthenticated()) {
+        if (type == FavoriteType.adoption) {
+          FirestoreService().saveUserFavs(
+              userId: user.uid, adoptionList: user.favAdoptionPosts);
+        } else {
+          FirestoreService()
+              .saveUserFavs(userId: user.uid, matingList: user.favMatingPosts);
+        }
+      }
+    } on PlatformException catch (e, s) {
+      sentry.captureException(exception: e, stackTrace: s);
+      notificationCtrl.sink.add('Error while saving favorites');
+    } on SocketException {
+      notificationCtrl.sink.add('Network error while saving favorites');
+      stateCtrl.sink.add(DataState.networkError);
+    }
   }
 
   void onSuggestionSelected() {
@@ -110,7 +162,7 @@ abstract class DogPostsBloc implements BlocBase {
               district = locationData.userDistrict;
               _localStorage.setUserLocationData(locationData);
 
-              _locationCtrl.sink.add(town ?? city ?? district);
+              notificationCtrl.sink.add(town ?? city ?? district);
 
               await getPosts();
             }

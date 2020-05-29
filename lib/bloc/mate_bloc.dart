@@ -123,7 +123,7 @@ class MateBloc extends DogPostsBloc {
           stateCtrl.sink.add(DataState.postsAvailable);
         }
       } on SocketException {
-        stateCtrl.sink.add(DataState.fetchingNetworkError);
+        notificationCtrl.sink.add('Network problems while fetching posts');
       }
 
       /*/*/* when data is updated, the widget rebuild takes

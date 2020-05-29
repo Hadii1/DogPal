@@ -7,6 +7,7 @@ import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/models/mate_post.dart';
+import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
@@ -14,11 +15,10 @@ import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:flutter/services.dart';
-import 'package:sentry/sentry.dart';
+import 'package:sentry/sentry.dart' as _sentry;
 
 enum ProfileScreenState {
   loading,
-  error,
   unAuthenticated,
   authenticated,
 }
@@ -60,6 +60,9 @@ class ProfileBloc implements BlocBase {
 
   Stream<UserDataState> get dataStateStream => _dataStateCtrl.stream;
 
+  StreamController<String> _notificationsCtrl = StreamController();
+  Stream<String> get notifications => _notificationsCtrl.stream;
+
   //used for cache
   List<DocumentSnapshot> userPosts = [];
   List<DocumentSnapshot> favs = [];
@@ -77,6 +80,7 @@ class ProfileBloc implements BlocBase {
   void dispose() {
     _screenStateCtrl.close();
     _dataStateCtrl.close();
+    _notificationsCtrl.close();
   }
 
   void signOutPressed() async {
@@ -86,32 +90,25 @@ class ProfileBloc implements BlocBase {
         await _authService.signOut().timeout(
           Duration(seconds: 8),
           onTimeout: () {
-            errorMsg = Random().nextInt(2) == 0
+            _notificationsCtrl.sink.add(Random().nextInt(2) == 0
                 ? 'Your network is causing some problems'
-                : 'Poor Internet Connection';
-
-            _screenStateCtrl.sink.add(ProfileScreenState.error);
+                : 'Poor Internet Connection');
           },
         );
         //if successful it triggers the authStateStream above
       } on PlatformException catch (_) {
-        errorMsg = Random().nextInt(2) == 0
+        _notificationsCtrl.sink.add(Random().nextInt(2) == 0
             ? 'An Error Occured'
-            : 'We\'re having some problems on our side';
-
-        _screenStateCtrl.sink.add(ProfileScreenState.error);
+            : 'We\'re having some problems on our side');
       } on SocketException {
-        errorMsg = Random().nextInt(2) == 0
+        _notificationsCtrl.sink.add(Random().nextInt(2) == 0
             ? 'Your network is causing some problems'
-            : 'Poor Internet Connection';
-        _screenStateCtrl.sink.add(ProfileScreenState.error);
+            : 'Poor Internet Connection');
       }
     } else {
-      errorMsg = Random().nextInt(2) == 0
+      _notificationsCtrl.sink.add(Random().nextInt(2) == 0
           ? 'No Internet Connection'
-          : 'You\'re offline';
-
-      _screenStateCtrl.sink.add(ProfileScreenState.error);
+          : 'You\'re offline');
     }
   }
 
@@ -124,9 +121,9 @@ class ProfileBloc implements BlocBase {
         if (await isOnline()) {
           // log to see how many users are deleting accounts
           sentry.capture(
-            event: Event(
+            event: _sentry.Event(
               loggerName: 'User Delete Account',
-              userContext: User(
+              userContext: _sentry.User(
                 username: _localStorage.getUser().username,
                 email: _localStorage.getUser().email,
                 id: _localStorage.getUser().uid,
@@ -146,17 +143,15 @@ class ProfileBloc implements BlocBase {
           //if successful it triggers the authStateStream above
 
         } else {
-          errorMsg = 'Your\'re offline';
-          _screenStateCtrl.sink.add(ProfileScreenState.error);
+          _notificationsCtrl.sink.add('Your\'re offline');
         }
       } on SocketException {
-        errorMsg = 'Poor Intrenet Connection';
-        _screenStateCtrl.sink.add(ProfileScreenState.error);
+        _notificationsCtrl.sink.add('Poor Intrenet Connection');
       } on PlatformException catch (e, s) {
         print(e.code);
         print(e.message);
-        errorMsg = 'Something went wrong. Please try again.';
-        _screenStateCtrl.sink.add(ProfileScreenState.error);
+
+        _notificationsCtrl.sink.add('Something went wrong. Please try again.');
         sentry.captureException(exception: e, stackTrace: s);
       }
 
@@ -237,6 +232,8 @@ class ProfileBloc implements BlocBase {
   }
 
   Future<void> initFavs() async {
+    favs.clear();
+
     _dataStateCtrl.sink.add(UserDataState.loadingWithNoData);
     try {
       if (await isOnline()) {
@@ -246,12 +243,18 @@ class ProfileBloc implements BlocBase {
           _dataStateCtrl.sink.add(UserDataState.loadingWithData);
         }
 
-        List<DocumentSnapshot> newPosts =
-            await _firestoreService.fetchAllUserFavs(
-          _localStorage.getUser().uid,
-        );
+        List<String> adoptFavs =
+            _localStorage.getFavorites(FavoriteType.adoption);
+        List<String> mateFavs = _localStorage.getFavorites(FavoriteType.mating);
 
-        favs = newPosts;
+        List<DocumentSnapshot> adoptPosts = await FirestoreService()
+            .getFavroiteList(adoptFavs, FirestoreConsts.ADOPTION_DOGS);
+
+        List<DocumentSnapshot> matePosts = await FirestoreService()
+            .getFavroiteList(mateFavs, FirestoreConsts.MATE_DOGS);
+
+        favs.addAll(matePosts);
+        favs.addAll(adoptPosts);
 
         _dataStateCtrl.sink.add(UserDataState.postsReady);
       } else {
@@ -268,9 +271,11 @@ class ProfileBloc implements BlocBase {
           ? 'An error occured'
           : 'We\'re having some problems getting your data';
 
-      _dataStateCtrl.sink.add(favs.isEmpty
-          ? UserDataState.errorWithNoData
-          : UserDataState.errorWithData);
+      _dataStateCtrl.sink.add(
+        favs.isEmpty
+            ? UserDataState.errorWithNoData
+            : UserDataState.errorWithData,
+      );
     } on SocketException {
       errorMsg = Random().nextInt(2) == 0
           ? 'Your network is causing some problems'
@@ -283,8 +288,9 @@ class ProfileBloc implements BlocBase {
   }
 
   List<DogPost> filterFavs(FavoriteType type) {
+    List<DocumentSnapshot> list;
     if (type == FavoriteType.adoption) {
-      List<DocumentSnapshot> list = favs.where(
+      list = favs.where(
         (doc) {
           return doc.data[PostsConsts.POST_TYPE] == 'adopt' &&
               _localStorage
@@ -299,7 +305,7 @@ class ProfileBloc implements BlocBase {
         },
       ).toList();
     } else {
-      List<DocumentSnapshot> list = favs.where(
+      list = favs.where(
         (doc) {
           return doc.data[PostsConsts.POST_TYPE] == 'mate' &&
               _localStorage
@@ -331,5 +337,51 @@ class ProfileBloc implements BlocBase {
       return doc.data[PostsConsts.POST_ID] == id;
     });
     _dataStateCtrl.sink.add(UserDataState.postsReady);
+  }
+
+  void onFavoritePressed(DogPost post) async {
+    FavoriteType type;
+    if (post.runtimeType == MatePost) {
+      type = FavoriteType.mating;
+    } else if (post.runtimeType == AdoptPost) {
+      type = FavoriteType.adoption;
+    } else {
+      throw PlatformException(code: '${post.runtimeType} is Not allowed');
+    }
+    try {
+      //Save locally
+      _localStorage.toggleFavorites(
+        post.id,
+        type,
+      );
+
+      //update the local and online user object with the new favs list
+
+      User user = _localStorage.getUser();
+
+      if (type == FavoriteType.adoption) {
+        user.favAdoptionPosts = _localStorage.getFavorites(type);
+      } else {
+        user.favMatingPosts = _localStorage.getFavorites(type);
+      }
+
+      _localStorage.editUser(user);
+
+      //Save to network
+      if (_localStorage.isAuthenticated()) {
+        if (type == FavoriteType.adoption) {
+          FirestoreService().saveUserFavs(
+              userId: user.uid, adoptionList: user.favAdoptionPosts);
+        } else {
+          FirestoreService()
+              .saveUserFavs(userId: user.uid, matingList: user.favMatingPosts);
+        }
+      }
+    } on PlatformException catch (e, s) {
+      sentry.captureException(exception: e, stackTrace: s);
+      _notificationsCtrl.sink.add('An error occured while saving favorites');
+    } on SocketException {
+      _notificationsCtrl.sink.add('Network error while saving favorites');
+    }
   }
 }

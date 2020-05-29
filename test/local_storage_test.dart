@@ -68,7 +68,7 @@ void main() {
       username: 'Hadi',
       dataJoined: DateTime(2020, 5, 24).toString(),
       favAdoptionPosts: [],
-      favMatingPost: ['987654321'],
+      favMatingPosts: ['987654321'],
       firstName: 'Hadi',
       phoneNumber: '010203',
     );
@@ -88,7 +88,7 @@ void main() {
     expect(userData.uid, '123');
     expect(user.dataJoined, DateTime(2020, 5, 24).toString());
     expect(userData.favAdoptionPosts, []);
-    expect(userData.favMatingPost, ['987654321']);
+    expect(userData.favMatingPosts, ['987654321']);
     expect(userData.phoneNumber, '010203');
   });
 

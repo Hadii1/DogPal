@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:dog_pal/bloc/mate_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
-import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/navigators/mate_navigator.dart';
 import 'package:dog_pal/screens/mate/mate_details_screen.dart';
-import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -22,12 +20,12 @@ class MateList extends StatelessWidget {
     @required this.posts,
     @required this.onRetry,
     @required this.pageController,
-    this.onFavPressed,
+    @required this.onFavPressed,
   });
 
   final List<MatePost> posts;
   final Function onRetry;
-  final Function onFavPressed;
+  final Function(MatePost) onFavPressed;
   final PageController pageController;
 
   @override
@@ -73,12 +71,12 @@ class MateList extends StatelessWidget {
 class MateCard extends StatefulWidget {
   const MateCard({
     @required this.post,
-    this.onFavPressed,
+    @required this.onFavPressed,
     this.onDeletePressed,
     this.heroTag,
   });
   final MatePost post;
-  final Function onFavPressed;
+  final Function(MatePost) onFavPressed;
   final Function onDeletePressed;
   final String heroTag;
 
@@ -175,32 +173,10 @@ class _MateCardState extends State<MateCard> {
                       InkWell(
                         onTap: () {
                           try {
-                            //Save locally
-                            _localStorage.toggleFavorites(
-                              widget.post.id,
-                              FavoriteType.mating,
-                            );
-
-                            //update the local and online user object with the new favs list
-
-                            User user = _localStorage.getUser();
-
-                            user.favMatingPost =
-                                _localStorage.getFavorites(FavoriteType.mating);
-
-                            _localStorage.editUser(user);
-
-                            setState(() {}); // to animate the icon
-
-                            //Save to network
-                            if (_localStorage.isAuthenticated()) {
-                              FirestoreService().saveUserFavs(
-                                  userId: user.uid,
-                                  mateFavs: user.favMatingPost);
-                            }
-
                             if (widget.onFavPressed != null) {
-                              widget.onFavPressed();
+                              setState(() {
+                                widget.onFavPressed(widget.post);
+                              });
                             }
                           } on PlatformException catch (e, s) {
                             sentry.captureException(

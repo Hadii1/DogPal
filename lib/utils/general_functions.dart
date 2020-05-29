@@ -9,7 +9,6 @@ enum DataState {
   loading,
   unknownError,
   networkError,
-  fetchingNetworkError,
   postsAvailable,
   noDataAvailable,
   locationDenied,

@@ -3,7 +3,9 @@ import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
 import 'package:dog_pal/bloc/lost_bloc.dart';
 import 'package:dog_pal/bloc/mate_bloc.dart';
+import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
+import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/navigators/adopt_navigator.dart';
 import 'package:dog_pal/navigators/lost_navigator.dart';
 import 'package:dog_pal/navigators/mate_navigator.dart';
@@ -44,11 +46,11 @@ class _DogsScreenState extends State<DogsScreen> {
   @override
   void initState() {
     _initializeBloc();
-    _bloc.locationChanges.listen((name) {
+    _bloc.blocNotifications.listen((notification) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Showing results near $name',
+            notification,
             style: TextStyle(
               fontSize: 45.sp,
             ),
@@ -160,16 +162,6 @@ class _DogsScreenState extends State<DogsScreen> {
                         );
                         break;
 
-                      case DataState.fetchingNetworkError:
-                        Scaffold.of(context).showSnackBar(
-                          errorSnackBar(
-                            'Network problems',
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
-                        return getPostsList();
-                        break;
-
                       case DataState.postsAvailable:
                         return getPostsList();
                         break;
@@ -251,20 +243,13 @@ class _DogsScreenState extends State<DogsScreen> {
     Widget widget;
     switch (_state) {
       case PostType.adopt:
-        widget = AdoptionDogsList(
+        widget = AdoptionList(
           posts: _bloc.posts,
           scrollController: _bloc.pageController,
           onRefresh: _bloc.getPosts,
+          onFavPressed: (AdoptPost post) => _bloc.onFavoritePressed(post),
         );
 
-        break;
-
-      case PostType.lost:
-        widget = LostDogsList(
-          posts: _bloc.posts,
-          scrollController: _bloc.pageController,
-          onRefresh: _bloc.getPosts,
-        );
         break;
 
       case PostType.mate:
@@ -272,6 +257,15 @@ class _DogsScreenState extends State<DogsScreen> {
           posts: _bloc.posts,
           pageController: _bloc.pageController,
           onRetry: _bloc.getPosts,
+          onFavPressed: (MatePost post) => _bloc.onFavoritePressed(post),
+        );
+        break;
+
+      case PostType.lost:
+        widget = LostList(
+          posts: _bloc.posts,
+          scrollController: _bloc.pageController,
+          onRefresh: _bloc.getPosts,
         );
         break;
 

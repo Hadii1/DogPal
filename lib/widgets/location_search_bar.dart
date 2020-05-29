@@ -158,28 +158,29 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
             ),
           ),
         ),
-        Container(
-          height: 3,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _isLoading
-              ? ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Colors.grey,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).accentColor,
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.sp),
+          child: Container(
+            height: 3,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _isLoading
+                ? ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(24)),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.grey,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).accentColor,
+                      ),
                     ),
-                  ),
-                )
-              : Container(),
+                  )
+                : Container(),
+          ),
         )
       ],
     );
   }
 
   Future<void> _suggestionSelected(Prediction prediction) async {
-    //Throwing exceptions will call error builder in the TypeAheadfield
-
     setState(() {
       _isLoading = true;
     });

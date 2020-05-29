@@ -110,7 +110,7 @@ class AuthBloc implements BlocBase {
           dataJoined: DateTime.now().toString(),
           photo: user.photoUrl ?? '',
           favAdoptionPosts: _localStorage.getFavorites(FavoriteType.adoption),
-          favMatingPost: _localStorage.getFavorites(FavoriteType.mating),
+          favMatingPosts: _localStorage.getFavorites(FavoriteType.mating),
           phoneNumber: '',
         );
       } else {
@@ -124,27 +124,34 @@ class AuthBloc implements BlocBase {
           uid: user.uid,
           photo: user.photoUrl,
           dataJoined: oldUser.dataJoined ?? DateTime.now(),
-          favAdoptionPosts: oldUser.favAdoptionPosts
-            ..addAll(
-              _localStorage.getFavorites(FavoriteType.adoption),
-            ),
-          favMatingPost: oldUser.favMatingPost
-            ..addAll(
-              _localStorage.getFavorites(FavoriteType.mating),
-            ),
+          favAdoptionPosts: oldUser.favAdoptionPosts,
+          favMatingPosts: oldUser.favMatingPosts,
           phoneNumber: oldUser.phoneNumber ?? user.phoneNumber ?? '',
         );
 
-        //add online favs to local favs
+        //Add the device favorites to the User object
+        localUser.favAdoptionPosts
+            .addAll(_localStorage.getFavorites(FavoriteType.adoption));
 
-        for (String a in localUser.favAdoptionPosts) {
-          _localStorage.addFavorite(a, FavoriteType.adoption);
+        localUser.favMatingPosts
+            .addAll(_localStorage.getFavorites(FavoriteType.mating));
+
+
+        //resync the device favorites to account for the online added ones and avoid multiples
+        _localStorage.clearFavorites(FavoriteType.mating);
+        _localStorage.clearFavorites(FavoriteType.adoption);
+
+        for (String id in localUser.favAdoptionPosts) {
+          print(id);
+          _localStorage.addFavorite(id, FavoriteType.adoption);
         }
-
-        for (String a in localUser.favMatingPost) {
-          _localStorage.addFavorite(a, FavoriteType.mating);
+        for (String id in localUser.favMatingPosts) {
+          print(id);
+          _localStorage.addFavorite(id, FavoriteType.mating);
         }
       }
+
+      //Save the user object both online and locally
 
       await FirestoreService().saveUserData(
         User.toMap(localUser),

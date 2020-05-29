@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:dog_pal/bloc/profile_bloc.dart';
-import 'package:dog_pal/models/dog_post_mode.dart';
+import 'package:dog_pal/models/adopt_post.dart';
+import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dogs_list.dart';
 import 'package:dog_pal/screens/dogs_screen.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
@@ -194,34 +195,31 @@ class _MatePostsWidget extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.7,
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 child: MateCard(
-                  post: mateFavs[index],
-                  heroTag: 'favorites',
-                  onDeletePressed: () =>
-                      bloc.removeFromFavs(mateFavs[index].id),
-                  onFavPressed: () {
-                    key.currentState.removeItem(
-                      index,
-                      (_, anim) {
-                        return FadeTransition(
-                          opacity: anim,
-                          child: SizeTransition(
-                            sizeFactor: anim,
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.7,
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    post: mateFavs[index],
+                    heroTag: 'favorites',
+                    onDeletePressed: () =>
+                        bloc.removeFromFavs(mateFavs[index].id),
+                    onFavPressed: (MatePost post) {
+                      bloc.onFavoritePressed(post);
+
+                      //Animate post removal
+                      key.currentState.removeItem(
+                        index,
+                        (_, anim) {
+                          return FadeTransition(
+                            opacity: anim,
+                            child: SizeTransition(
+                              sizeFactor: anim,
                               child: MateCard(
                                 post: mateFavs[index],
                                 heroTag: Random().nextInt(999).toString(),
+                                onFavPressed: (_) {},
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-
-                    bloc.removeFromFavs(mateFavs[index].id);
-                  },
-                ),
+                          );
+                        },
+                      );
+                    }),
               );
             },
           )
@@ -237,7 +235,7 @@ class _AdoptPostsWidget extends StatelessWidget {
   final ProfileBloc bloc;
 
   Widget build(BuildContext context) {
-    final List<DogPost> adoptFavs = bloc.filterFavs(FavoriteType.adoption);
+    final List<AdoptPost> adoptFavs = bloc.filterFavs(FavoriteType.adoption);
     return adoptFavs.isNotEmpty
         ? CustomAnimatedList(
             list: adoptFavs,
@@ -245,29 +243,31 @@ class _AdoptPostsWidget extends StatelessWidget {
             scrollPosition: bloc.adoptFavsScrollPos,
             child: (int index, GlobalKey<AnimatedListState> key) {
               return AdoptCard(
-                post: adoptFavs[index],
-                heroTag: 'favorites',
-                onDeletePressed: () => bloc.removeFromFavs(adoptFavs[index].id),
-                onFavPressed: () {
-                  key.currentState.removeItem(
-                    index,
-                    (_, anim) {
-                      return FadeTransition(
-                        opacity: anim,
-                        child: SizeTransition(
-                          sizeFactor: anim,
-                          child: AdoptCard(
-                            post: adoptFavs[index],
-                            heroTag: Random().nextInt(999).toString(),
-                          ),
-                        ),
-                      );
-                    },
-                  );
+                  post: adoptFavs[index],
+                  heroTag: 'favorites',
+                  onDeletePressed: () =>
+                      bloc.removeFromFavs(adoptFavs[index].id),
+                  onFavPressed: (AdoptPost post) {
+                    bloc.onFavoritePressed(post);
 
-                  bloc.removeFromFavs(adoptFavs[index].id);
-                },
-              );
+                    //Animate post removal
+                    key.currentState.removeItem(
+                      index,
+                      (_, anim) {
+                        return FadeTransition(
+                          opacity: anim,
+                          child: SizeTransition(
+                            sizeFactor: anim,
+                            child: AdoptCard(
+                              post: adoptFavs[index],
+                              heroTag: Random().nextInt(999).toString(),
+                              onFavPressed: (_) {},
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  });
             },
           )
         : EmptyPage(displayText: 'Nothing was found');

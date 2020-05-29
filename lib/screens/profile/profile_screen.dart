@@ -35,19 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _bloc = Provider.of<ProfileBloc>(context, listen: false);
     _localStorage = Provider.of<LocalStorage>(context, listen: false);
 
-    _bloc.screenStateStream.listen(
-      (state) {
-        if (state == ProfileScreenState.error) {
-          if (mounted) {
-            Scaffold.of(context).showSnackBar(
-              errorSnackBar(_bloc.errorMsg),
-            );
-          }
-        }
-      },
-    );
+    _bloc.notifications.listen((notification) {
+      Scaffold.of(context).showSnackBar(
+        errorSnackBar(notification),
+      );
+    });
     super.initState();
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

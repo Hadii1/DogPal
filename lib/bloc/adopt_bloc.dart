@@ -160,7 +160,7 @@ class AdoptBloc extends DogPostsBloc {
           stateCtrl.sink.add(DataState.postsAvailable);
         }
       } on SocketException {
-        stateCtrl.sink.add(DataState.fetchingNetworkError);
+        notificationCtrl.sink.add('Network problems while fetching posts');
       }
 
       Future.delayed(Duration(milliseconds: 100), () {

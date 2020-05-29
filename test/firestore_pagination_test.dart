@@ -54,7 +54,7 @@ LostPost _post = LostPost(
       uid: '',
       dataJoined: DateTime.now().toString(),
       favAdoptionPosts: [],
-      favMatingPost: [],
+      favMatingPosts: [],
       firstName: '',
       phoneNumber: '',
     ),

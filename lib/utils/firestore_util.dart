@@ -160,58 +160,36 @@ class FirestoreService {
 
   Future<void> saveUserFavs({
     @required String userId,
-    List<String> adoptfavs,
-    List<String> mateFavs,
+    List<String> adoptionList,
+    List<String> matingList,
   }) async {
-    if (adoptfavs != null) {
+    if (adoptionList != null) {
       _db
           .collection(FirestoreConsts.USER_COLLECTION)
           .document(userId)
-          .updateData({UserConsts.FAVORITE_ADOPTION: adoptfavs});
+          .updateData({UserConsts.FAVORITE_ADOPTION: adoptionList});
     }
 
-    if (mateFavs != null) {
+    if (matingList != null) {
       _db
           .collection(FirestoreConsts.USER_COLLECTION)
           .document(userId)
-          .updateData({UserConsts.FAVORITE_MATING: mateFavs});
+          .updateData({UserConsts.FAVORITE_MATING: matingList});
     }
   }
 
-  Future<List<DocumentSnapshot>> fetchAllUserFavs(String userId) async {
-    List<DocumentSnapshot> documents = [];
-
-    DocumentSnapshot snapshot = await _db
-        .collection(FirestoreConsts.USER_COLLECTION)
-        .document(userId)
-        .get(source: Source.server);
-
-    List<String> adoptFavs =
-        (snapshot.data[UserConsts.FAVORITE_ADOPTION] as List<dynamic>)
-            .cast<String>();
-
-    List<String> mateFavs =
-        (snapshot.data[UserConsts.FAVORITE_MATING] as List<dynamic>)
-            .cast<String>();
-
-    for (String a in adoptFavs) {
+  Future<List<DocumentSnapshot>> getFavroiteList(
+      List<String> ids, String collection) async {
+    List<DocumentSnapshot> docs = [];
+    for (String id in ids) {
       DocumentSnapshot snapshot =
-          await _db.collection(FirestoreConsts.ADOPTION_DOGS).document(a).get();
+          await _db.collection(collection).document(id).get();
 
       if (snapshot.exists) {
-        documents.add(snapshot);
+        docs.add(snapshot);
       }
     }
 
-    for (String a in mateFavs) {
-      DocumentSnapshot snapshot =
-          await _db.collection(FirestoreConsts.MATE_DOGS).document(a).get();
-
-      if (snapshot.exists) {
-        documents.add(snapshot);
-      }
-    }
-
-    return documents;
+    return docs;
   }
 }

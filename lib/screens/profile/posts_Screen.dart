@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dog_pal/bloc/profile_bloc.dart';
+import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dogs_list.dart';
@@ -218,6 +219,7 @@ class MateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = Provider.of<ProfileBloc>(context, listen: false);
     return matePosts.isNotEmpty
         ? Scrollbar(
             child: AnimationLimiter(
@@ -235,9 +237,10 @@ class MateWidget extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                           child: MateCard(
                             post: matePosts[index],
+                            onFavPressed: (post) =>
+                                bloc.onFavoritePressed(post),
                             onDeletePressed: () =>
-                                Provider.of<ProfileBloc>(context, listen: false)
-                                    .updatePostsList(matePosts[index].id),
+                                bloc.updatePostsList(matePosts[index].id),
                             heroTag: 'posts',
                           ),
                         ),
@@ -259,6 +262,7 @@ class AdoptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = Provider.of<ProfileBloc>(context, listen: false);
     return adoptPosts.isNotEmpty
         ? AnimationLimiter(
             child: Scrollbar(
@@ -273,8 +277,9 @@ class AdoptWidget extends StatelessWidget {
                         child: AdoptCard(
                           post: adoptPosts[index],
                           onDeletePressed: () =>
-                              Provider.of<ProfileBloc>(context, listen: false)
-                                  .updatePostsList(adoptPosts[index].id),
+                              bloc.updatePostsList(adoptPosts[index].id),
+                          onFavPressed: (AdoptPost post) =>
+                              bloc.onFavoritePressed(post),
                           heroTag: 'posts',
                         ),
                       ),

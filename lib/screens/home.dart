@@ -119,7 +119,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
         if (succeeded) {
           _scaffoldKey.currentState.showSnackBar(
             SnackBar(
-              duration: Duration(seconds: 5),
+              duration: Duration(seconds: 3),
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

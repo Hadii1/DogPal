@@ -12,7 +12,7 @@ class User {
   String dataJoined;
 
   List<String> favAdoptionPosts;
-  List<String> favMatingPost;
+  List<String> favMatingPosts;
 
   static Map<String, dynamic> toMap(User user) => {
         UserConsts.USER_EMAIL: user.email,
@@ -20,7 +20,7 @@ class User {
         UserConsts.USER_PHOTO: user.photo,
         UserConsts.USER_UID: user.uid,
         UserConsts.FAVORITE_ADOPTION: user.favAdoptionPosts,
-        UserConsts.FAVORITE_MATING: user.favMatingPost,
+        UserConsts.FAVORITE_MATING: user.favMatingPosts,
         UserConsts.USERNAME: user.username,
         UserConsts.DATE_JOINED: user.dataJoined,
         UserConsts.PHONE_NUMBER: user.phoneNumber,
@@ -33,7 +33,7 @@ class User {
       username: map[UserConsts.USERNAME],
       favAdoptionPosts:
           (map[UserConsts.FAVORITE_ADOPTION] as List<dynamic>).cast<String>(),
-      favMatingPost:
+      favMatingPosts:
           (map[UserConsts.FAVORITE_MATING] as List<dynamic>).cast<String>(),
       firstName: map[UserConsts.FIRST_NAME] ?? map[UserConsts.USERNAME],
       uid: map[UserConsts.USER_UID],
@@ -49,7 +49,7 @@ class User {
     @required this.uid,
     this.firstName,
     this.favAdoptionPosts,
-    this.favMatingPost,
+    this.favMatingPosts,
     this.dataJoined,
     this.phoneNumber,
   });

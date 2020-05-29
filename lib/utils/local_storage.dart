@@ -26,15 +26,13 @@ abstract class LocalDataRepositroy {
   List<String> getFavorites(FavoriteType type);
   void toggleFavorites(String id, FavoriteType type);
   void addFavorite(String id, FavoriteType type);
+  void clearFavorites(FavoriteType type);
 
   User getUser();
   void editUser(User user);
 }
 
 class LocalStorage implements LocalDataRepositroy {
-
-
-
   static const String IS_AUTHENTICATED = 'isAuthenticated';
   static const String FIRST_TIME = 'firstTime';
   static const String USER = 'user';
@@ -42,8 +40,6 @@ class LocalStorage implements LocalDataRepositroy {
   static const String USER_LOCATION = 'userLocation';
   static const String FAVORITE_ADOPTION = 'favoriteAdoption';
   static const String FAVORITE_MATING = 'favoriteMating';
-
-
 
   @visibleForTesting
   UserLocationData defaultUserLocation = UserLocationData(
@@ -107,14 +103,19 @@ class LocalStorage implements LocalDataRepositroy {
 
   @override
   void addFavorite(String id, FavoriteType type) {
-    List<String> favs = _prefs.getStringList(type == FavoriteType.adoption
-            ? FAVORITE_ADOPTION
-            : FAVORITE_MATING) ??
+    List<String> favs = _prefs.getStringList(
+          type == FavoriteType.adoption ? FAVORITE_ADOPTION : FAVORITE_MATING,
+        ) ??
         [];
 
     if (!favs.contains(id)) {
       favs.add(id);
     }
+
+    _prefs.setStringList(
+      type == FavoriteType.adoption ? FAVORITE_ADOPTION : FAVORITE_MATING,
+      favs,
+    );
   }
 
   @override
@@ -183,5 +184,13 @@ class LocalStorage implements LocalDataRepositroy {
   @override
   void setFirstLaunch(bool value) {
     _prefs.setBool(FIRST_TIME, value);
+  }
+
+  @override
+  void clearFavorites(FavoriteType type) {
+    _prefs.setStringList(
+      type == FavoriteType.adoption ? FAVORITE_ADOPTION : FAVORITE_MATING,
+      [],
+    );
   }
 }

@@ -12,8 +12,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-class LostDogsList extends StatelessWidget {
-  const LostDogsList({
+class LostList extends StatelessWidget {
+  const LostList({
     @required this.scrollController,
     @required this.posts,
     @required this.onRefresh,
