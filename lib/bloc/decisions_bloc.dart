@@ -85,7 +85,6 @@ class DecisionsBloc implements BlocBase {
             return;
           }
 
-          //Good to Go
           await accessLocation();
           _navigationCtrl.sink.add(true);
         }

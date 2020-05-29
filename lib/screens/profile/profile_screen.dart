@@ -684,9 +684,10 @@ class _ProfileHeader extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 24,
                       backgroundColor: blackishColor,
-                      backgroundImage: localStorage.isAuthenticated()
-                          ? ExtendedImage.network(user.photo).image
-                          : null,
+                      backgroundImage:
+                          localStorage.isAuthenticated() && user != null
+                              ? ExtendedImage.network(user.photo).image
+                              : null,
                       child: (() {
                         if (localStorage.isAuthenticated() && user != null) {
                           user.photo.isEmpty

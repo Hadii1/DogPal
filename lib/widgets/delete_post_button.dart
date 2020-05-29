@@ -11,6 +11,7 @@ import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
@@ -79,6 +80,8 @@ class _DeletePostButtonState extends State<DeletePostButton> {
           ),
           secondChild: Text(
             'Delete Post',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 50.sp),
           ),
           duration: Duration(milliseconds: 150),
         ),
@@ -129,7 +132,6 @@ class _DeletePostButtonState extends State<DeletePostButton> {
             ),
           ),
         );
- 
 
         //delete images in storage
         firestoreUtil.deleteImages(_post.dog.imagesUrls.cast<String>());

@@ -18,7 +18,10 @@ class DescriptionField extends StatelessWidget {
         onChanged: (value) => onChanged(value),
         keyboardType: TextInputType.text,
         maxLines: 4,
-        style: TextStyle(fontFamily: 'OpenSans'),
+        style: TextStyle(
+          fontFamily: 'OpenSans',
+          fontSize: 55.sp,
+        ),
         decoration: InputDecoration(
           counter: SizedBox.shrink(),
           labelText: 'Description',
@@ -53,6 +56,7 @@ class NameField extends StatelessWidget {
           child: TextFormField(
             autocorrect: false,
             autofocus: false,
+            style: TextStyle(fontSize: 55.sp),
             validator: (input) {
               if (input.isEmpty) return ("kindly add the dog's name");
               return null;
@@ -105,6 +109,7 @@ class PhoneField extends StatelessWidget {
             child: TextField(
               autocorrect: false,
               autofocus: false,
+              style: TextStyle(fontSize: 55.sp),
               inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.phone,
               onChanged: (number) => onChanged(number),

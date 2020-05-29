@@ -205,7 +205,7 @@ class _BreedsDialogState extends State<BreedsDialog> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 2),
       child: SizedBox(
-        height: 200.h,
+        height: 200.sp,
         child: Card(
           elevation: 1,
           color: Color(0xfffffffa),

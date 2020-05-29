@@ -34,9 +34,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([]); // set full screen
 
-    var _bloc = Provider.of<LocalStorage>(context, listen: false);
+    var _localStorage = Provider.of<LocalStorage>(context, listen: false);
 
-    _bloc.initLocalStorage().then((_) {
+    _localStorage.initLocalStorage().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           _width = 75;
@@ -49,12 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
               fullscreenDialog: true,
               builder: (_) {
                 return Provider<DecisionsBloc>(
-                  create: (_) {
-                    var localStorage =
-                        Provider.of<LocalStorage>(context, listen: false);
-
-                    return DecisionsBloc(localStorage);
-                  },
+                  create: (_) => DecisionsBloc(_localStorage),
                   child: DecisionsScreen(),
                 );
               },
