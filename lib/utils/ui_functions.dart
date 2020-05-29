@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:android_intent/android_intent.dart';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/screens/login.dart';
+import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +18,6 @@ SnackBar permissionSnackbar(
     duration: Duration(seconds: 5),
     content: Row(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(6, 0, 21, 0),
-          child: Text(
-            'Error',
-            style: TextStyle(
-              fontSize: 18,
-              color: Color(0xffC24444),
-            ),
-          ),
-        ),
         Expanded(
           child: Text(
             text,
@@ -45,6 +37,39 @@ SnackBar permissionSnackbar(
           : await androidPermission.shouldShowRequestRationale
               ? await [androidPermission].request()
               : await openAppSettings(),
+    ),
+  );
+}
+
+SnackBar locationServiceSnackbar() {
+  return SnackBar(
+    duration: Duration(seconds: 4),
+    content: Row(
+      children: <Widget>[
+        Expanded(
+          child: Text(
+            GeneralConstants.LOCATION_SERVICE_OFF_MSG,
+            style: TextStyle(
+              color: blackishColor,
+              fontFamily: 'OpenSans',
+              fontSize: 14,
+            ),
+          ),
+        )
+      ],
+    ),
+    action: SnackBarAction(
+      label: 'Enable',
+      onPressed: () async {
+        if (Platform.isIOS) {
+          await openAppSettings();
+        } else {
+          final AndroidIntent intent = new AndroidIntent(
+            action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+          );
+          await intent.launch();
+        }
+      },
     ),
   );
 }
@@ -81,7 +106,7 @@ SnackBar errorSnackBar(
   Function onRetry,
 }) {
   return SnackBar(
-    duration: duration ?? Duration(seconds: 4),
+    duration: duration ?? Duration(seconds: 3),
     content: Row(
       children: <Widget>[
         Padding(

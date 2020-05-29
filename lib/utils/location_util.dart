@@ -38,6 +38,7 @@ class LocationUtil {
       Duration(seconds: 6),
       onTimeout: () => PermissionStatus.undetermined,
     );
+
     print(status.toString());
     return status == PermissionStatus.granted;
   }
@@ -85,17 +86,17 @@ class LocationUtil {
       return null;
     }
 
-    String town = getLocationName(
+    String town = _getLocationName(
       LocationType.town,
       response.results,
     );
 
-    String city = getLocationName(
+    String city = _getLocationName(
       LocationType.city,
       response.results,
     );
 
-    String district = getLocationName(
+    String district = _getLocationName(
       LocationType.district,
       response.results,
     );
@@ -107,7 +108,7 @@ class LocationUtil {
     };
   }
 
-  String getLocationName(
+  String _getLocationName(
     LocationType type,
     List<GeocodingResult> geocodingResults,
   ) {
@@ -141,6 +142,10 @@ class LocationUtil {
       print('$type not available');
       return null;
     }
+  }
+
+  Future<bool> isLocationServiceEnabled() async {
+    return await Geolocator().isLocationServiceEnabled();
   }
 
   Future<Position> getLocation(LocationAccuracy accuracy) async {
@@ -184,17 +189,17 @@ class LocationUtil {
         return null;
       }
 
-      String town = getLocationName(
+      String town = _getLocationName(
         LocationType.town,
         response.results,
       );
 
-      String city = getLocationName(
+      String city = _getLocationName(
         LocationType.city,
         response.results,
       );
 
-      String district = getLocationName(
+      String district = _getLocationName(
         LocationType.district,
         response.results,
       );

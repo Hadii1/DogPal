@@ -41,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     });
     super.initState();
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -687,19 +687,23 @@ class _ProfileHeader extends StatelessWidget {
                       backgroundImage: localStorage.isAuthenticated()
                           ? ExtendedImage.network(user.photo).image
                           : null,
-                      child: localStorage.isAuthenticated()
-                          ? user.photo.isEmpty
+                      child: (() {
+                        if (localStorage.isAuthenticated() && user != null) {
+                          user.photo.isEmpty
                               ? Icon(
                                   Icons.person,
                                   color: yellowishColor,
                                   size: 35,
                                 )
-                              : SizedBox.shrink()
-                          : Icon(
-                              Icons.person,
-                              color: yellowishColor,
-                              size: 35,
-                            ),
+                              : SizedBox.shrink();
+                        } else {
+                          Icon(
+                            Icons.person,
+                            color: yellowishColor,
+                            size: 35,
+                          );
+                        }
+                      }()),
                     ),
                   ),
                 ),

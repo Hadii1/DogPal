@@ -36,6 +36,8 @@ class LocationWidgetDialog extends State<PostLocation> {
               androidPermission: Permission.locationWhenInUse,
             ),
           );
+        } else if (error == GeneralConstants.LOCATION_SERVICE_OFF_MSG) {
+          Scaffold.of(context).showSnackBar(locationServiceSnackbar());
         } else {
           Scaffold.of(context).showSnackBar(
             SnackBar(

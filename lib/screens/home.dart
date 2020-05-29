@@ -37,6 +37,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   AppBloc _appBloc;
 
+  LocalStorage _localStorage;
+
   List<String> _errorMsgs = [
     'Couldnt\'t add post. There seems to be an error from our side.',
     'Oops.. we couldn\'t add your post. Looks like somethings went wrong.',
@@ -45,6 +47,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   @override
   void initState() {
+    _appBloc = Provider.of<AppBloc>(context, listen: false);
+    _localStorage = Provider.of<LocalStorage>(context, listen: false);
+
     _navigatorsKeys = List.generate(
       4,
       (int index) => GlobalKey(),
@@ -62,14 +67,26 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
     _faders[_bottomNavIndex].value = 1;
 
-    _appBloc = Provider.of<AppBloc>(context, listen: false);
-
     //Show any information from the decisions screen
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.locationNotification != null) {
-        _scaffoldKey.currentState.showSnackBar(widget.locationNotification);
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        if (widget.locationNotification != null) {
+          _scaffoldKey.currentState.showSnackBar(widget.locationNotification);
+        }
+
+        await Future.delayed(
+          Duration(seconds: widget.locationNotification == null ? 0 : 4),
+          () {
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Text(
+                    'Showing results in ${_localStorage.getUserLocationData().userDisplay}'),
+              ),
+            );
+          },
+        );
+      },
+    );
 
     _appBloc.notifications.listen(
       (snack) {
@@ -307,8 +324,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   }
 
   void _refreshPosts() {
-    final _localStorage = Provider.of<LocalStorage>(context, listen: false);
-
     DogPostsBloc bloc;
     switch (_appBloc.dogPost.type) {
       case 'lost':

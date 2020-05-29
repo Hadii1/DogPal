@@ -6,6 +6,7 @@ import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
+import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -58,37 +59,69 @@ class PostLocationBloc implements BlocBase {
       _shouldLoadCtrl.sink.add(true);
       try {
         if (await isOnline()) {
+          bool isServiceEnabled = await LocationUtil()
+              .isLocationServiceEnabled()
+              .timeout(Duration(seconds: 5), onTimeout: () => null);
+
+          if (isServiceEnabled == null) {
+            _errorCtrl.sink.add(
+                'Fetching location took more than expected. Please try again');
+            _isFetchingLocation = false;
+            _shouldLoadCtrl.sink.add(false);
+            return;
+          }
+
+          if (!isServiceEnabled) {
+            _errorCtrl.sink.add(GeneralConstants.LOCATION_SERVICE_OFF_MSG);
+            _isFetchingLocation = false;
+            _shouldLoadCtrl.sink.add(false);
+            return;
+          }
+
           bool permissionGranted = await checkAndAskPermission(
-              permission: Permission.locationWhenInUse);
+                  permission: Permission.locationWhenInUse)
+              .timeout(Duration(seconds: 5), onTimeout: () => null);
 
-          if (permissionGranted) {
-            LocationUtil locationUtil = LocationUtil();
+          if (permissionGranted == null) {
+            _errorCtrl.sink.add(
+                'Fetching location took more than expected. Please try again');
+            _isFetchingLocation = false;
+            _shouldLoadCtrl.sink.add(false);
+            return;
+          }
 
-            UserLocationData data = await locationUtil
-                .getInfoFromPosition()
-                .timeout(Duration(seconds: 12), onTimeout: () => null);
+          if (!permissionGranted) {
+            _errorCtrl.sink.add('Access to location was denied');
+            _isFetchingLocation = false;
+            _shouldLoadCtrl.sink.add(false);
+            return;
+          }
 
-            if (data == null) {
-              _errorCtrl.sink.add('An error occured on our side. Try again.');
-            } else {
-              _town = data.userTown;
-              _city = data.userCity;
-              _district = data.userDistrict;
-              locationDisplay = data.userDisplay;
+          LocationUtil locationUtil = LocationUtil();
 
-              _cityNameCtrl.sink.add(locationDisplay ?? _town ?? _city ?? _district);
-            }
+          UserLocationData data = await locationUtil
+              .getInfoFromPosition()
+              .timeout(Duration(seconds: 12), onTimeout: () => null);
+
+          if (data == null) {
+            _errorCtrl.sink.add('An error occured on our side. Try again.');
           } else {
-            _errorCtrl.sink.add(GeneralConstants.LOCATION_PERMISSION_ERROR);
+            _town = data.userTown;
+            _city = data.userCity;
+            _district = data.userDistrict;
+            locationDisplay = data.userDisplay;
+
+            _cityNameCtrl.sink.add(locationDisplay);
           }
         } else {
           _errorCtrl.sink
-              .add('Your\'re offline. Please check your internet conncetoin');
+              .add('Your\'re offline. Please check your internet connection');
         }
       } on SocketException {
         _errorCtrl.sink.add('Poor Internet Connection');
-      } on PlatformException {
+      } on PlatformException catch (e, s) {
         _errorCtrl.sink.add('An error occured on our side. Try again.');
+        sentry.captureException(exception: e, stackTrace: s);
       }
       _isFetchingLocation = false;
     }

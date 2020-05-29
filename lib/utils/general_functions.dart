@@ -14,6 +14,7 @@ enum DataState {
   locationDenied,
   locationNetworkError,
   locationUnknownError,
+  locationServiceOff
 }
 
 enum PostAdditionState {

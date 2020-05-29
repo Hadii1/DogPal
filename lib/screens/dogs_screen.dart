@@ -141,6 +141,10 @@ class _DogsScreenState extends State<DogsScreen> {
                         );
                         break;
 
+                      case DataState.locationServiceOff:
+                        return LocationServiceOff();
+                        break;
+
                       case DataState.locationDenied:
                         return LocationAccessDenied();
                         break;

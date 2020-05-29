@@ -145,29 +145,57 @@ abstract class DogPostsBloc implements BlocBase {
 
       try {
         if (await isOnline()) {
+          bool isServiceEnabled = await LocationUtil()
+              .isLocationServiceEnabled()
+              .timeout(Duration(seconds: 5), onTimeout: () => null);
+
+          if (isServiceEnabled == null) {
+            stateCtrl.sink.add(DataState.locationUnknownError);
+            _fetchingLocation = false;
+            return;
+          }
+
+          if (!isServiceEnabled) {
+            stateCtrl.sink.add(DataState.locationServiceOff);
+            _fetchingLocation = false;
+            return;
+          }
+
           bool permissionGranted = await checkAndAskPermission(
-              permission: Permission.locationWhenInUse);
-          if (permissionGranted) {
-            UserLocationData locationData =
-                await LocationUtil().getInfoFromPosition().timeout(
-                      Duration(seconds: 14),
-                      onTimeout: () => null,
-                    );
+                  permission: Permission.locationWhenInUse)
+              .timeout(Duration(seconds: 5), onTimeout: () => null);
 
-            if (locationData == null) {
-              stateCtrl.sink.add(DataState.locationUnknownError);
-            } else {
-              town = locationData.userTown;
-              city = locationData.userCity;
-              district = locationData.userDistrict;
-              _localStorage.setUserLocationData(locationData);
+          if (permissionGranted == null) {
+            stateCtrl.sink.add(DataState.locationUnknownError);
+            _fetchingLocation = false;
+            return;
+          }
 
-              notificationCtrl.sink.add(town ?? city ?? district);
-
-              await getPosts();
-            }
-          } else {
+          if (!permissionGranted) {
             stateCtrl.sink.add(DataState.locationDenied);
+            _fetchingLocation = false;
+            return;
+          }
+
+          UserLocationData locationData =
+              await LocationUtil().getInfoFromPosition().timeout(
+                    Duration(seconds: 10),
+                    onTimeout: () => null,
+                  );
+
+          if (locationData == null) {
+            stateCtrl.sink.add(DataState.locationUnknownError);
+          } else {
+            town = locationData.userTown;
+            city = locationData.userCity;
+            district = locationData.userDistrict;
+
+            _localStorage.setUserLocationData(locationData);
+
+            notificationCtrl.sink
+                .add('Showing results in ${town ?? city ?? district}');
+
+            await getPosts();
           }
         } else {
           stateCtrl.sink.add(DataState.locationNetworkError);
@@ -175,7 +203,6 @@ abstract class DogPostsBloc implements BlocBase {
       } on SocketException {
         stateCtrl.sink.add(DataState.locationNetworkError);
       } on PlatformException catch (e, s) {
-        print(e.message ?? e.code);
         stateCtrl.sink.add(DataState.locationUnknownError);
         sentry.captureException(
           exception: e,

@@ -1,5 +1,3 @@
-
-
 class FirestoreConsts {
   static const int DOCS_LIMIT = 40;
   static const String USER_COLLECTION = 'Users';
@@ -57,6 +55,8 @@ class GeneralConstants {
   static const String NO_INTERNET_CONNECTION = 'No Internet Connection';
   static const String LOCATION_PERMISSION_ERROR =
       'Kindly enable location access for more efficient use of the app';
+  static const String LOCATION_SERVICE_OFF_MSG =
+      'Location services are disabled. Enable them from settings to access location.';
 
   static const String IMAGE_PERMISSION_ERROR = 'Please enable storage access.';
 }

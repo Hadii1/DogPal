@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
+import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
@@ -57,15 +58,36 @@ class DecisionsBloc implements BlocBase {
         if (_localStorage.isFirstLaunch()) {
           _askPermission();
         } else {
+          bool isServiceEnabled = await _locationUtil
+              .isLocationServiceEnabled()
+              .timeout(Duration(seconds: 6), onTimeout: () => true);
+
+          if (isServiceEnabled == null) {
+            locationNotification = errorSnackBar(
+              'Fetching location took more time than expected so we passed. Please press Nearby to retry.',
+            );
+            _navigationCtrl.sink.add(true);
+            return;
+          }
+
+          if (!isServiceEnabled) {
+            locationNotification = locationServiceSnackbar();
+            _navigationCtrl.sink.add(true);
+            return;
+          }
+
           bool isPermissionGranted = await _locationUtil
               .isLocationPermissionGranted()
               .timeout(Duration(seconds: 4), onTimeout: () => false);
 
-          if (isPermissionGranted) {
-            accessLocation();
-          } else {
+          if (!isPermissionGranted) {
             _navigationCtrl.sink.add(true);
+            return;
           }
+
+          //Good to Go
+          await accessLocation();
+          _navigationCtrl.sink.add(true);
         }
       } else {
         locationNotification = noConnectionSnackbar();
