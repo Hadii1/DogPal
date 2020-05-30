@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dog_pal/screens/full_screen_image.dart';
 import 'package:dog_pal/widgets/circle_indicator_widget.dart';
 import 'package:extended_image/extended_image.dart';
@@ -51,7 +53,7 @@ class _ImagePreviewState extends State<ImagePreview> {
     double _height = widget.height ?? MediaQuery.of(context).size.height * 0.6;
     return Container(
       height: _height,
-      color: Colors.transparent,
+      color: Colors.black,
       child: Stack(
         children: <Widget>[
           PageView.builder(
@@ -68,61 +70,67 @@ class _ImagePreviewState extends State<ImagePreview> {
               );
             },
             itemBuilder: (_, index) {
-              return InkWell(
-                onTap: () {
-                  if (widget.onPressed == null) {
-                    _navigateToFullScreenImage();
-                  } else {
-                    widget.onPressed(index);
-                  }
-                },
-                child: Hero(
-                  tag: '${widget.urlsList[index]}${widget.heroTag}',
-                  transitionOnUserGestures: true,
-                  placeholderBuilder: (_, s, w) {
-                    return ExtendedImage.network(
+              return Container(
+                width: double.maxFinite,
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    if (widget.onPressed == null) {
+                      _navigateToFullScreenImage();
+                    } else {
+                      widget.onPressed(index);
+                    }
+                  },
+                  child: Hero(
+                    tag: '${widget.urlsList[index]}${widget.heroTag}',
+                    transitionOnUserGestures: true,
+                    placeholderBuilder: (context, heroSize, child) =>
+                        ExtendedImage.network(
                       widget.urlsList[index],
                       fit: BoxFit.cover,
-                    );
-                  },
-                  child: ExtendedImage.network(
-                    widget.urlsList[index],
-                    fit: BoxFit.cover,
-                    loadStateChanged: (ExtendedImageState state) {
-                      switch (state.extendedImageLoadState) {
-                        case LoadState.loading:
-                          return Container(
-                            color: Colors.grey[200],
-                            child: Shimmer.fromColors(
-                              child: Card(
-                                child: SizedBox.expand(),
-                              ),
-                              baseColor: Colors.grey[200],
-                              highlightColor: Colors.white,
-                            ),
-                          );
-                          break;
+                    ),
+                    child: Container(
+                      color: Colors.black,
+                      child: ExtendedImage.network(
+                        widget.urlsList[index],
+                        fit: BoxFit.cover,
+                        loadStateChanged: (ExtendedImageState state) {
+                          switch (state.extendedImageLoadState) {
+                            case LoadState.loading:
+                              return Container(
+                                color: Colors.grey[200],
+                                child: Shimmer.fromColors(
+                                  child: Card(
+                                    child: SizedBox.expand(),
+                                  ),
+                                  baseColor: Colors.grey[200],
+                                  highlightColor: Colors.white,
+                                ),
+                              );
+                              break;
 
-                        case LoadState.completed:
-                          return null;
-                          break;
+                            case LoadState.completed:
+                              return null;
+                              break;
 
-                        case LoadState.failed:
-                          return Container(
-                            color: Colors.grey[200],
-                            child: Center(
-                              child: Text(
-                                'Loading Failed',
-                                style:
-                                    TextStyle(fontSize: ScreenUtil().setSp(38)),
-                              ),
-                            ),
-                          );
-                          break;
-                        default:
-                          return null;
-                      }
-                    },
+                            case LoadState.failed:
+                              return Container(
+                                color: Colors.grey[200],
+                                child: Center(
+                                  child: Text(
+                                    'Loading Failed',
+                                    style: TextStyle(
+                                        fontSize: ScreenUtil().setSp(38)),
+                                  ),
+                                ),
+                              );
+                              break;
+                            default:
+                              return null;
+                          }
+                        },
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -143,28 +151,23 @@ class _ImagePreviewState extends State<ImagePreview> {
     );
   }
 
-  void _navigateToFullScreenImage() async {
-    _activeIndex = await Navigator.of(context, rootNavigator: true).push(
-          TransparentMaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (_) {
-              return FullScreenView(
-                activePicture: _activeIndex,
-                urlsList: widget.urlsList,
-                heroTag: widget.heroTag,
-              );
-            },
-          ),
-        ) ??
-        _activeIndex ??
-        0;
-    if (mounted)
-      setState(() {
-        _controller.animateToPage(
-          _activeIndex,
-          duration: Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-        );
-      });
+  void _navigateToFullScreenImage() {
+    Widget child = FullScreenView(
+      activePicture: _activeIndex,
+      urlsList: widget.urlsList,
+      heroTag: widget.heroTag,
+      onChanged: (index) {
+        setState(() {
+          _activeIndex = index;
+          _controller.jumpToPage(_activeIndex);
+        });
+      },
+    );
+    Navigator.of(context, rootNavigator: true).push(
+      Platform.isIOS
+          ? TransparentCupertinoPageRoute(
+              fullscreenDialog: true, builder: (_) => child)
+          : TransparentMaterialPageRoute(builder: (_) => child),
+    );
   }
 }

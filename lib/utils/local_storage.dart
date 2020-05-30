@@ -65,7 +65,11 @@ class LocalStorage implements LocalDataRepositroy {
 
   @override
   Future<void> editUser(User user) async {
-    await _prefs.setString(USER, json.encode(User.toMap(user)));
+    if (user == null) {
+      await _prefs.setString(USER, null);
+    } else {
+      await _prefs.setString(USER, json.encode(User.toMap(user)));
+    }
   }
 
   @override

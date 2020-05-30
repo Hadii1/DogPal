@@ -141,6 +141,7 @@ class _ImageSlideState extends State<ImageSlide> {
         builder: (_) => FullScreenView(
           activePicture: activePicture,
           assetList: list,
+          onChanged: (_) {},
         ),
       ),
     );

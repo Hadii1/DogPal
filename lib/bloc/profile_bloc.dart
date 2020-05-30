@@ -40,6 +40,7 @@ class ProfileBloc implements BlocBase {
         if (user == null) {
           _screenStateCtrl.sink.add(ProfileScreenState.unAuthenticated);
           _localStorage.setAuthentication(false);
+          _localStorage.editUser(null);
         } else {
           _screenStateCtrl.sink.add(ProfileScreenState.authenticated);
         }

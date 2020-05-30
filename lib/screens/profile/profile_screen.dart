@@ -690,7 +690,7 @@ class _ProfileHeader extends StatelessWidget {
                               : null,
                       child: (() {
                         if (localStorage.isAuthenticated() && user != null) {
-                          user.photo.isEmpty
+                          return user.photo.isEmpty
                               ? Icon(
                                   Icons.person,
                                   color: yellowishColor,
@@ -698,7 +698,7 @@ class _ProfileHeader extends StatelessWidget {
                                 )
                               : SizedBox.shrink();
                         } else {
-                          Icon(
+                          return Icon(
                             Icons.person,
                             color: yellowishColor,
                             size: 35,
