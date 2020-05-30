@@ -52,24 +52,23 @@ class _FullScreenViewState extends State<FullScreenView> {
         key: _key,
         direction: DismissDirection.down,
         onDismissed: (_) => Navigator.of(context, rootNavigator: true).pop(),
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            widget.assetList == null
-                ?
-                /*/*/* For network images */*/*/
-                ExtendedImageGesturePageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.urlsList.length,
-                    onPageChanged: (index) {
-                      _currentIndex = index;
-                      widget.onChanged(index);
-                    },
-                    itemBuilder: (_, index) {
-                      String url = widget.urlsList[index];
-                      return Container(
-                        color: Colors.black,
-                        child: Hero(
+        child: ColorChanger(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              widget.assetList == null
+                  ?
+                  /*/*/* For network images */*/*/
+                  ExtendedImageGesturePageView.builder(
+                      controller: _pageController,
+                      itemCount: widget.urlsList.length,
+                      onPageChanged: (index) {
+                        _currentIndex = index;
+                        widget.onChanged(index);
+                      },
+                      itemBuilder: (_, index) {
+                        String url = widget.urlsList[index];
+                        return Hero(
                           transitionOnUserGestures: true,
                           tag: '$url${widget.heroTag}',
                           child: ExtendedImage.network(
@@ -119,58 +118,59 @@ class _FullScreenViewState extends State<FullScreenView> {
                               }
                             },
                           ),
-                        ),
-                      );
-                    },
-                  )
-                :
-                /*/*/* For assets */*/*/
-                PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                        widget.onChanged(_currentIndex);
-                      });
-                    },
-                    children: widget.assetList.map(
-                      (asset) {
-                        return PhotoView.customChild(
-                          maxScale: PhotoViewComputedScale.contained * 2,
-                          initialScale: PhotoViewComputedScale.contained,
-                          minScale: PhotoViewComputedScale.contained,
-                          child: AssetMemoryImage(asset),
                         );
                       },
-                    ).toList(),
+                    )
+                  :
+
+                  /*/*/* For assets */*/*/
+                  PageView(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                          widget.onChanged(_currentIndex);
+                        });
+                      },
+                      children: widget.assetList.map(
+                        (asset) {
+                          return PhotoView.customChild(
+                            maxScale: PhotoViewComputedScale.contained * 2,
+                            initialScale: PhotoViewComputedScale.contained,
+                            minScale: PhotoViewComputedScale.contained,
+                            child: AssetMemoryImage(asset),
+                          );
+                        },
+                      ).toList(),
+                    ),
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.of(context, rootNavigator: true)
+                        .pop(_currentIndex),
                   ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => Navigator.of(context, rootNavigator: true)
-                      .pop(_currentIndex),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularIndicators(
-                  activeIndex: _currentIndex,
-                  totalNumber: widget.urlsList == null
-                      ? widget.assetList.length
-                      : widget.urlsList.length,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularIndicators(
+                    activeIndex: _currentIndex,
+                    totalNumber: widget.urlsList == null
+                        ? widget.assetList.length
+                        : widget.urlsList.length,
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -218,6 +218,46 @@ class _AssetMemoryImageState extends State<AssetMemoryImage> {
                     fit: BoxFit.contain,
                   ),
       ),
+    );
+  }
+}
+
+class ColorChanger extends StatefulWidget {
+  ColorChanger({@required this.child});
+  final Widget child;
+
+  @override
+  _ColorChangerState createState() => _ColorChangerState();
+}
+
+class _ColorChangerState extends State<ColorChanger> {
+  bool _changeColor = false;
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(
+      Duration(milliseconds: 50),
+      () {
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) {
+              setState(() {
+                _changeColor = true;
+              });
+            },
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      color: _changeColor ? Colors.black : Colors.transparent,
+      child: widget.child,
     );
   }
 }
