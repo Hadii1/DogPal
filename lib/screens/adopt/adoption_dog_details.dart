@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog.dart';
@@ -62,7 +64,7 @@ class _AdoptionDogWallState extends State<AdoptionDogWall> {
               brightness: Brightness.light,
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
                   color: Colors.white,
                 ),
                 onPressed: () => Navigator.of(context).pop(),

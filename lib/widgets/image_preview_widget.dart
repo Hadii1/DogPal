@@ -165,9 +165,37 @@ class _ImagePreviewState extends State<ImagePreview> {
     );
     Navigator.of(context, rootNavigator: true).push(
       Platform.isIOS
-          ? TransparentCupertinoPageRoute(
-              fullscreenDialog: true, builder: (_) => child)
+          ? TransparentRoute(builder: () => child)
           : TransparentMaterialPageRoute(builder: (_) => child),
     );
   }
+}
+
+class TransparentRoute extends PageRoute {
+  TransparentRoute({@required this.builder});
+  final Widget Function() builder;
+
+  @override
+  Color get barrierColor => null;
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get opaque => false;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return FadeTransition(
+      opacity: animation,
+      child: builder(),
+    );
+  }
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 400);
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_pal/bloc/lost_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
@@ -51,7 +53,7 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
               backgroundColor: Colors.transparent,
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
                   color: Colors.white,
                 ),
                 onPressed: () => Navigator.of(context).pop(),

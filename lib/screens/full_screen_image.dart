@@ -52,7 +52,8 @@ class _FullScreenViewState extends State<FullScreenView> {
         key: _key,
         direction: DismissDirection.down,
         onDismissed: (_) => Navigator.of(context, rootNavigator: true).pop(),
-        child: ColorChanger(
+        child: Container(
+          color: Colors.black,
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -65,6 +66,7 @@ class _FullScreenViewState extends State<FullScreenView> {
                       onPageChanged: (index) {
                         _currentIndex = index;
                         widget.onChanged(index);
+                        setState(() {});
                       },
                       itemBuilder: (_, index) {
                         String url = widget.urlsList[index];
@@ -255,7 +257,7 @@ class _ColorChangerState extends State<ColorChanger> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 400),
       color: _changeColor ? Colors.black : Colors.transparent,
       child: widget.child,
     );

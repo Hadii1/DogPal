@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dog_pal/bloc/mate_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
@@ -52,7 +54,7 @@ class _MateDogDetailsScreenState extends State<MateDogDetailsScreen> {
               floating: true,
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
                   color: Colors.white,
                 ),
                 onPressed: () => Navigator.of(context).pop(),

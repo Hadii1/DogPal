@@ -55,17 +55,13 @@ class AddMateDogBloc implements BlocBase {
   List<Asset> assets = [];
 
   Future<void> sendPostToAppBloc() async {
-    _stateCtrl.sink.add(PostAdditionState.loading);
-    if (await isOnline()) {
-      if (_appBloc.currentlyAdding) {
-        _errorCtrl.sink.add(
-            'Another post is currently being added, kindly hold up until it finishes to add another one');
-        return;
+    if (!_appBloc.currentlyAdding) {
+      if (await isOnline()) {
+        _stateCtrl.sink.add(PostAdditionState.shouldNavigate);
+        _appBloc.postsCtrl.sink.add(addPost);
+      } else {
+        _stateCtrl.sink.add(PostAdditionState.noInternet);
       }
-      _stateCtrl.sink.add(PostAdditionState.shouldNavigate);
-      _appBloc.postsCtrl.sink.add(addPost);
-    } else {
-      _stateCtrl.sink.add(PostAdditionState.noInternet);
     }
   }
 
