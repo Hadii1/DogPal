@@ -193,6 +193,8 @@ class _DogsScreenState extends State<DogsScreen> {
               ),
               AnimatedSwitcher(
                 duration: Duration(milliseconds: 200),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInExpo,
                 transitionBuilder: (child, animation) => SlideTransition(
                   child: child,
                   position: Tween<Offset>(
@@ -204,39 +206,56 @@ class _DogsScreenState extends State<DogsScreen> {
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 32.0),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
+                          height: MediaQuery.of(context).size.height * 0.15,
                           child: Material(
                               elevation: 12,
                               borderRadius: BorderRadius.circular(22),
                               color: blackishColor,
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(
                                       child: Padding(
                                         padding:
-                                            const EdgeInsets.only(left: 4.0),
+                                            const EdgeInsets.only(left: 6.0),
                                         child: Text(
                                           'Another post is currently being added, kindly hold up until it finishes to add another one.',
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: 0.1,
-                                            color: Colors.white,
-                                          ),
+                                              fontWeight: FontWeight.w300,
+                                              letterSpacing: 0.1,
+                                              color: Colors.white,
+                                              fontSize:
+                                                  normalTextStyle.fontSize),
                                         ),
                                       ),
                                     ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.cancel,
-                                        color: Colors.white,
+                                    VerticalDivider(
+                                      color: Colors.white,
+                                      endIndent: 8,
+                                      indent: 8,
+                                      thickness: 0.3,
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 6.0),
+                                      child: InkWell(
+                                        highlightColor:
+                                            Theme.of(context).primaryColor,
+                                        focusColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
+                                        onTap: () {
+                                          setState(
+                                            () {
+                                              _showUpperSnackbar = false;
+                                            },
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _showUpperSnackbar = false;
-                                        });
-                                      },
                                     )
                                   ],
                                 ),
@@ -268,6 +287,7 @@ class _DogsScreenState extends State<DogsScreen> {
     }
   }
 
+  // TODO: refactor into the bloc
   _handleFabPress() async {
     final AppBloc appBloc = Provider.of<AppBloc>(context, listen: false);
     final LocalStorage localStorage =

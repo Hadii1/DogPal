@@ -43,7 +43,6 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           bottomSheetTheme: BottomSheetThemeData(
             modalBackgroundColor: Color(0xfffffffa),
