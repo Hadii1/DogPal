@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 # Miscellaneous
-=======
->>>>>>> first
 *.class
 *.log
 *.pyc
@@ -42,8 +39,4 @@ lib/generated_plugin_registrant.dart
 #Dog Pal related
 lib/utils/app_secrets.dart
 android
-<<<<<<< HEAD
 ios
-=======
-ios
->>>>>>> first
