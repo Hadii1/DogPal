@@ -50,7 +50,7 @@ class _AnimatedHeaderState extends State<AnimatedHeader> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      height: _shouldShow ? widget.height ?? 40 : 0,
+      height: _shouldShow ? widget.height ?? 100 : 0,
       child: AnimatedOpacity(
         duration: Duration(milliseconds: 150),
         opacity: _shouldShow ? 1 : 0,

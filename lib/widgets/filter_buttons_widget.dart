@@ -37,14 +37,14 @@ class FilterButtons extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    height: 120.sp,
+                    height: 100.sp,
                     child: OutlineButton(
                       splashColor: Colors.transparent,
                       onPressed: () => _showFilterSheet(context),
                       borderSide: BorderSide(color: Colors.grey, width: 0.5),
                       highlightedBorderColor: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         snapshot.data == 0
@@ -65,7 +65,7 @@ class FilterButtons extends StatelessWidget {
                           ? CrossFadeState.showSecond
                           : CrossFadeState.showFirst,
                       firstChild: SizedBox(
-                        height: 120.sp,
+                        height: 100.sp,
                         child: OutlineButton(
                           splashColor: Colors.transparent,
                           onPressed: onClearPressed,
@@ -74,7 +74,7 @@ class FilterButtons extends StatelessWidget {
                           borderSide:
                               BorderSide(color: Colors.grey, width: 0.5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             'Clear',
@@ -86,25 +86,6 @@ class FilterButtons extends StatelessWidget {
                         ),
                       ),
                       secondChild: SizedBox.shrink(),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 120.sp,
-                    child: OutlineButton(
-                      splashColor: Colors.transparent,
-                      onPressed: onNearbyPressed,
-                      borderSide: BorderSide(color: Colors.grey, width: 0.5),
-                      highlightedBorderColor: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(
-                        'Nearby',
-                        style: TextStyle(
-                          color: blackishColor,
-                          fontSize: ScreenUtil().setSp(42),
-                        ),
-                      ),
                     ),
                   ),
                 ],

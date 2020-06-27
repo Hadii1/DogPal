@@ -25,6 +25,7 @@ import 'package:dog_pal/widgets/location_access_denied.dart';
 import 'package:dog_pal/widgets/location_search_bar.dart';
 import 'package:dog_pal/widgets/no_connection_widget.dart';
 import 'package:dog_pal/widgets/no_data_widget.dart';
+import 'package:dog_pal/widgets/post_type_button.dart';
 import 'package:dog_pal/widgets/unknown_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -123,11 +124,19 @@ class _DogsScreenState extends State<DogsScreen> {
                   AnimatedHeader(
                     didPressSuggestion: _bloc.isSuggestionPressed,
                     scrollController: _bloc.pageController,
-                    child: FilterButtons(
-                      filterSheet: _handleFilterSheet(),
-                      onClearPressed: _bloc.clearFilters,
-                      onNearbyPressed: _bloc.nearByPressed,
-                      filterStream: _bloc.activeFilters,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        FilterButtons(
+                          filterSheet: _handleFilterSheet(),
+                          onClearPressed: _bloc.clearFilters,
+                          onNearbyPressed: _bloc.nearByPressed,
+                          filterStream: _bloc.activeFilters,
+                        ),
+                        PostTypeButton(
+                          onTypePressed: (PostType type) {},
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(

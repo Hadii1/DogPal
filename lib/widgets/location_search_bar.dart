@@ -134,10 +134,19 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                           ),
                           child: Icon(
                             Icons.close,
+                            size: 21,
                             color: blackishColor.withAlpha(200),
                           ),
                         )
-                      : SizedBox.shrink(),
+                      : InkWell(
+                          onTap: () {
+                            // TODO: add callback
+                          },
+                          child: Icon(
+                            Icons.location_on,
+                            size: 21,
+                          ),
+                        ),
                 ),
                 labelText: 'Search Cities',
                 labelStyle: TextStyle(fontFamily: 'OpenSans'),
@@ -145,6 +154,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                 fillColor: yellowishColor,
                 prefixIcon: Icon(
                   Icons.search,
+                  size: 24,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -180,6 +190,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
     );
   }
 
+  //Refactor to a callback
   Future<void> _suggestionSelected(Prediction prediction) async {
     setState(() {
       _isLoading = true;
