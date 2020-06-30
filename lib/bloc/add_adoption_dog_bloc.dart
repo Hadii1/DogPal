@@ -50,10 +50,11 @@ class AddAdoptionDogBloc implements BlocBase {
     _errorCtrl.close();
   }
 
-  StreamController<PostAdditionState> _stateCtrl = StreamController.broadcast();
+  final StreamController<PostAdditionState> _stateCtrl =
+      StreamController.broadcast();
   Stream<PostAdditionState> get state => _stateCtrl.stream;
 
-  StreamController<String> _errorCtrl = StreamController();
+  final StreamController<String> _errorCtrl = StreamController();
   Stream<String> get errors => _errorCtrl.stream;
 
   final AppBloc _appBloc;
@@ -80,7 +81,7 @@ class AddAdoptionDogBloc implements BlocBase {
     }
   }
 
-  Future<bool> addPost() async {
+  Future<AdoptPost> addPost() async {
     DocumentReference reference =
         _firestoreService.createDocRef(FirestoreConsts.ADOPTION_DOGS);
 
@@ -91,7 +92,7 @@ class AddAdoptionDogBloc implements BlocBase {
       );
 
       if (adoptionDog.imagesUrls == null || adoptionDog.imagesUrls.isEmpty) {
-        return false;
+        return null;
       }
 
       post = AdoptPost(
@@ -108,9 +109,7 @@ class AddAdoptionDogBloc implements BlocBase {
 
       await reference.setData(AdoptPost.toDocument(post));
 
-      _appBloc.dogPost = post;
-
-      return true;
+      return post;
     } on PlatformException catch (e, s) {
       //Delete the images if they were saved before the error
       print(e.message ?? e.code);
@@ -126,9 +125,9 @@ class AddAdoptionDogBloc implements BlocBase {
         stackTrace: s,
       );
 
-      return false;
+      return null;
     } on Exception {
-      return false;
+      return null;
     }
   }
 }

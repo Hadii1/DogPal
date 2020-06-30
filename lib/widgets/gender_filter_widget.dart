@@ -15,11 +15,11 @@ class GenderFilter extends StatefulWidget {
 }
 
 class _GenderFilterState extends State<GenderFilter> {
-  String _gender;
+  String _groupValue;
 
   @override
   void initState() {
-    _gender = widget.initialValue ?? 'Female';
+    _groupValue = widget.initialValue ?? 'Female';
     super.initState();
   }
 
@@ -39,11 +39,17 @@ class _GenderFilterState extends State<GenderFilter> {
               children: <Widget>[
                 CustomRadio(
                   value: 'Male',
-                  groupValue: _gender,
+                  groupValue: _groupValue,
                   onChanged: (value) {
-                    _gender = value;
-                    setState(() {});
-                    widget.onChanged(value);
+                    setState(() {
+                      if (_groupValue == value) {
+                        _groupValue = '';
+                      } else {
+                        _groupValue = value;
+                      }
+
+                      widget.onChanged(_groupValue);
+                    });
                   },
                 ),
                 Text(
@@ -56,11 +62,17 @@ class _GenderFilterState extends State<GenderFilter> {
               children: <Widget>[
                 CustomRadio(
                   value: 'Female',
-                  groupValue: _gender,
+                  groupValue: _groupValue,
                   onChanged: (value) {
-                    _gender = value;
-                    setState(() {});
-                    widget.onChanged(value);
+                    setState(() {
+                      if (_groupValue == value) {
+                        _groupValue = '';
+                      } else {
+                        _groupValue = value;
+                      }
+
+                      widget.onChanged(_groupValue);
+                    });
                   },
                 ),
                 Text(
@@ -97,8 +109,8 @@ class CustomRadio extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
         child: AnimatedContainer(
           duration: Duration(milliseconds: 250),
-          width: 23,
-          height: 23,
+          width: 19,
+          height: 19,
           decoration: BoxDecoration(
             color: groupValue == value
                 ? Theme.of(context).primaryColor
@@ -115,7 +127,7 @@ class CustomRadio extends StatelessWidget {
               child: groupValue == value
                   ? Icon(
                       Icons.check,
-                      size: 20,
+                      size: 16,
                       color: Colors.white,
                     )
                   : SizedBox.shrink(),

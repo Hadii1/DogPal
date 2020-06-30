@@ -10,6 +10,7 @@ import 'package:dog_pal/widgets/location_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -177,22 +178,23 @@ class LocationWidgetDialog extends State<PostLocation> {
                     color: Colors.white,
                   ),
                   Expanded(
-                      child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 250),
-                    child: snapshot.data
-                        ? SpinKitThreeBounce(
-                            color: Colors.white,
-                            size: 25,
-                          )
-                        : Text(
-                            'Use Current Location',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 250),
+                      child: snapshot.data
+                          ? SpinKitThreeBounce(
                               color: Colors.white,
-                              fontSize: 45.sp,
+                              size: 25,
+                            )
+                          : Text(
+                              'Use Current Location',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 45.sp,
+                              ),
                             ),
-                          ),
-                  )),
+                    ),
+                  ),
                 ],
               ),
               onPressed: () async {
@@ -228,8 +230,10 @@ class LocationWidgetDialog extends State<PostLocation> {
       padding: const EdgeInsets.all(12),
       child: LocationSeachBar(
         cityController: TextEditingController(),
-        onSuggestionSelected: (town, city, district, item) {
-          _bloc.onSuggesstionSelected(town, city, district, item);
+        suggestionCallback: (input) => _bloc.onLocationSearch(input),
+        onNearbyPressed: () => _bloc.onCurrentLocationPressed(),
+        onSuggestionSelected: (Prediction prediction) {
+          _bloc.onSuggesstionSelected(prediction);
         },
       ),
     );

@@ -24,10 +24,6 @@ class PaginationUtil {
   @visibleForTesting
   bool noMoreDocuments = false;
 
-  Query firstQuery; //town query
-  Query secondQuery; //city query
-  Query thirdQuery; //district query
-
   @visibleForTesting
   Query activeQuery;
 
@@ -36,6 +32,10 @@ class PaginationUtil {
 
   @visibleForTesting
   DocumentSnapshot lastDocument;
+
+  Query firstQuery; //town query
+  Query secondQuery; //city query
+  Query thirdQuery; //district query
 
   Future<List<DocumentSnapshot>> getDogs() async {
     noMoreDocuments = false;
@@ -46,12 +46,11 @@ class PaginationUtil {
 
     assert(activeQuery != null);
 
-    allDocs = [];
+    allDocs.clear();
 
     do {
-      querySnapshot = await activeQuery
-          .limit(FirestoreConsts.DOCS_LIMIT)
-          .getDocuments();
+      querySnapshot =
+          await activeQuery.limit(FirestoreConsts.DOCS_LIMIT).getDocuments();
 
       allDocs.addAll(querySnapshot.documents);
 

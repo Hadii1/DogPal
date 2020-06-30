@@ -28,17 +28,6 @@ class UserLocationData {
       userDisplay: map['userLocationDisplay'],
     );
   }
-
-  // @override
-  // bool operator ==(value) =>
-  //     value is UserLocationData &&
-  //     value.userCity == userCity &&
-  //     value.userDisplay == userDisplay &&
-  //     value.userDistrict == userDistrict &&
-  //     value.userTown == userTown;
-
-  // @override
-  // int get hashCode => userDisplay.hashCode;
 }
 
 class PostLocationData {

@@ -155,7 +155,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).town == 't';
+                return LostPost.fromMap(doc.data).town == 't';
               })
               .toList()
               .length,
@@ -164,7 +164,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).city == 'c';
+                return LostPost.fromMap(doc.data).city == 'c';
               })
               .toList()
               .length,
@@ -183,7 +183,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).town == 't';
+                return LostPost.fromMap(doc.data).town == 't';
               })
               .toList()
               .length,
@@ -192,7 +192,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).city == 'c';
+                return LostPost.fromMap(doc.data).city == 'c';
               })
               .toList()
               .length,
@@ -201,7 +201,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).district == 'd';
+                return LostPost.fromMap(doc.data).district == 'd';
               })
               .toList()
               .length,
@@ -220,7 +220,7 @@ void main() {
       expect(
         docs
             .where((doc) {
-              return LostPost.fromDocument(doc.data).town == 't';
+              return LostPost.fromMap(doc.data).town == 't';
             })
             .toList()
             .length,
@@ -230,7 +230,7 @@ void main() {
       expect(
         docs
             .where((doc) {
-              return LostPost.fromDocument(doc.data).city == 'c';
+              return LostPost.fromMap(doc.data).city == 'c';
             })
             .toList()
             .length,
@@ -240,7 +240,7 @@ void main() {
       expect(
         docs
             .where((doc) {
-              return LostPost.fromDocument(doc.data).district == 'd';
+              return LostPost.fromMap(doc.data).district == 'd';
             })
             .toList()
             .length,
@@ -260,7 +260,7 @@ void main() {
       expect(
           docs
               .where((doc) {
-                return LostPost.fromDocument(doc.data).town == 't';
+                return LostPost.fromMap(doc.data).town == 't';
               })
               .toList()
               .length,
@@ -340,14 +340,14 @@ void main() {
       expect(paginationUtil.activeQuery, paginationUtil.secondQuery);
       expect(
         paginationUtil.allDocs.where((doc) {
-          return LostPost.fromDocument(doc.data).city == 'c';
+          return LostPost.fromMap(doc.data).city == 'c';
         }),
         hasLength(40),
       );
 
       expect(
         paginationUtil.allDocs.where((doc) {
-          return LostPost.fromDocument(doc.data).town == 't';
+          return LostPost.fromMap(doc.data).town == 't';
         }),
         hasLength(50),
       );

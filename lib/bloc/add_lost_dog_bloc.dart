@@ -72,7 +72,7 @@ class AddLostDogBloc implements BlocBase {
     }
   }
 
-  Future<bool> addPost() async {
+  Future<LostPost> addPost() async {
     DocumentReference reference =
         _firestoreService.createDocRef(FirestoreConsts.LOST_DOGS);
 
@@ -81,7 +81,7 @@ class AddLostDogBloc implements BlocBase {
           await _firestoreService.saveImagesToNetwork(assetsList, 'Lost Dogs');
 
       if (urls == null || urls.isEmpty) {
-        return false;
+        return null;
       }
 
       dog.imagesUrls = urls;
@@ -100,9 +100,7 @@ class AddLostDogBloc implements BlocBase {
 
       await reference.setData(LostPost.toDocument(post));
 
-      _appBloc.dogPost = post;
-
-      return true;
+      return post;
     } on PlatformException catch (e, s) {
       sentry.captureException(
         exception: e,
@@ -115,9 +113,9 @@ class AddLostDogBloc implements BlocBase {
         _firestoreService.deleteImages(post.dog.imagesUrls);
       }
 
-      return false;
+      return null;
     } on Exception {
-      return false;
+      return null;
     }
   }
 }

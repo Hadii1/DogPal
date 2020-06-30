@@ -8,6 +8,7 @@ import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PostLocationBloc implements BlocBase {
@@ -24,6 +25,7 @@ class PostLocationBloc implements BlocBase {
   String locationDisplay;
 
   final LocalDataRepositroy _localStorage;
+  final LocationUtil _locationUtil = LocationUtil();
 
   StreamController<bool> _shouldLoadCtrl = StreamController.broadcast();
   Stream<bool> get shouldLoad => _shouldLoadCtrl.stream;
@@ -43,14 +45,30 @@ class PostLocationBloc implements BlocBase {
     _cityNameCtrl.close();
   }
 
-  void onSuggesstionSelected(
-      String town, String city, String district, String display) {
-    _cityNameCtrl.sink.add(display);
+  Future<List<Prediction>> onLocationSearch(String input) async {
+    return await _locationUtil.completePlacesQuery(input);
+  }
 
-    _city = city;
-    _town = town;
-    _district = district;
-    locationDisplay = display;
+  void onSuggesstionSelected(Prediction prediction) async {
+    try {
+      Map<String, String> info =
+          await _locationUtil.getDetailsFromPrediction(prediction);
+
+      if (info == null) {
+        _errorCtrl.sink.add('Something went wrong on our side');
+        return;
+      }
+
+      _town = info[PostsConsts.TOWN];
+      _city = info[PostsConsts.CITY];
+      _district = info[PostsConsts.DISTRICT];
+
+      _cityNameCtrl.sink.add(prediction.description);
+    } on SocketException {
+      _errorCtrl.sink.add('Poor Internet Connection');
+    } on PlatformException {
+      _errorCtrl.sink.add('Something went wrong on our side');
+    }
   }
 
   Future<void> onCurrentLocationPressed() async {

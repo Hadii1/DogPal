@@ -1,6 +1,5 @@
-import 'package:dog_pal/bloc/adopt_bloc.dart';
-import 'package:dog_pal/bloc/lost_bloc.dart';
-import 'package:dog_pal/bloc/mate_bloc.dart';
+import 'dart:ui';
+import 'package:dog_pal/bloc/dog_posts_bloc.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/widgets/breed_filter_widget.dart';
 import 'package:dog_pal/widgets/coat_color_filter_widget.dart';
@@ -12,64 +11,78 @@ import 'package:flutter_screenutil/screenutil.dart';
 
 class AdoptFilterSheet extends StatelessWidget {
   const AdoptFilterSheet(this._bloc);
-  final AdoptBloc _bloc;
+  final DogPostsBloc _bloc;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.85,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildTitle(),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ListView(
-                children: <Widget>[
-                  BreedFilterWidget(
-                    orientation: WidgetOrientation.vertical,
-                    initalBreed: _bloc.breed,
-                    onChanged: (breed) => _bloc.breed = breed,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                _buildTitle(),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ListView(
+                      physics: ClampingScrollPhysics(),
+                      children: <Widget>[
+                        BreedFilterWidget(
+                          orientation: WidgetOrientation.vertical,
+                          initalBreed: _bloc.breed,
+                          onChanged: (breed) => _bloc.breed = breed,
+                        ),
+                        Divider(),
+                        GenderFilter(
+                          onChanged: (value) {
+                            _bloc.gender = value;
+                            print(value);
+                          },
+                          initialValue: _bloc.gender,
+                        ),
+                        Divider(),
+                        CoatColor(
+                          onChanged: (colors) => _bloc.colors = colors,
+                          initialColors: _bloc.colors,
+                        ),
+                        Divider(),
+                        SizeFilter(
+                          onChanged: (String size) => _bloc.size = size,
+                          initialValue: _bloc.size,
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.energyLevel,
+                          onChanged: (String value) =>
+                              _bloc.energyLevel = value,
+                          title: 'Energy Level',
+                          values: ['Calm', 'Regular', 'Energetic'],
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.barkTendencies,
+                          onChanged: (String value) =>
+                              _bloc.barkTendencies = value,
+                          title: 'Barking Tendency',
+                          values: ['Rarely', 'Moderate', 'Vocalist'],
+                        ),
+                        Divider(),
+                        FilterChoiceChip(
+                          initialValue: _bloc.trainingLevel,
+                          onChanged: (String value) =>
+                              _bloc.trainingLevel = value,
+                          values: ['None', 'Basic', 'Advanced'],
+                          title: 'Training Level',
+                        ),
+                      ],
+                    ),
                   ),
-                  Divider(),
-                  GenderFilter(
-                    onChanged: (value) => _bloc.gender = value,
-                    initialValue: _bloc.gender,
-                  ),
-                  Divider(),
-                  CoatColor(
-                    onChanged: (colors) => _bloc.coatColors = colors,
-                    initialColors: _bloc.coatColors,
-                  ),
-                  Divider(),
-                  SizeFilter(
-                    onChanged: (String size) => _bloc.size = size,
-                    initialValue: _bloc.size,
-                  ),
-                  Divider(),
-                  FilterChoiceChip(
-                    initialValue: _bloc.energyLevel,
-                    onChanged: (String value) => _bloc.energyLevel = value,
-                    title: 'Energy Level:',
-                    values: ['Calm', 'Regular', 'Energetic'],
-                  ),
-                  Divider(),
-                  FilterChoiceChip(
-                    initialValue: _bloc.barkTendencies,
-                    onChanged: (String value) => _bloc.barkTendencies = value,
-                    title: 'Barking Tendency:',
-                    values: ['Rarely', 'Moderate', 'Vocalist'],
-                  ),
-                  Divider(),
-                  FilterChoiceChip(
-                    initialValue: _bloc.trainingLevel,
-                    onChanged: (String value) => _bloc.trainingLevel = value,
-                    values: ['None', 'Basic', 'Advanced'],
-                    title: 'Training Level:',
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -77,6 +90,7 @@ class AdoptFilterSheet extends StatelessWidget {
             child: FlatButton(
               onPressed: () {
                 _bloc.getPosts();
+
                 Navigator.pop(context);
               },
               color: Theme.of(context).primaryColor,
@@ -85,7 +99,7 @@ class AdoptFilterSheet extends StatelessWidget {
                 child: Text('Apply'),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -94,7 +108,7 @@ class AdoptFilterSheet extends StatelessWidget {
 
 class MateFilterPage extends StatelessWidget {
   const MateFilterPage(this._bloc);
-  final MateBloc _bloc;
+  final DogPostsBloc _bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +124,7 @@ class MateFilterPage extends StatelessWidget {
               Expanded(
                 child: Container(
                   child: ListView(
+                    physics: ClampingScrollPhysics(),
                     children: <Widget>[
                       BreedFilterWidget(
                         orientation: WidgetOrientation.vertical,
@@ -158,12 +173,13 @@ class MateFilterPage extends StatelessWidget {
 class LostFilterPage extends StatelessWidget {
   const LostFilterPage(this._bloc);
 
-  final LostBloc _bloc;
+  final DogPostsBloc _bloc;
 
   @override
   Widget build(BuildContext context) {
     return Wrap(children: [
       SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
@@ -183,8 +199,8 @@ class LostFilterPage extends StatelessWidget {
               ),
               Divider(),
               CoatColor(
-                onChanged: (colors) => _bloc.coatColors = colors,
-                initialColors: _bloc.coatColors,
+                onChanged: (colors) => _bloc.colors = colors,
+                initialColors: _bloc.colors,
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),

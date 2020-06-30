@@ -33,7 +33,7 @@ class AdoptPost implements DogPost<AdoptionDog> {
   @override
   String locationDisplay;
 
-  factory AdoptPost.fromDocument(Map map) {
+  factory AdoptPost.fromMap(Map map) {
     return AdoptPost(
       id: map[PostsConsts.POST_ID],
       city: map[PostsConsts.CITY],

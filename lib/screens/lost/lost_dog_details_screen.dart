@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dog_pal/bloc/lost_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/models/user.dart';
@@ -20,11 +18,9 @@ import 'package:provider/provider.dart';
 class LostDetailsArgs {
   LostPost post;
   Function onDeletePressed;
-  LostBloc bloc;
 
   LostDetailsArgs({
     @required this.post,
-    @required this.bloc,
     this.onDeletePressed,
   });
 }
@@ -97,7 +93,7 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
                 localStorage.isAuthenticated() &&
                         user.uid == widget.args.post.dog.owner.uid
                     ? DeletePostButton(
-                        bloc: widget.args.bloc,
+                        bloc: null,
                         post: widget.args.post,
                         onDeletePressed: widget.args.onDeletePressed,
                       )

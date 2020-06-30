@@ -36,7 +36,7 @@ class _FilterChoiceChipState extends State<FilterChoiceChip> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 12.0),
               child: Text(
                 widget.title,
                 style: subHeaderStyle,
@@ -53,11 +53,14 @@ class _FilterChoiceChipState extends State<FilterChoiceChip> {
                   ),
                   selected: _selectedValue == e,
                   onSelected: (selected) {
-                    if (selected) {
-                      _selectedValue = e;
-                      setState(() {});
+                    setState(() {
+                      if (selected) {
+                        _selectedValue = e;
+                      } else {
+                        _selectedValue = '';
+                      }
                       widget.onChanged(_selectedValue);
-                    }
+                    });
                   },
                 );
               }).toList(),

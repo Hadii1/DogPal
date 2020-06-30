@@ -1,14 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:android_intent/android_intent.dart';
-import 'package:dog_pal/bloc/auth_bloc.dart';
-import 'package:dog_pal/screens/login.dart';
 import 'package:dog_pal/utils/constants_util.dart';
-import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 SnackBar permissionSnackbar(
   String text, {
@@ -135,40 +131,6 @@ SnackBar errorSnackBar(
             onPressed: onRetry,
           )
         : null,
-  );
-}
-
-SnackBar signInSnackBar(BuildContext context, {String text}) {
-  return SnackBar(
-    duration: Duration(seconds: 3),
-    action: SnackBarAction(
-      label: 'Sign In',
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).push(
-          MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (_) {
-              return Provider(
-                create: (_) =>
-                    AuthBloc(Provider.of<LocalStorage>(context, listen: false)),
-                child: LoginScreen(),
-              );
-            },
-          ),
-        );
-      },
-    ),
-    content: Row(
-      children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.6,
-          child: Text(
-            text ?? 'Please Sign in to add a post',
-            softWrap: true,
-          ),
-        ),
-      ],
-    ),
   );
 }
 

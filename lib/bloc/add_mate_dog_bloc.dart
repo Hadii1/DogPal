@@ -73,7 +73,7 @@ class AddMateDogBloc implements BlocBase {
     _errorCtrl.close();
   }
 
-  Future<bool> addPost() async {
+  Future<MatePost> addPost() async {
     DocumentReference reference =
         _firestoreService.createDocRef(FirestoreConsts.MATE_DOGS);
 
@@ -82,7 +82,7 @@ class AddMateDogBloc implements BlocBase {
           await _firestoreService.saveImagesToNetwork(assets, 'Mating Dogs');
 
       if (urls == null || urls.isEmpty) {
-        return false;
+        return null;
       }
 
       mateDog.imagesUrls = urls;
@@ -101,9 +101,7 @@ class AddMateDogBloc implements BlocBase {
 
       await reference.setData(MatePost.toDocument(matePost));
 
-      _appBloc.dogPost = matePost;
-
-      return true;
+      return matePost;
     } on PlatformException catch (e, s) {
       //Delete the images if they were saved before the error
       reference.delete();
@@ -116,9 +114,9 @@ class AddMateDogBloc implements BlocBase {
         exception: e,
         stackTrace: s,
       );
-      return false;
+      return null;
     } on Exception {
-      return false;
+      return null;
     }
   }
 }

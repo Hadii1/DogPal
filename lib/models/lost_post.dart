@@ -32,7 +32,7 @@ class LostPost implements DogPost {
   @override
   String locationDisplay;
 
-  factory LostPost.fromDocument(Map map) {
+  factory LostPost.fromMap(Map map) {
     return LostPost(
       dog: Dog(
         dogName: map[DogConsts.DOG_NAME],

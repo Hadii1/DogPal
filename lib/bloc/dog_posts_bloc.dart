@@ -1,11 +1,17 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/location_data.dart';
+import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/models/user.dart';
+import 'package:dog_pal/repo/adopt_repo.dart';
+import 'package:dog_pal/repo/lost_repo.dart';
+import 'package:dog_pal/repo/mate_repo.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
+import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
@@ -13,13 +19,16 @@ import 'package:dog_pal/utils/location_util.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-abstract class DogPostsBloc implements BlocBase {
-  DogPostsBloc(this._localStorage) {
-    town = _localStorage.getUserLocationData().userTown;
-    city = _localStorage.getUserLocationData().userCity;
-    district = _localStorage.getUserLocationData().userDistrict;
+class DogPostsBloc implements BlocBase {
+  DogPostsBloc({
+    @required this.localStorage,
+  }) {
+    town = localStorage.getUserLocationData().userTown;
+    city = localStorage.getUserLocationData().userCity;
+    district = localStorage.getUserLocationData().userDistrict;
 
     pageController.addListener(
       () {
@@ -33,34 +42,57 @@ abstract class DogPostsBloc implements BlocBase {
       filters = i;
     });
   }
-  final LocalDataRepositroy _localStorage;
-
+  final LocalStorage localStorage;
+  final MateRepo mateRepo = MateRepo();
+  final AdoptRepo adoptRepo = AdoptRepo();
+  final LostRepo lostRepo = LostRepo();
   final PageController pageController = PageController();
   final TextEditingController cityNameController = TextEditingController();
+  final LocationUtil _locationUtil = LocationUtil();
 
-  StreamController<String> notificationCtrl = StreamController.broadcast();
-  Stream<String> get blocNotifications => notificationCtrl.stream;
+  StreamController<String> _notificationCtrl = StreamController.broadcast();
+  Stream<String> get blocNotifications => _notificationCtrl.stream;
 
-  //When a suggestion is pressed we want to show the fab and filter buttons
+  //When a location suggestion is pressed we want to show the fab and filter buttons
   //so we hook this stream to the animated header widget and re-render it
   //when a suggestion is pressed
-  StreamController<bool> _didPressSuggestion = StreamController.broadcast();
-  Stream<bool> get isSuggestionPressed => _didPressSuggestion.stream;
+  StreamController<bool> _shouldShowHeader = StreamController.broadcast();
+  Stream<bool> get showHeader => _shouldShowHeader.stream;
 
-  Stream<int> get activeFilters;
-  Stream<DataState> get dataState;
+  StreamController<int> _activeFilterCtrl = StreamController.broadcast();
+  Stream<int> get activeFilters => _activeFilterCtrl.stream;
+
+  StreamController<DataState> stateCtrl = StreamController.broadcast();
+  Stream<DataState> get dataState => stateCtrl.stream;
+
+  StreamController<String> _postTypeCtrl = StreamController.broadcast();
+  Stream<String> get postType => _postTypeCtrl.stream;
+
+  StreamController<String> _locationCtrl = StreamController.broadcast();
+  Stream<String> get location => _locationCtrl.stream;
 
   int filters = 0;
-
-  StreamController<DataState> stateCtrl;
 
   List<DogPost> posts;
 
   bool _fetchingLocation = false;
+  bool _isFetchingMorePosts = false;
+
+  PostType postsType = PostType.adopt;
 
   String town;
   String district;
   String city;
+
+  //All filters:
+
+  String gender = '';
+  String breed = '';
+  String size = '';
+  List<String> colors = [];
+  String trainingLevel = '';
+  String energyLevel = '';
+  String barkTendencies = '';
 
   bool isHalfScrolled() {
     double maxScroll = pageController.position.maxScrollExtent;
@@ -71,8 +103,11 @@ abstract class DogPostsBloc implements BlocBase {
   @override
   void dispose() {
     stateCtrl.close();
-    _didPressSuggestion.close();
-    notificationCtrl.close();
+    _shouldShowHeader.close();
+    _postTypeCtrl.close();
+    _locationCtrl.close();
+    _activeFilterCtrl.close();
+    _notificationCtrl.close();
   }
 
   void onFavoritePressed(DogPost post) async {
@@ -87,25 +122,25 @@ abstract class DogPostsBloc implements BlocBase {
 
     try {
       //Save locally
-      _localStorage.toggleFavorites(
+      localStorage.toggleFavorites(
         post.id,
         type,
       );
 
       //update the local and online user object with the new favs list
 
-      User user = _localStorage.getUser();
+      User user = localStorage.getUser();
 
       if (type == FavoriteType.adoption) {
-        user.favAdoptionPosts = _localStorage.getFavorites(type);
+        user.favAdoptionPosts = localStorage.getFavorites(type);
       } else {
-        user.favMatingPosts = _localStorage.getFavorites(type);
+        user.favMatingPosts = localStorage.getFavorites(type);
       }
 
-      _localStorage.editUser(user);
+      localStorage.editUser(user);
 
       //Save to network
-      if (_localStorage.isAuthenticated()) {
+      if (localStorage.isAuthenticated()) {
         if (type == FavoriteType.adoption) {
           FirestoreService().saveUserFavs(
               userId: user.uid, adoptionList: user.favAdoptionPosts);
@@ -116,24 +151,249 @@ abstract class DogPostsBloc implements BlocBase {
       }
     } on PlatformException catch (e, s) {
       sentry.captureException(exception: e, stackTrace: s);
-      notificationCtrl.sink.add('Error while saving favorites');
+      _notificationCtrl.sink.add('Error while saving favorites');
     } on SocketException {
-      notificationCtrl.sink.add('Network error while saving favorites');
+      _notificationCtrl.sink.add('Network error while saving favorites');
       stateCtrl.sink.add(DataState.networkError);
     }
   }
 
-  void onSuggestionSelected() {
-    _didPressSuggestion.sink.add(true);
+  Future<List<Prediction>> onLocationSearch(String input) async {
+    return await _locationUtil.completePlacesQuery(input);
   }
 
-  void clearFilters();
+  Future<void> onSuggestionSelected(Prediction prediction) async {
+    try {
+      Map<String, String> info =
+          await _locationUtil.getDetailsFromPrediction(prediction);
 
-  void recountFilters();
+      if (info == null) {
+        _notificationCtrl.sink.add('Something went wrong on our side');
+        return;
+      }
 
-  Future<void> getPosts();
+      town = info[UserConsts.TOWN];
+      city = info[UserConsts.CITY];
+      district = info[UserConsts.DISTRICT];
 
-  void loadMorePosts();
+      _locationCtrl.sink.add(prediction.description);
+
+      getPosts();
+    } on SocketException {
+      _notificationCtrl.sink.add('Poor Internet Connection');
+    } on PlatformException {
+      _notificationCtrl.sink.add('Something went wrong on our side');
+    }
+  }
+
+  void onPostTypeChanded(PostType type) {
+    String typeDisplay;
+    switch (type) {
+      case PostType.lost:
+        typeDisplay = 'Lost Dogs';
+        break;
+      case PostType.adopt:
+        typeDisplay = 'Adoption Dogs';
+        break;
+      case PostType.mate:
+        typeDisplay = 'Mating Dogs';
+        break;
+    }
+
+    _postTypeCtrl.sink.add(typeDisplay);
+    postsType = type;
+    clearAllFilters();
+  }
+
+  void clearAllFilters() {
+    gender = '';
+    breed = '';
+    size = '';
+    colors = [];
+    trainingLevel = '';
+    energyLevel = '';
+    barkTendencies = '';
+
+    getPosts();
+  }
+
+  void recountFilters() {
+    int i = 0;
+    switch (postsType) {
+      case PostType.lost:
+        if (gender.isNotEmpty) i++;
+        if (breed.isNotEmpty) i++;
+        if (colors.isNotEmpty) i++;
+        break;
+
+      case PostType.adopt:
+        if (gender.isNotEmpty) i++;
+        if (breed.isNotEmpty) i++;
+        if (colors.isNotEmpty) i++;
+        if (trainingLevel.isNotEmpty) i++;
+        if (energyLevel.isNotEmpty) i++;
+        if (barkTendencies.isNotEmpty) i++;
+        if (size.isNotEmpty) i++;
+        break;
+
+      case PostType.mate:
+        if (gender.isNotEmpty) i++;
+        if (size.isNotEmpty) i++;
+        if (breed.isNotEmpty) i++;
+        if (colors.isNotEmpty) i++;
+        break;
+    }
+
+    print(i);
+    _activeFilterCtrl.sink.add(i);
+  }
+
+  Future<void> getPosts() async {
+    recountFilters();
+    stateCtrl.sink.add(DataState.loading);
+    try {
+      List<DocumentSnapshot> list;
+      if (await isOnline()) {
+        switch (postsType) {
+          case PostType.lost:
+            list = await lostRepo.getLostDogs(
+              town: town,
+              city: city,
+              district: district,
+              breed: breed,
+              colors: colors,
+              gender: gender,
+            );
+
+            break;
+
+          case PostType.adopt:
+            list = await adoptRepo.getAdoptionDogs(
+              town: town,
+              city: city,
+              district: district,
+              gender: gender,
+              breed: breed,
+              coatColors: colors,
+              trainingLevel: trainingLevel,
+              energyLevel: energyLevel,
+              barkTendencies: barkTendencies,
+              size: size,
+            );
+
+            break;
+
+          case PostType.mate:
+            list = await mateRepo.getMatingDogs(
+              town: town,
+              city: city,
+              district: district,
+              gender: gender,
+              size: size,
+              breed: breed,
+              colors: colors,
+            );
+
+            break;
+        }
+
+        if (list == null) {
+          stateCtrl.sink.add(DataState.unknownError);
+          return;
+        }
+
+        if (list.isEmpty) {
+          stateCtrl.sink.add(DataState.noDataAvailable);
+          return;
+        }
+
+        switch (postsType) {
+          case PostType.lost:
+            posts = list.map((doc) {
+              return LostPost.fromMap(doc.data);
+            }).toList();
+            break;
+
+          case PostType.adopt:
+            posts = list.map((doc) {
+              return AdoptPost.fromMap(doc.data);
+            }).toList();
+            break;
+
+          case PostType.mate:
+            posts = list.map((doc) {
+              return MatePost.fromMap(doc.data);
+            }).toList();
+            break;
+        }
+
+        stateCtrl.sink.add(DataState.postsAvailable);
+      } else {
+        stateCtrl.sink.add(DataState.networkError);
+      }
+    } on PlatformException catch (e, s) {
+      sentry.captureException(
+        exception: e,
+        stackTrace: s,
+      );
+      print(e.code);
+      print(e.message);
+
+      stateCtrl.sink.add(DataState.unknownError);
+    } on SocketException {
+      stateCtrl.sink.add(DataState.networkError);
+    }
+  }
+
+  Future<void> loadMorePosts() async {
+    if (!_isFetchingMorePosts) {
+      _isFetchingMorePosts = true;
+      try {
+        List<DocumentSnapshot> list;
+        switch (postsType) {
+          case PostType.lost:
+            list = await lostRepo.loadMoreData();
+            break;
+
+          case PostType.adopt:
+            list = await adoptRepo.loadMoreData();
+            break;
+
+          case PostType.mate:
+            list = await mateRepo.loadMoreData();
+            break;
+        }
+
+        if (list != null && list.isNotEmpty) {
+          switch (postsType) {
+            case PostType.lost:
+              posts = list.map((doc) => LostPost.fromMap(doc.data)).toList();
+              break;
+
+            case PostType.adopt:
+              posts = list.map((doc) => AdoptPost.fromMap(doc.data)).toList();
+              break;
+
+            case PostType.mate:
+              posts = list.map((doc) => MatePost.fromMap(doc.data)).toList();
+              break;
+          }
+          stateCtrl.sink.add(DataState.postsAvailable);
+        }
+      } on SocketException {
+        _notificationCtrl.sink.add('You\'re Internet Connection is poor.');
+      }
+
+      /*/*/* when data is updated, the widget rebuild takes
+       time and so the scroll controller doesn't instantly 
+       update it's scrolling values and directly makes
+       another call to get more data thus doing two batches 
+       of data in one scrolling session */*/*/
+      Future.delayed(Duration(milliseconds: 100), () {
+        _isFetchingMorePosts = false;
+      });
+    }
+  }
 
   Future<void> nearByPressed() async {
     if (!_fetchingLocation) {
@@ -190,9 +450,10 @@ abstract class DogPostsBloc implements BlocBase {
             city = locationData.userCity;
             district = locationData.userDistrict;
 
-            _localStorage.setUserLocationData(locationData);
+            localStorage.setUserLocationData(locationData);
 
-            notificationCtrl.sink
+            _locationCtrl.sink.add(locationData.userDisplay);
+            _notificationCtrl.sink
                 .add('Showing results in ${town ?? city ?? district}');
 
             await getPosts();

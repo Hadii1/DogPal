@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:dog_pal/bloc/mate_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
@@ -13,12 +11,10 @@ import 'package:provider/provider.dart';
 class MateDetailsArgs {
   MatePost post;
   Function onDeletePressed;
-  MateBloc bloc;
   int activeImageIndex;
   String heroTag;
 
   MateDetailsArgs({
-    @required this.bloc,
     @required this.post,
     this.activeImageIndex,
     this.onDeletePressed,
@@ -129,7 +125,7 @@ class _MateDogDetailsScreenState extends State<MateDogDetailsScreen> {
                         localStorage.getUser().uid ==
                             widget.args.post.dog.owner.uid
                     ? DeletePostButton(
-                        bloc: widget.args.bloc,
+                        bloc: null,
                         post: widget.args.post,
                         onDeletePressed: widget.args.onDeletePressed,
                       )

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog.dart';
 import 'package:dog_pal/models/user.dart';
@@ -17,13 +15,11 @@ import 'package:provider/provider.dart';
 class AdoptDetailsArgs {
   AdoptPost post;
   Function onDeletePressed;
-  AdoptBloc bloc;
   int activeImageIndex;
   String heroTag;
 
   AdoptDetailsArgs({
     @required this.post,
-    @required this.bloc,
     this.activeImageIndex,
     this.heroTag,
     this.onDeletePressed,
@@ -112,7 +108,7 @@ class _AdoptionDogWallState extends State<AdoptionDogWall> {
                   ? DeletePostButton(
                       post: widget.args.post,
                       onDeletePressed: widget.args.onDeletePressed,
-                      bloc: widget.args.bloc,
+                      bloc: null,
                     )
                   : OwnerContactButton(widget.args.post.dog.owner),
             ],

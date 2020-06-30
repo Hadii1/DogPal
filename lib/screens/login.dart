@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dog_pal/bloc/auth_bloc.dart';
-import 'package:dog_pal/screens/profile/profile_screen.dart';
+import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
@@ -250,11 +250,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: TextDecoration.underline,
               ),
               recognizer: TapGestureRecognizer()
-                ..onTap = () => Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (_) => TermsScreen(),
-                      ),
-                    ),
+                ..onTap = () => Navigator.of(context, rootNavigator: true)
+                    .pushNamed(AppRoutes.TERMS_SCREEN),
             )
           ],
         ),

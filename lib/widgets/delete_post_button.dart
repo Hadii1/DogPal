@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:dog_pal/bloc/app_bloc.dart';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/utils/constants_util.dart';
@@ -81,7 +79,7 @@ class _DeletePostButtonState extends State<DeletePostButton> {
           secondChild: Text(
             'Delete Post',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 50.sp),
+            style: TextStyle(fontSize: 42.sp),
           ),
           duration: Duration(milliseconds: 150),
         ),
@@ -119,19 +117,20 @@ class _DeletePostButtonState extends State<DeletePostButton> {
 
         //notify the user of success
 
-        AppBloc appBloc = Provider.of<AppBloc>(context, listen: false);
-        appBloc.notificationsSender.sink.add(
-          SnackBar(
-            duration: Duration(seconds: 3),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Text('Post Deleted'),
-                Icon(Icons.check_circle, color: Colors.green),
-              ],
-            ),
-          ),
-        );
+        // AppBloc appBloc = Provider.of<AppBloc>(context, listen: false);
+        // TODO
+        // appBloc.notificationsSender.sink.add(
+        //   SnackBar(
+        //     duration: Duration(seconds: 3),
+        //     content: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //       children: <Widget>[
+        //         Text('Post Deleted'),
+        //         Icon(Icons.check_circle, color: Colors.green),
+        //       ],
+        //     ),
+        //   ),
+        // );
 
         //delete images in storage
         firestoreUtil.deleteImages(_post.dog.imagesUrls.cast<String>());

@@ -1,12 +1,8 @@
 import 'dart:math';
-import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/bloc/app_bloc.dart';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
-import 'package:dog_pal/bloc/lost_bloc.dart';
-import 'package:dog_pal/bloc/mate_bloc.dart';
-import 'package:dog_pal/navigators/adopt_navigator.dart';
-import 'package:dog_pal/navigators/lost_navigator.dart';
-import 'package:dog_pal/navigators/mate_navigator.dart';
+import 'package:dog_pal/models/dog_post_mode.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/navigators/profile_navigator.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
@@ -33,13 +29,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  int _bottomNavIndex = 2;
+  int _bottomNavIndex = 0;
 
   AppBloc _appBloc;
 
   LocalStorage _localStorage;
 
-  List<String> _errorMsgs = [
+  DogPostsBloc _dogPostsBloc;
+
+  final List<String> _errorMsgs = [
     'Couldnt\'t add post. There seems to be an error from our side.',
     'Oops.. we couldn\'t add your post. Looks like somethings went wrong.',
     'We\'ve had an error adding your post.',
@@ -49,14 +47,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   void initState() {
     _appBloc = Provider.of<AppBloc>(context, listen: false);
     _localStorage = Provider.of<LocalStorage>(context, listen: false);
+    _dogPostsBloc = Provider.of<DogPostsBloc>(context, listen: false);
 
     _navigatorsKeys = List.generate(
-      4,
+      2,
       (int index) => GlobalKey(),
     );
 
     _faders = List.generate(
-      4,
+      2,
       (ind) {
         return AnimationController(
           vsync: this,
@@ -74,100 +73,91 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
           _scaffoldKey.currentState.showSnackBar(widget.locationNotification);
         }
 
-        await Future.delayed(
-          Duration(seconds: widget.locationNotification == null ? 0 : 4),
-          () {
-            _scaffoldKey.currentState.showSnackBar(
-              SnackBar(
-                content: Text(
-                    'Showing results in ${_localStorage.getUserLocationData().userDisplay}'),
-              ),
-            );
-          },
-        );
+        //Show first location:
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+              'Showing results in ${_localStorage.getUserLocationData().userDisplay}'),
+        ));
       },
     );
+    // TODO: refactor refreshing posts into bloc
+    _appBloc.operationStatus.listen((status) {
+      switch (status) {
+        case OperationStatus.adding:
+          _showProgressNotification();
+          break;
+        case OperationStatus.successful:
+          _scaffoldKey.currentState.hideCurrentSnackBar();
+          _showSuccessNotification();
+          _refreshPosts();
+          break;
+        case OperationStatus.failed:
+          _scaffoldKey.currentState.hideCurrentSnackBar();
+          _showFailureNotification();
+          break;
+      }
+    });
 
-    _appBloc.notifications.listen(
-      (snack) {
-        _scaffoldKey.currentState.showSnackBar(snack);
-      },
+    super.initState();
+  }
+
+  void _showFailureNotification() {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(_errorMsgs[Random().nextInt(3)]),
+        action: SnackBarAction(
+          label: 'Retry',
+          onPressed: () => _appBloc.onRetryPressed(),
+        ),
+      ),
     );
+  }
 
-    _appBloc.postsToAddStream.listen(
-      (func) async {
-        _appBloc.lastFunction = func;
-        _appBloc.currentlyAdding = true;
-
-        //notify the user of the operation
-        _scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            content: Wrap(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text('Adding Post...'),
-                    ),
-                    SizedBox(
-                      height: 2,
-                      child: LinearProgressIndicator(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ],
+  void _showProgressNotification() {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Wrap(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text('Adding Post...'),
+                ),
+                SizedBox(
+                  height: 2,
+                  child: LinearProgressIndicator(
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
                 ),
               ],
             ),
-            duration: Duration(days: 100),
-          ),
-        );
-
-        bool succeeded =
-            await func().timeout(Duration(seconds: 60), onTimeout: () => false);
-
-        _scaffoldKey.currentState.hideCurrentSnackBar();
-
-        _appBloc.currentlyAdding = false;
-
-        if (succeeded) {
-          _scaffoldKey.currentState.showSnackBar(
-            SnackBar(
-              duration: Duration(seconds: 3),
-              content: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Post Successfully Added'),
-                  Icon(Icons.check_box, color: Theme.of(context).accentColor),
-                ],
-              ),
-              action: SnackBarAction(
-                label: 'View',
-                onPressed: () => _navigateToPost(context),
-              ),
-            ),
-          );
-
-          _refreshPosts();
-        } else {
-          _scaffoldKey.currentState.showSnackBar(
-            SnackBar(
-              content: Text(_errorMsgs[Random().nextInt(3)]),
-              action: SnackBarAction(
-                label: 'Retry',
-                onPressed: () async =>
-                    _appBloc.postsCtrl.sink.add(_appBloc.lastFunction),
-              ),
-            ),
-          );
-        }
-      },
+          ],
+        ),
+        duration: Duration(days: 100),
+      ),
     );
+  }
 
-    super.initState();
+  void _showSuccessNotification() {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 3),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('Post Successfully Added'),
+            Icon(Icons.check_box, color: Theme.of(context).accentColor),
+          ],
+        ),
+        action: SnackBarAction(
+          label: 'View',
+          onPressed: () => _navigateToPost(context),
+        ),
+      ),
+    );
   }
 
   @override
@@ -183,7 +173,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
           top: false,
           child: Stack(
             fit: StackFit.expand,
-            children: List.generate(4, (index) {
+            children: List.generate(2, (index) {
               final Widget view = FadeTransition(
                 opacity: _faders[index].drive(
                   CurveTween(curve: Curves.easeOutCubic),
@@ -213,16 +203,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   Widget getChild(int index) {
     switch (index) {
       case 0:
-        return AdoptNavigator(_navigatorsKeys[0]);
+        return DogsScreenNavigator(_navigatorsKeys[0]);
         break;
       case 1:
-        return MateNavigator(_navigatorsKeys[1]);
-        break;
-      case 2:
-        return LostNavigator(_navigatorsKeys[2]);
-        break;
-      case 3:
-        return ProfileNavigator(_navigatorsKeys[3]);
+        return ProfileNavigator(_navigatorsKeys[1]);
         break;
       default:
         return null;
@@ -231,10 +215,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   BottomNavigationBar _buildNavigationBar() {
     return BottomNavigationBar(
-      selectedFontSize: 45.sp,
       unselectedFontSize: 35.sp,
       elevation: 12,
-      selectedIconTheme: IconThemeData(size: 85.sp),
       iconSize: 75.sp,
       currentIndex: _bottomNavIndex,
       showUnselectedLabels: true,
@@ -243,18 +225,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
       unselectedItemColor: Colors.grey,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(MdiIcons.homeHeart),
-          title: Text('Adopt'),
-          backgroundColor: yellowishColor,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(MdiIcons.heart),
-          title: Text('Mate'),
-          backgroundColor: yellowishColor,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(MdiIcons.emoticonSad),
-          title: Text('Lost'),
+          icon: Icon(MdiIcons.dog),
+          title: Text('Dogs'),
           backgroundColor: yellowishColor,
         ),
         BottomNavigationBarItem(
@@ -279,13 +251,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   void _navigateToPost(BuildContext context) {
     Widget child;
-    print(_appBloc.dogPost.type);
+
     switch (_appBloc.dogPost.type) {
       case 'lost':
         child = LostDogDetailsScreen(
           LostDetailsArgs(
             post: _appBloc.dogPost,
-            bloc: Provider.of<LostBloc>(context, listen: false),
           ),
         );
         break;
@@ -294,7 +265,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
         child = AdoptionDogWall(
           AdoptDetailsArgs(
             post: _appBloc.dogPost,
-            bloc: Provider.of<AdoptBloc>(context, listen: false),
           ),
         );
         break;
@@ -303,7 +273,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
         child = MateDogDetailsScreen(
           MateDetailsArgs(
             post: _appBloc.dogPost,
-            bloc: Provider.of<MateBloc>(context, listen: false),
           ),
         );
         break;
@@ -324,30 +293,31 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   }
 
   void _refreshPosts() {
-    DogPostsBloc bloc;
+    //to search for the last post added we edit the
+    //location we're searching in to the last post location
+
+    _dogPostsBloc.town = _localStorage.getPostLocationData().postTown;
+    _dogPostsBloc.city = _localStorage.getPostLocationData().postCity;
+    _dogPostsBloc.district = _localStorage.getPostLocationData().postDistrict;
+
+    PostType type;
+    //check last post type we added to query for this type
     switch (_appBloc.dogPost.type) {
       case 'lost':
-        bloc = Provider.of<LostBloc>(context, listen: false);
+        type = PostType.lost;
         break;
-
       case 'adopt':
-        bloc = Provider.of<AdoptBloc>(context, listen: false);
+        type = PostType.adopt;
         break;
-
       case 'mate':
-        bloc = Provider.of<MateBloc>(context, listen: false);
+        type = PostType.mate;
         break;
-
       default:
-        throw PlatformException(code: 'post type isn\'t valid');
+        throw PlatformException(code: 'post type not supported');
     }
 
-    //to search for the last post added we edit the location we're searching in to the post location
+    _dogPostsBloc.onPostTypeChanded(type);
 
-    bloc.town = _localStorage.getPostLocationData().postTown;
-    bloc.city = _localStorage.getPostLocationData().postCity;
-    bloc.district = _localStorage.getPostLocationData().postDistrict;
-
-    bloc.getPosts();
+    _dogPostsBloc.getPosts();
   }
 }

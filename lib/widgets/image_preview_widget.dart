@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/screens/full_screen_image.dart';
 import 'package:dog_pal/widgets/circle_indicator_widget.dart';
 import 'package:extended_image/extended_image.dart';
@@ -163,11 +162,9 @@ class _ImagePreviewState extends State<ImagePreview> {
         });
       },
     );
-    Navigator.of(context, rootNavigator: true).push(
-      Platform.isIOS
-          ? TransparentRoute(builder: () => child)
-          : TransparentMaterialPageRoute(builder: (_) => child),
-    );
+
+    Navigator.of(context, rootNavigator: true)
+        .pushNamed(AppRoutes.FULL_SCREEN_IMAGE, arguments: child);
   }
 }
 

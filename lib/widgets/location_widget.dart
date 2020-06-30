@@ -1,5 +1,4 @@
-import 'package:dog_pal/bloc/post_location_bloc.dart';
-import 'package:dog_pal/screens/post_location.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -39,18 +38,10 @@ class _LocationFieldState extends State<LocationField> {
               borderRadius: BorderRadius.circular(10),
             ),
             onPressed: () async {
-              _locationDisplay = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (_) {
-                        return Provider(
-                          create: (_) => PostLocationBloc(
-                            Provider.of<LocalStorage>(context, listen: false),
-                          ),
-                          child: PostLocation(),
-                        );
-                      },
-                    ),
+              _locationDisplay = await Navigator.of(context).pushNamed(
+                    DogsScreenRoutes.POST_LOCATION,
+                    arguments:
+                        Provider.of<LocalStorage>(context, listen: false),
                   ) ??
                   _locationDisplay ??
                   '';

@@ -77,39 +77,44 @@ class _SizeFilterState extends State<SizeFilter> {
               ),
             ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.14,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: GridView.count(
-                crossAxisCount: 1,
-                scrollDirection: Axis.horizontal,
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: _sizes.map(
                   (size) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: ChoiceChip(
                             backgroundColor: Colors.grey[200],
                             labelPadding: EdgeInsets.symmetric(horizontal: 2),
                             label: Center(
-                              child: Text(
-                                size,
-                                overflow: TextOverflow.visible,
-                                style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(42),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0),
+                                child: Text(
+                                  size,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    fontSize: ScreenUtil().setSp(42),
+                                  ),
                                 ),
                               ),
                             ),
                             selected: _selectedSize == size,
                             onSelected: (selected) {
-                              if (selected) {
-                                _selectedSize = size;
-                              }
-                              widget.onChanged(_selectedSize);
-                              setState(() {});
+                              setState(() {
+                                if (selected) {
+                                  _selectedSize = size;
+                                } else {
+                                  _selectedSize = '';
+                                }
+                                widget.onChanged(_selectedSize);
+                              });
                             },
                           ),
                         ),

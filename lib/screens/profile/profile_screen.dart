@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/profile_bloc.dart';
+import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/navigators/profile_navigator.dart';
-import 'package:dog_pal/screens/login.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/privacy_policy.dart';
@@ -87,7 +87,7 @@ class _LoadingWidget extends StatelessWidget {
 class ProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final localStorage = Provider.of<LocalStorage>(context, listen: false);
+    final _localStorage = Provider.of<LocalStorage>(context, listen: false);
     final _profileBloc = Provider.of<ProfileBloc>(context, listen: false);
     return Fader(
       child: SingleChildScrollView(
@@ -107,15 +107,10 @@ class ProfileWidget extends StatelessWidget {
                         iconData: MdiIcons.dogSide,
                         text: 'Posts',
                         onPressed: () {
-                          localStorage.isAuthenticated()
+                          _localStorage.isAuthenticated()
                               ? Navigator.of(context)
                                   .pushNamed(ProfileRoutes.POSTS_SCREEN)
-                              : Scaffold.of(context).showSnackBar(
-                                  signInSnackBar(
-                                    context,
-                                    text: 'Sign in to add and view posts',
-                                  ),
-                                );
+                              : _showSignInSnackBar(context);
                         },
                       ),
                       _ProfileItem(
@@ -184,7 +179,7 @@ class ProfileWidget extends StatelessWidget {
                               onPressed: () => Navigator.of(context)
                                   .pushNamed(ProfileRoutes.CREDENTIALS_SCREEN),
                             ),
-                            localStorage.isAuthenticated()
+                            _localStorage.isAuthenticated()
                                 ? _ProfileItem(
                                     hideDivier: true,
                                     iconData: Icons.keyboard_return,
@@ -198,20 +193,10 @@ class ProfileWidget extends StatelessWidget {
                                     text: 'Sign in',
                                     onPressed: () => Navigator.of(context,
                                             rootNavigator: true)
-                                        .push(
-                                      MaterialPageRoute(
-                                        fullscreenDialog: true,
-                                        builder: (c) {
-                                          return Provider(
-                                            create: (_) =>
-                                                AuthBloc(localStorage),
-                                            child: LoginScreen(),
-                                          );
-                                        },
-                                      ),
-                                    ),
+                                        .pushNamed(AppRoutes.AUTH_SCREEN,
+                                            arguments: _localStorage),
                                   ),
-                            localStorage.isAuthenticated()
+                            _localStorage.isAuthenticated()
                                 ? _ProfileItem(
                                     hideDivier: true,
                                     iconData: Icons.delete,
@@ -227,6 +212,35 @@ class ProfileWidget extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSignInSnackBar(BuildContext context) {
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Sign In',
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pushNamed(
+              AppRoutes.AUTH_SCREEN,
+              arguments:
+                  AuthBloc(Provider.of<LocalStorage>(context, listen: false)),
+            );
+          },
+        ),
+        content: Row(
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Text(
+                'Please Sign in to add a post',
+                softWrap: true,
+              ),
             ),
           ],
         ),
@@ -641,17 +655,9 @@ class _ProfileHeader extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (!localStorage.isAuthenticated()) {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              fullscreenDialog: true,
-                              builder: (_) {
-                                return Provider(
-                                  create: (_) => AuthBloc(localStorage),
-                                  child: LoginScreen(),
-                                );
-                              },
-                            ),
-                          );
+                          Navigator.of(context, rootNavigator: true).pushNamed(
+                              AppRoutes.AUTH_SCREEN,
+                              arguments: localStorage);
                         }
                       },
                       child: Text(

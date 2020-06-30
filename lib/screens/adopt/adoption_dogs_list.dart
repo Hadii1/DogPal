@@ -1,6 +1,5 @@
-import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
-import 'package:dog_pal/navigators/adopt_navigator.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
@@ -103,13 +102,12 @@ class _AdoptCardState extends State<AdoptCard> {
                       heroTag: widget.heroTag,
                       initialImage: _imageScrollIndex,
                       onPressed: (int index) => Navigator.of(context).pushNamed(
-                        AdoptRoutes.ADOPTION_DOG_WALL,
+                        DogsScreenRoutes.ADOPTION_DOG_WALL,
                         arguments: AdoptDetailsArgs(
                           post: widget.post,
                           onDeletePressed: widget.onDeletePressed,
                           activeImageIndex: index,
                           heroTag: widget.heroTag,
-                          bloc: Provider.of<AdoptBloc>(context, listen: false),
                         ),
                       ),
                       height: MediaQuery.of(context).size.height * 0.35,

@@ -1,23 +1,17 @@
 import 'dart:math';
-import 'package:dog_pal/bloc/adopt_bloc.dart';
 import 'package:dog_pal/bloc/app_bloc.dart';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
-import 'package:dog_pal/bloc/lost_bloc.dart';
-import 'package:dog_pal/bloc/mate_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/mate_post.dart';
-import 'package:dog_pal/navigators/adopt_navigator.dart';
-import 'package:dog_pal/navigators/lost_navigator.dart';
-import 'package:dog_pal/navigators/mate_navigator.dart';
+import 'package:dog_pal/navigators/app_navigator.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/screens/adopt/adoption_dogs_list.dart';
-import 'package:dog_pal/screens/filter_pages.dart';
 import 'package:dog_pal/screens/lost/lost_dogs_list.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
-import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/animated_header.dart';
 import 'package:dog_pal/widgets/fade_in_widget.dart';
 import 'package:dog_pal/widgets/filter_buttons_widget.dart';
@@ -33,9 +27,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class DogsScreen extends StatefulWidget {
-  const DogsScreen({@required this.postType});
-  final PostType postType;
-
+  const DogsScreen();
   @override
   _DogsScreenState createState() => _DogsScreenState();
 }
@@ -43,13 +35,12 @@ class DogsScreen extends StatefulWidget {
 class _DogsScreenState extends State<DogsScreen> {
   DogPostsBloc _bloc;
 
-  PostType get _state => widget.postType;
-
   bool _showUpperSnackbar = false;
 
   @override
   void initState() {
-    _initializeBloc();
+    _bloc = Provider.of<DogPostsBloc>(context, listen: false);
+
     _bloc.blocNotifications.listen((notification) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
@@ -62,6 +53,7 @@ class _DogsScreenState extends State<DogsScreen> {
         ),
       );
     });
+
     _bloc.getPosts();
     super.initState();
   }
@@ -70,11 +62,6 @@ class _DogsScreenState extends State<DogsScreen> {
   void dispose() {
     _bloc.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -91,9 +78,8 @@ class _DogsScreenState extends State<DogsScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: AnimatedHeader(
-            height: 150.sp,
             scrollController: _bloc.pageController,
-            didPressSuggestion: _bloc.isSuggestionPressed,
+            didPressSuggestion: _bloc.showHeader,
             child: FloatingActionButton(
               tooltip: 'Add Post',
               heroTag: Random().nextInt(999),
@@ -112,29 +98,31 @@ class _DogsScreenState extends State<DogsScreen> {
                     padding: const EdgeInsets.fromLTRB(21, 4, 21, 0),
                     child: LocationSeachBar(
                       cityController: _bloc.cityNameController,
-                      onSuggestionSelected: (town, city, district, display) {
-                        _bloc.town = town;
-                        _bloc.city = city;
-                        _bloc.district = district;
-                        _bloc.onSuggestionSelected();
-                        _bloc.getPosts();
-                      },
+                      onNearbyPressed: _bloc.nearByPressed,
+                      suggestionCallback: _bloc.onLocationSearch,
+                      onSuggestionSelected: _bloc.onSuggestionSelected,
                     ),
                   ),
                   AnimatedHeader(
-                    didPressSuggestion: _bloc.isSuggestionPressed,
+                    didPressSuggestion: _bloc.showHeader,
                     scrollController: _bloc.pageController,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        FilterButtons(
-                          filterSheet: _handleFilterSheet(),
-                          onClearPressed: _bloc.clearFilters,
-                          onNearbyPressed: _bloc.nearByPressed,
-                          filterStream: _bloc.activeFilters,
+                        Flexible(
+                          flex: 1,
+                          child: FilterButtons(
+                            onClearPressed: _bloc.clearAllFilters,
+                            filterStream: _bloc.activeFilters,
+                          ),
                         ),
-                        PostTypeButton(
-                          onTypePressed: (PostType type) {},
+                        Flexible(
+                          flex: 1,
+                          child: PostTypeField(
+                            onTypePressed: _bloc.onPostTypeChanded,
+                            type: _bloc.postType,
+                          ),
                         ),
                       ],
                     ),
@@ -173,6 +161,7 @@ class _DogsScreenState extends State<DogsScreen> {
                             return UnknownErrorWidget(
                               onRetry: () => _bloc.nearByPressed(),
                             );
+                            break;
 
                           case DataState.locationNetworkError:
                             return NoInternetWidget(
@@ -181,12 +170,12 @@ class _DogsScreenState extends State<DogsScreen> {
                             break;
 
                           case DataState.postsAvailable:
-                            return getPostsList();
+                            return _getPostsList();
                             break;
 
                           case DataState.noDataAvailable:
                             return NoDogsWidget(
-                              postType: _state,
+                              postType: _bloc.postsType,
                               filters: _bloc.filters,
                             );
                             break;
@@ -280,22 +269,6 @@ class _DogsScreenState extends State<DogsScreen> {
     );
   }
 
-  Widget _handleFilterSheet() {
-    switch (_state) {
-      case PostType.adopt:
-        return AdoptFilterSheet(_bloc);
-        break;
-      case PostType.lost:
-        return LostFilterPage(_bloc);
-        break;
-      case PostType.mate:
-        return MateFilterPage(_bloc);
-        break;
-      default:
-        return null;
-    }
-  }
-
   // TODO: refactor into the bloc
   _handleFabPress() async {
     final AppBloc appBloc = Provider.of<AppBloc>(context, listen: false);
@@ -305,17 +278,17 @@ class _DogsScreenState extends State<DogsScreen> {
     if (localStorage.isAuthenticated()) {
       if (!appBloc.currentlyAdding) {
         String destination;
-        switch (_state) {
+        switch (_bloc.postsType) {
           case PostType.adopt:
-            destination = AdoptRoutes.ADD_ADOPTION_POST;
+            destination = DogsScreenRoutes.ADD_ADOPTION_POST;
             break;
 
           case PostType.lost:
-            destination = LostRoutes.ADD_LOST_DOG;
+            destination = DogsScreenRoutes.ADD_LOST_DOG;
             break;
 
           case PostType.mate:
-            destination = MateRoutes.MATE_WARNING;
+            destination = DogsScreenRoutes.MATE_WARNING;
             break;
         }
         Navigator.of(context).pushNamed(destination);
@@ -335,27 +308,41 @@ class _DogsScreenState extends State<DogsScreen> {
         });
       }
     } else {
-      Scaffold.of(context).showSnackBar(signInSnackBar(context));
+      _showSignInSnackBar(context);
     }
   }
 
-  void _initializeBloc() {
-    switch (_state) {
-      case PostType.adopt:
-        _bloc = Provider.of<AdoptBloc>(context, listen: false);
-        break;
-      case PostType.lost:
-        _bloc = Provider.of<LostBloc>(context, listen: false);
-        break;
-      case PostType.mate:
-        _bloc = Provider.of<MateBloc>(context, listen: false);
-        break;
-    }
+  void _showSignInSnackBar(BuildContext context) {
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Sign In',
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pushNamed(
+              AppRoutes.AUTH_SCREEN,
+              arguments: Provider.of<LocalStorage>(context, listen: false),
+            );
+          },
+        ),
+        content: Row(
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Text(
+                'Please Sign in to add a post',
+                softWrap: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget getPostsList() {
+  Widget _getPostsList() {
     Widget widget;
-    switch (_state) {
+    switch (_bloc.postsType) {
       case PostType.adopt:
         widget = AdoptionList(
           posts: _bloc.posts,

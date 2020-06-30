@@ -36,45 +36,49 @@ class _CoatColorState extends State<CoatColor> {
             'Coat Color(s)',
             style: subHeaderStyle,
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-            child: GridView.count(
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              crossAxisCount: 1,
-              children: DogUtil.DOG_COLORS.map((color) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                  child: FilterChip(
-                    labelPadding: EdgeInsets.symmetric(horizontal: 2),
-                    backgroundColor: Colors.grey[200],
-                    checkmarkColor: Colors.white,
-                    label: Text(
-                      color,
-                      overflow: TextOverflow.visible,
-                      style: TextStyle(
-                        color: _selectedColors.contains(color)
-                            ? Colors.white
-                            : Colors.black87,
-                        fontSize: ScreenUtil().setSp(40),
+              child: Row(
+                children: DogUtil.DOG_COLORS.map((color) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: FilterChip(
+                      labelPadding: EdgeInsets.symmetric(horizontal: 2),
+                      backgroundColor: Colors.grey[200],
+                      checkmarkColor: Colors.white,
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text(
+                          color,
+                          overflow: TextOverflow.visible,
+                          style: TextStyle(
+                            color: _selectedColors.contains(color)
+                                ? Colors.white
+                                : Colors.black87,
+                            fontSize: ScreenUtil().setSp(40),
+                          ),
+                        ),
                       ),
-                    ),
-                    selected: _selectedColors.contains(color),
-                    onSelected: (selected) {
-                      if (selected) {
-                        _selectedColors.add(color);
-                      } else {
-                        _selectedColors.removeWhere((name) {
-                          return color == name;
-                        });
-                      }
+                      selected: _selectedColors.contains(color),
+                      onSelected: (selected) {
+                        if (selected) {
+                          _selectedColors.add(color);
+                        } else {
+                          _selectedColors.removeWhere((name) {
+                            return color == name;
+                          });
+                        }
 
-                      widget.onChanged(_selectedColors);
-                      setState(() {});
-                    },
-                    selectedColor: Theme.of(context).primaryColor,
-                  ),
-                );
-              }).toList(),
+                        widget.onChanged(_selectedColors);
+                        setState(() {});
+                      },
+                      selectedColor: Theme.of(context).primaryColor,
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],

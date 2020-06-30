@@ -212,7 +212,7 @@ class ProfileBloc implements BlocBase {
     if (postType == 'lost') {
       return list.map(
         (doc) {
-          return LostPost.fromDocument(doc.data);
+          return LostPost.fromMap(doc.data);
         },
       ).toList();
     } else if (postType == 'mate') {
@@ -224,7 +224,7 @@ class ProfileBloc implements BlocBase {
     } else if (postType == 'adopt') {
       return list.map(
         (doc) {
-          return AdoptPost.fromDocument(doc.data);
+          return AdoptPost.fromMap(doc.data);
         },
       ).toList();
     } else {
@@ -302,7 +302,7 @@ class ProfileBloc implements BlocBase {
 
       return list.map(
         (e) {
-          return AdoptPost.fromDocument(e.data);
+          return AdoptPost.fromMap(e.data);
         },
       ).toList();
     } else {

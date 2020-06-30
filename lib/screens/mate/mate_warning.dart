@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dog_pal/navigators/mate_navigator.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/utils/mate_warnings.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +99,7 @@ class _MateWarningScreenState extends State<MateWarningScreen> {
                   ),
                 ),
                 onPressed: () => _documentRead
-                    ? Navigator.of(context).pushNamed(MateRoutes.ADD_MATE_DOG)
+                    ? Navigator.of(context).pushNamed(DogsScreenRoutes.ADD_MATE_DOG)
                     : null,
               )
             ],

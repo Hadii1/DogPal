@@ -25,9 +25,9 @@ class LostRepo extends PaginationUtil {
     @required String town,
     @required String city,
     @required String district,
-    String breed,
-    String gender,
-    List<String> colors,
+    @required String breed,
+    @required String gender,
+    @required List<String> colors,
   }) {
     town == null
         ? firstQuery = null

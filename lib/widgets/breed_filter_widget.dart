@@ -1,3 +1,4 @@
+import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/utils/dog_util.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
@@ -94,21 +95,22 @@ class _BreedFilterWidgetState extends State<BreedFilterWidget> {
   }
 
   _showBreedDialog(BuildContext context) async {
-    _currentBreed = await Navigator.of(context, rootNavigator: true).push(
-          MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (_) {
-              return BreedsDialog();
-            },
-          ),
-        ) ??
-        _currentBreed ??
-        'Any';
-    widget.onChanged(_currentBreed);
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.BREED_DIALOGE,
+      arguments: (breed) {
+        setState(() {
+          _currentBreed = breed;
+          widget.onChanged(_currentBreed);
+        });
+      },
+    );
+    // _currentBreed ?? 'Any';
   }
 }
 
 class BreedsDialog extends StatefulWidget {
+  const BreedsDialog({@required this.onBreedChosen});
+  final Function(String) onBreedChosen;
   @override
   _BreedsDialogState createState() => _BreedsDialogState();
 }
@@ -162,6 +164,7 @@ class _BreedsDialogState extends State<BreedsDialog> {
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
                         onTap: () {
+                          widget.onBreedChosen(dogSuggestions[index]);
                           Navigator.pop(context, dogSuggestions[index]);
                         },
                         child: Row(

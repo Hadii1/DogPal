@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dog_pal/bloc/app_bloc.dart';
-import 'package:dog_pal/utils/decision_util.dart';
+import 'package:dog_pal/navigators/app_navigator.dart';
+import 'package:dog_pal/screens/splash_screen.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        onGenerateRoute: AppRoutes.onGenerateRoute,
         theme: ThemeData(
           bottomSheetTheme: BottomSheetThemeData(
             modalBackgroundColor: Color(0xfffffffa),

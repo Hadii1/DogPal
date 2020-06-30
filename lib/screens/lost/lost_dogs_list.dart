@@ -1,6 +1,5 @@
-import 'package:dog_pal/bloc/lost_bloc.dart';
 import 'package:dog_pal/models/lost_post.dart';
-import 'package:dog_pal/navigators/lost_navigator.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -8,8 +7,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LostList extends StatelessWidget {
@@ -85,11 +82,10 @@ class LostPostCard extends StatelessWidget {
       height: _cardHeight,
       child: InkWell(
         onTap: () => Navigator.of(context).pushNamed(
-          LostRoutes.LOST_DOG_DETAILS_SCREEN,
+          DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN,
           arguments: LostDetailsArgs(
             post: post,
             onDeletePressed: onDeletePressed,
-            bloc: Provider.of<LostBloc>(context, listen: false),
           ),
         ),
         child: Row(

@@ -1,10 +1,9 @@
 import 'dart:io';
-
+import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/screens/full_screen_image.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -135,16 +134,13 @@ class _ImageSlideState extends State<ImageSlide> {
   }
 
   _navigateToPreview(int activePicture, List<Asset> list) {
-    Navigator.of(context, rootNavigator: true).push(
-      TransparentMaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => FullScreenView(
-          activePicture: activePicture,
-          assetList: list,
-          onChanged: (_) {},
-        ),
-      ),
+    Widget child = FullScreenView(
+      activePicture: activePicture,
+      assetList: list,
+      onChanged: (_) {},
     );
+    Navigator.of(context, rootNavigator: true)
+        .pushNamed(AppRoutes.FULL_SCREEN_IMAGE, arguments: child);
   }
 
   _addImages() async {

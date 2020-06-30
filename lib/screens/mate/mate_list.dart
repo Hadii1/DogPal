@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'package:dog_pal/bloc/mate_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
-import 'package:dog_pal/navigators/mate_navigator.dart';
+import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/screens/mate/mate_details_screen.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
@@ -106,13 +105,12 @@ class _MateCardState extends State<MateCard> {
               heroTag: widget.heroTag,
               showIndicator: false,
               onPressed: (int index) => Navigator.of(context).pushNamed(
-                MateRoutes.MATE_DOG_WALL,
+                DogsScreenRoutes.MATE_DOG_WALL,
                 arguments: MateDetailsArgs(
                   post: widget.post,
                   onDeletePressed: widget.onDeletePressed,
                   activeImageIndex: index,
                   heroTag: widget.heroTag,
-                  bloc: Provider.of<MateBloc>(context, listen: false),
                 ),
               ),
             ),

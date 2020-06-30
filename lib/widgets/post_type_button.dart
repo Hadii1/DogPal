@@ -4,30 +4,60 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PostTypeButton extends StatelessWidget {
-  const PostTypeButton({@required this.onTypePressed});
+class PostTypeField extends StatelessWidget {
+  const PostTypeField({
+    @required this.onTypePressed,
+    @required this.type,
+  });
   final Function(PostType) onTypePressed;
+  final Stream<String> type;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0, left: 24),
-      child: SizedBox(
-        height: 100.sp,
-        child: OutlineButton(
-          splashColor: Colors.transparent,
-          onPressed: () => _showPostTypeSheet(context),
-          borderSide: BorderSide(color: Colors.grey, width: 0.5),
-          highlightedBorderColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Text(
-            'Searching for:  Lost Dogs',
-            style: TextStyle(
-              color: blackishColor,
-              fontSize: 42.sp,
+      child: InkWell(
+        splashColor: Colors.transparent,
+        onTap: () => _showPostTypeSheet(context),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Searching for: ',
+              style: TextStyle(
+                color: blackishColor,
+                fontFamily: 'Montserrat',
+                fontSize: 54.sp,
+              ),
             ),
-          ),
+            Expanded(
+              child: StreamBuilder<String>(
+                stream: type,
+                initialData: 'Adoption Dogs',
+                builder: (context, snapshot) {
+                  return Row(
+                    children: <Widget>[
+                      Text(
+                        ' ${snapshot.data}',
+                        style: TextStyle(
+                          color: blackishColor,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Montserrat',
+                          fontSize: 54.sp,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Icon(
+                          Icons.arrow_drop_down,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
