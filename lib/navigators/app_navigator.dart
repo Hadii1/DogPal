@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dog_pal/bloc/app_bloc.dart';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/decisions_bloc.dart';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
@@ -44,18 +45,22 @@ class AppRoutes {
               break;
 
             case HOME:
-              assert(settings.arguments is LocalStorage);
+              LocalStorage localStorage = settings.arguments;
+              DogPostsBloc _dogPostsBloc =
+                  DogPostsBloc(localStorage: localStorage);
+              ProfileBloc _profileBloc =
+                  ProfileBloc(localStorage: localStorage);
+              AppBloc _appBloc = AppBloc(_dogPostsBloc);
               return MultiProvider(
                 providers: [
-                  Provider<ProfileBloc>(
-                    create: (_) => ProfileBloc(
-                      settings.arguments,
-                    ),
+                  Provider<DogPostsBloc>(
+                    create: (_) => _dogPostsBloc,
                   ),
-                  Provider(
-                    create: (_) => DogPostsBloc(
-                      localStorage: settings.arguments,
-                    ),
+                  Provider<ProfileBloc>(
+                    create: (_) => _profileBloc,
+                  ),
+                  Provider<AppBloc>(
+                    create: (_) => _appBloc,
                   )
                 ],
                 child: Home(),

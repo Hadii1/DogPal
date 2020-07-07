@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dog_pal/bloc/post_details_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
@@ -10,14 +11,12 @@ import 'package:provider/provider.dart';
 
 class MateDetailsArgs {
   MatePost post;
-  Function onDeletePressed;
   int activeImageIndex;
   String heroTag;
 
   MateDetailsArgs({
     @required this.post,
     this.activeImageIndex,
-    this.onDeletePressed,
     this.heroTag,
   });
 }
@@ -33,10 +32,19 @@ class MateDogDetailsScreen extends StatefulWidget {
 class _MateDogDetailsScreenState extends State<MateDogDetailsScreen> {
   int _imageScrollIndex;
 
+  PostDeletionBloc _bloc;
+
   @override
   void initState() {
+    _bloc = Provider.of<PostDeletionBloc>(context, listen: false);
     _imageScrollIndex = widget.args.activeImageIndex ?? 0;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -125,9 +133,13 @@ class _MateDogDetailsScreenState extends State<MateDogDetailsScreen> {
                         localStorage.getUser().uid ==
                             widget.args.post.dog.owner.uid
                     ? DeletePostButton(
-                        bloc: null,
-                        post: widget.args.post,
-                        onDeletePressed: widget.args.onDeletePressed,
+                        fullWidth: MediaQuery.of(context).size.width * 0.8,
+                        onDeletePressed: () =>
+                            _bloc.deletePost(widget.args.post),
+                        onRetryPressed: () =>
+                            _bloc.deletePost(widget.args.post),
+                        onCancelPressed: () => _bloc.cancelOperation(),
+                        statusStream: _bloc.operationStatus,
                       )
                     : OwnerContactButton(widget.args.post.dog.owner),
               ],

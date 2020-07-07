@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dog_pal/bloc/post_details_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/models/user.dart';
@@ -15,25 +16,29 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-class LostDetailsArgs {
-  LostPost post;
-  Function onDeletePressed;
-
-  LostDetailsArgs({
-    @required this.post,
-    this.onDeletePressed,
-  });
-}
-
 class LostDogDetailsScreen extends StatefulWidget {
-  LostDogDetailsScreen(this.args);
-  final LostDetailsArgs args;
+  LostDogDetailsScreen({@required this.post});
+  final LostPost post;
 
   @override
   _LostDogDetailsScreenState createState() => _LostDogDetailsScreenState();
 }
 
 class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
+  PostDeletionBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = Provider.of<PostDeletionBloc>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
+  }
+
   int _imageScrollIndex = 0;
 
   @override
@@ -58,7 +63,7 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
               expandedHeight: MediaQuery.of(context).size.height * 0.6,
               flexibleSpace: FlexibleSpaceBar(
                 background: ImagePreview(
-                  widget.args.post.dog.imagesUrls,
+                  widget.post.dog.imagesUrls,
                   onChanged: (index) => _imageScrollIndex = index,
                   initialImage: _imageScrollIndex,
                 ),
@@ -73,31 +78,35 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 NameAndBreedDetails(
-                  widget.args.post.dog.dogName,
-                  widget.args.post.dog.breed,
+                  widget.post.dog.dogName,
+                  widget.post.dog.breed,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      LocationLost(widget.args.post),
-                      DateAdded(widget.args.post.dateAdded),
-                      Gender(widget.args.post.dog.gender),
-                      CoatColors(widget.args.post.dog.coatColors),
+                      LocationLost(widget.post),
+                      DateAdded(widget.post.dateAdded),
+                      Gender(widget.post.dog.gender),
+                      CoatColors(widget.post.dog.coatColors),
                     ],
                   ),
                 ),
-                Description(widget.args.post.description),
-                OwnerInformation(user: widget.args.post.dog.owner),
+                Description(widget.post.description),
+                OwnerInformation(user: widget.post.dog.owner),
                 localStorage.isAuthenticated() &&
-                        user.uid == widget.args.post.dog.owner.uid
+                        user.uid == widget.post.dog.owner.uid
                     ? DeletePostButton(
-                        bloc: null,
-                        post: widget.args.post,
-                        onDeletePressed: widget.args.onDeletePressed,
+                        fullWidth: MediaQuery.of(context).size.width * 0.8,
+                        onDeletePressed: () =>
+                            _bloc.deletePost(widget.post),
+                        onRetryPressed: () =>
+                            _bloc.deletePost(widget.post),
+                        onCancelPressed: () => _bloc.cancelOperation(),
+                        statusStream: _bloc.operationStatus,
                       )
-                    : OwnerContactButton(widget.args.post.dog.owner),
+                    : OwnerContactButton(widget.post.dog.owner),
               ],
             ),
           ),

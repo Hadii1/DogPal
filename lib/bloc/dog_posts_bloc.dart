@@ -12,6 +12,7 @@ import 'package:dog_pal/repo/lost_repo.dart';
 import 'package:dog_pal/repo/mate_repo.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
@@ -26,9 +27,10 @@ class DogPostsBloc implements BlocBase {
   DogPostsBloc({
     @required this.localStorage,
   }) {
-    town = localStorage.getUserLocationData().userTown;
-    city = localStorage.getUserLocationData().userCity;
-    district = localStorage.getUserLocationData().userDistrict;
+    UserLocationData data = localStorage.getUserLocationData();
+    _town = data.userTown;
+    _city = data.userCity;
+    _district = data.userDistrict;
 
     pageController.addListener(
       () {
@@ -43,9 +45,9 @@ class DogPostsBloc implements BlocBase {
     });
   }
   final LocalStorage localStorage;
-  final MateRepo mateRepo = MateRepo();
-  final AdoptRepo adoptRepo = AdoptRepo();
-  final LostRepo lostRepo = LostRepo();
+  final MateRepo _mateRepo = MateRepo();
+  final AdoptRepo _adoptRepo = AdoptRepo();
+  final LostRepo _lostRepo = LostRepo();
   final PageController pageController = PageController();
   final TextEditingController cityNameController = TextEditingController();
   final LocationUtil _locationUtil = LocationUtil();
@@ -80,9 +82,9 @@ class DogPostsBloc implements BlocBase {
 
   PostType postsType = PostType.adopt;
 
-  String town;
-  String district;
-  String city;
+  String _town;
+  String _district;
+  String _city;
 
   //All filters:
 
@@ -172,9 +174,9 @@ class DogPostsBloc implements BlocBase {
         return;
       }
 
-      town = info[UserConsts.TOWN];
-      city = info[UserConsts.CITY];
-      district = info[UserConsts.DISTRICT];
+      _town = info[UserConsts.TOWN];
+      _city = info[UserConsts.CITY];
+      _district = info[UserConsts.DISTRICT];
 
       _locationCtrl.sink.add(prediction.description);
 
@@ -256,10 +258,10 @@ class DogPostsBloc implements BlocBase {
       if (await isOnline()) {
         switch (postsType) {
           case PostType.lost:
-            list = await lostRepo.getLostDogs(
-              town: town,
-              city: city,
-              district: district,
+            list = await _lostRepo.getLostDogs(
+              town: _town,
+              city: _city,
+              district: _district,
               breed: breed,
               colors: colors,
               gender: gender,
@@ -268,10 +270,10 @@ class DogPostsBloc implements BlocBase {
             break;
 
           case PostType.adopt:
-            list = await adoptRepo.getAdoptionDogs(
-              town: town,
-              city: city,
-              district: district,
+            list = await _adoptRepo.getAdoptionDogs(
+              town: _town,
+              city: _city,
+              district: _district,
               gender: gender,
               breed: breed,
               coatColors: colors,
@@ -284,10 +286,10 @@ class DogPostsBloc implements BlocBase {
             break;
 
           case PostType.mate:
-            list = await mateRepo.getMatingDogs(
-              town: town,
-              city: city,
-              district: district,
+            list = await _mateRepo.getMatingDogs(
+              town: _town,
+              city: _city,
+              district: _district,
               gender: gender,
               size: size,
               breed: breed,
@@ -352,15 +354,15 @@ class DogPostsBloc implements BlocBase {
         List<DocumentSnapshot> list;
         switch (postsType) {
           case PostType.lost:
-            list = await lostRepo.loadMoreData();
+            list = await _lostRepo.loadMoreData();
             break;
 
           case PostType.adopt:
-            list = await adoptRepo.loadMoreData();
+            list = await _adoptRepo.loadMoreData();
             break;
 
           case PostType.mate:
-            list = await mateRepo.loadMoreData();
+            list = await _mateRepo.loadMoreData();
             break;
         }
 
@@ -446,15 +448,15 @@ class DogPostsBloc implements BlocBase {
           if (locationData == null) {
             stateCtrl.sink.add(DataState.locationUnknownError);
           } else {
-            town = locationData.userTown;
-            city = locationData.userCity;
-            district = locationData.userDistrict;
+            _town = locationData.userTown;
+            _city = locationData.userCity;
+            _district = locationData.userDistrict;
 
             localStorage.setUserLocationData(locationData);
 
             _locationCtrl.sink.add(locationData.userDisplay);
             _notificationCtrl.sink
-                .add('Showing results in ${town ?? city ?? district}');
+                .add('Showing results in ${_town ?? _city ?? _district}');
 
             await getPosts();
           }
@@ -472,5 +474,34 @@ class DogPostsBloc implements BlocBase {
       }
       _fetchingLocation = false;
     }
+  }
+
+  void onUserPostAdded(DogPost post) {
+    //to search for the last post added we edit the
+    //location we're searching in to the last post location
+
+    _town = localStorage.getPostLocationData().postTown;
+    _city = localStorage.getPostLocationData().postCity;
+    _district = localStorage.getPostLocationData().postDistrict;
+
+    PostType type;
+    //check last post type we added to query for this type
+    switch (post.type) {
+      case 'lost':
+        type = PostType.lost;
+        break;
+      case 'adopt':
+        type = PostType.adopt;
+        break;
+      case 'mate':
+        type = PostType.mate;
+        break;
+      default:
+        throw PlatformException(code: 'post type not supported');
+    }
+
+    onPostTypeChanded(type);
+
+    getPosts();
   }
 }

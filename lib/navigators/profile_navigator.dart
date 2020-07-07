@@ -1,3 +1,8 @@
+import 'package:dog_pal/bloc/app_bloc.dart';
+import 'package:dog_pal/bloc/dog_posts_bloc.dart';
+import 'package:dog_pal/bloc/post_details_bloc.dart';
+import 'package:dog_pal/bloc/profile_bloc.dart';
+import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
@@ -6,6 +11,7 @@ import 'package:dog_pal/screens/profile/favorites_screen.dart';
 import 'package:dog_pal/screens/profile/posts_Screen.dart';
 import 'package:dog_pal/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileRoutes {
   static const String PROFILE_SCREEN = '/profileScreen';
@@ -22,6 +28,10 @@ class ProfileNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appBloc = Provider.of<AppBloc>(context);
+    var dogPostsBloc = Provider.of<DogPostsBloc>(context);
+    var profileBloc = Provider.of<ProfileBloc>(context);
+
     return Navigator(
       observers: [HeroController()],
       key: navigatorKey,
@@ -31,8 +41,15 @@ class ProfileNavigator extends StatelessWidget {
           builder: (context) {
             switch (setting.name) {
               case DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN:
-                assert(setting.arguments is LostDetailsArgs);
-                return LostDogDetailsScreen(setting.arguments);
+                assert(setting.arguments is LostPost);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: LostDogDetailsScreen(post:setting.arguments),
+                );
                 break;
 
               case ProfileRoutes.TERMS_SCREEN:
@@ -49,7 +66,14 @@ class ProfileNavigator extends StatelessWidget {
 
               case DogsScreenRoutes.MATE_DOG_WALL:
                 assert(setting.arguments is MateDetailsArgs);
-                return MateDogDetailsScreen(setting.arguments);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: MateDogDetailsScreen(setting.arguments),
+                );
                 break;
 
               case ProfileRoutes.POSTS_SCREEN:
@@ -58,7 +82,14 @@ class ProfileNavigator extends StatelessWidget {
 
               case DogsScreenRoutes.ADOPTION_DOG_WALL:
                 assert(setting.arguments is AdoptDetailsArgs);
-                return AdoptionDogWall(setting.arguments);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: AdoptionDogWall(setting.arguments),
+                );
                 break;
 
               case ProfileRoutes.FAVORTIES_SCREEN:

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
@@ -12,10 +13,6 @@ import 'package:dog_pal/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:dog_pal/utils/extensions_util.dart';
 
-enum SignInMethod {
-  fb,
-  gmail,
-}
 
 class AuthBloc implements BlocBase {
   AuthBloc(this._localStorage);

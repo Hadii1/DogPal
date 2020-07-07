@@ -20,9 +20,3 @@ abstract class DogPost<T extends Dog> {
 
   T dog;
 }
-
-enum PostType {
-  lost,
-  adopt,
-  mate,
-}

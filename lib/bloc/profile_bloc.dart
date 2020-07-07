@@ -10,37 +10,24 @@ import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sentry/sentry.dart' as _sentry;
 
-enum ProfileScreenState {
-  loading,
-  unAuthenticated,
-  authenticated,
-}
-
-//The state of user posts and user favorites
-enum UserDataState {
-  loadingWithNoData,
-  loadingWithData,
-  postsReady,
-  errorWithNoData,
-  errorWithData,
-}
-
 class ProfileBloc implements BlocBase {
-  ProfileBloc(this._localStorage) {
+  ProfileBloc({@required this.localStorage}) {
     //Used to detect when the users signs out
     _authService.authState.listen(
       (user) {
         if (user == null) {
           _screenStateCtrl.sink.add(ProfileScreenState.unAuthenticated);
-          _localStorage.setAuthentication(false);
-          _localStorage.editUser(null);
+          localStorage.setAuthentication(false);
+          localStorage.editUser(null);
         } else {
           _screenStateCtrl.sink.add(ProfileScreenState.authenticated);
         }
@@ -48,7 +35,7 @@ class ProfileBloc implements BlocBase {
     );
   }
 
-  final LocalStorage _localStorage;
+  final LocalStorage localStorage;
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
 
@@ -114,7 +101,7 @@ class ProfileBloc implements BlocBase {
   }
 
   Future<void> deleteAccountPressed() async {
-    String uid = _localStorage.getUser().uid;
+    String uid = localStorage.getUser().uid;
     if (!_deletingAccount) {
       _deletingAccount = true;
       _screenStateCtrl.sink.add(ProfileScreenState.loading);
@@ -125,9 +112,9 @@ class ProfileBloc implements BlocBase {
             event: _sentry.Event(
               loggerName: 'User Delete Account',
               userContext: _sentry.User(
-                username: _localStorage.getUser().username,
-                email: _localStorage.getUser().email,
-                id: _localStorage.getUser().uid,
+                username: localStorage.getUser().username,
+                email: localStorage.getUser().email,
+                id: localStorage.getUser().uid,
                 extras: {
                   'Deleted at': DateTime.now().toString(),
                 },
@@ -139,7 +126,7 @@ class ProfileBloc implements BlocBase {
 
           await _firestoreService.deleteUserData(uid);
           await _authService.signOut();
-          _localStorage.setAuthentication(false);
+          localStorage.setAuthentication(false);
 
           //if successful it triggers the authStateStream above
 
@@ -161,7 +148,7 @@ class ProfileBloc implements BlocBase {
   }
 
   Future<void> initUserPosts() async {
-    assert(_localStorage.getUser() != null,
+    assert(localStorage.getUser() != null,
         'This can\'t be  called when the user is not authenticated by design');
     try {
       if (await isOnline()) {
@@ -171,7 +158,7 @@ class ProfileBloc implements BlocBase {
           _dataStateCtrl.sink.add(UserDataState.loadingWithData);
         }
 
-        String userUid = _localStorage.getUser().uid;
+        String userUid = localStorage.getUser().uid;
 
         List<DocumentSnapshot> newPosts =
             await _firestoreService.fetchUserPosts(userUid);
@@ -245,8 +232,8 @@ class ProfileBloc implements BlocBase {
         }
 
         List<String> adoptFavs =
-            _localStorage.getFavorites(FavoriteType.adoption);
-        List<String> mateFavs = _localStorage.getFavorites(FavoriteType.mating);
+            localStorage.getFavorites(FavoriteType.adoption);
+        List<String> mateFavs = localStorage.getFavorites(FavoriteType.mating);
 
         List<DocumentSnapshot> adoptPosts = await FirestoreService()
             .getFavroiteList(adoptFavs, FirestoreConsts.ADOPTION_DOGS);
@@ -294,7 +281,7 @@ class ProfileBloc implements BlocBase {
       list = favs.where(
         (doc) {
           return doc.data[PostsConsts.POST_TYPE] == 'adopt' &&
-              _localStorage
+              localStorage
                   .getFavorites(type)
                   .contains(doc.data[PostsConsts.POST_ID]);
         },
@@ -309,7 +296,7 @@ class ProfileBloc implements BlocBase {
       list = favs.where(
         (doc) {
           return doc.data[PostsConsts.POST_TYPE] == 'mate' &&
-              _localStorage
+              localStorage
                   .getFavorites(type)
                   .contains(doc.data[PostsConsts.POST_ID]);
         },
@@ -351,25 +338,25 @@ class ProfileBloc implements BlocBase {
     }
     try {
       //Save locally
-      _localStorage.toggleFavorites(
+      localStorage.toggleFavorites(
         post.id,
         type,
       );
 
       //update the local and online user object with the new favs list
 
-      User user = _localStorage.getUser();
+      User user = localStorage.getUser();
 
       if (type == FavoriteType.adoption) {
-        user.favAdoptionPosts = _localStorage.getFavorites(type);
+        user.favAdoptionPosts = localStorage.getFavorites(type);
       } else {
-        user.favMatingPosts = _localStorage.getFavorites(type);
+        user.favMatingPosts = localStorage.getFavorites(type);
       }
 
-      _localStorage.editUser(user);
+      localStorage.editUser(user);
 
       //Save to network
-      if (_localStorage.isAuthenticated()) {
+      if (localStorage.isAuthenticated()) {
         if (type == FavoriteType.adoption) {
           FirestoreService().saveUserFavs(
               userId: user.uid, adoptionList: user.favAdoptionPosts);

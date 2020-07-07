@@ -2,6 +2,7 @@ import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/decisions_bloc.dart';
 import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/screens/login.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/widgets/fade_in_widget.dart';
 import 'package:flutter/cupertino.dart';

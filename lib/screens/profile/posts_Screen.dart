@@ -10,6 +10,7 @@ import 'package:dog_pal/screens/lost/lost_dogs_list.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
 import 'package:dog_pal/screens/profile/favorites_screen.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/no_connection_widget.dart';

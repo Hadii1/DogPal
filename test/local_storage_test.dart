@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/models/user.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,8 +28,6 @@ void main() {
       )
     });
 
-    await localStorage.initLocalStorage();
-
     UserLocationData locationData = localStorage.getUserLocationData();
     expect(locationData.userCity, 'Beirut');
     expect(locationData.userDisplay, 'Beirut');
@@ -49,8 +48,6 @@ void main() {
         PostLocationData.toJson(data),
       )
     });
-
-    await localStorage.initLocalStorage();
 
     PostLocationData locationData = localStorage.getPostLocationData();
 
@@ -79,8 +76,6 @@ void main() {
       )
     });
 
-    await localStorage.initLocalStorage();
-
     User userData = localStorage.getUser();
 
     expect(userData.email, 'Hadi.hammoud@live.com');
@@ -94,7 +89,6 @@ void main() {
 
   test('default values are true', () async {
     SharedPreferences.setMockInitialValues({});
-    await localStorage.initLocalStorage();
 
     //isAuthenticated is false by default and isFirstTime is true
 

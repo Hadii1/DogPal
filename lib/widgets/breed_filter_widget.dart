@@ -1,13 +1,11 @@
 import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/utils/dog_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-enum WidgetOrientation {
-  vertical,
-  horizontal,
-}
+
 
 class BreedFilterWidget extends StatefulWidget {
   const BreedFilterWidget({

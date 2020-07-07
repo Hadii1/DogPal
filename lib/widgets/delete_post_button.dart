@@ -1,175 +1,307 @@
-import 'dart:io';
-import 'package:dog_pal/bloc/dog_posts_bloc.dart';
-import 'package:dog_pal/models/dog_post_mode.dart';
-import 'package:dog_pal/utils/constants_util.dart';
-import 'package:dog_pal/utils/firestore_util.dart';
-import 'package:dog_pal/utils/general_functions.dart';
-import 'package:dog_pal/utils/local_storage.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
-import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:provider/provider.dart';
 
-class DeletePostButton extends StatefulWidget {
+class DeletePostButton extends StatelessWidget {
   const DeletePostButton({
-    @required this.bloc,
-    @required this.post,
-    this.onDeletePressed,
+    @required this.fullWidth,
+    @required this.onDeletePressed,
+    @required this.onRetryPressed,
+    @required this.statusStream,
+    this.onCancelPressed,
   });
-  final DogPost post;
-  final Function onDeletePressed;
-  final DogPostsBloc bloc;
 
-  @override
-  _DeletePostButtonState createState() => _DeletePostButtonState();
-}
+  final Function() onDeletePressed;
+  final Function() onCancelPressed;
+  final Function() onRetryPressed;
 
-class _DeletePostButtonState extends State<DeletePostButton> {
-  DogPost get _post => widget.post;
+  final Stream<PostDeletionStatus> statusStream;
+  final double fullWidth;
 
-  bool _isLoading = false;
-
-  LocalStorage _localStorage;
-
-  @override
-  void initState() {
-    _localStorage = Provider.of<LocalStorage>(context, listen: false);
-    super.initState();
+  double _getActiveWidth(PostDeletionStatus status, BuildContext context) {
+    switch (status) {
+      case PostDeletionStatus.unInitiated:
+        return fullWidth / 2;
+        break;
+      case PostDeletionStatus.loading:
+        return fullWidth;
+        break;
+      case PostDeletionStatus.successful:
+        return fullWidth / 1.5;
+        break;
+      case PostDeletionStatus.failed:
+        return fullWidth;
+        break;
+      default:
+        return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 24, top: 24),
-      child: FlatButton(
-        color: blackishColor,
-        splashColor: Theme.of(context).accentColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-        onPressed: () async {
-          if (!_isLoading) {
-            if (widget.post.dog.owner.uid == _localStorage.getUser().uid) {
-              _deletePost();
-            } else {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Something went wrong'),
-                ),
-              );
-            }
-          } else {
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text('In progress'),
+    return StreamBuilder<PostDeletionStatus>(
+      initialData: PostDeletionStatus.unInitiated,
+      stream: statusStream,
+      builder: (_, snapshot) {
+        return Material(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(200),
+          ),
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 250),
+            width: _getActiveWidth(snapshot.data, context),
+            height: 50,
+            child: (() {
+              switch (snapshot.data) {
+                case PostDeletionStatus.unInitiated:
+                  return UninitiatedButton(
+                    onSumbitPressed: onDeletePressed,
+                  );
+                  break;
+                case PostDeletionStatus.successful:
+                  return SuccessfulButton();
+                  break;
+                case PostDeletionStatus.failed:
+                  return LoadingOrFailedButton(
+                    onCancelPressed: onCancelPressed,
+                    onRetryPressed: onRetryPressed,
+                    status: PostDeletionStatus.failed,
+                  );
+                  break;
+                case PostDeletionStatus.loading:
+                  return LoadingOrFailedButton(
+                    onCancelPressed: onCancelPressed,
+                    onRetryPressed: onRetryPressed,
+                    status: PostDeletionStatus.loading,
+                  );
+                  break;
+                default:
+                  return null;
+              }
+            }()),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class UninitiatedButton extends StatelessWidget {
+  const UninitiatedButton({@required this.onSumbitPressed});
+  final Function() onSumbitPressed;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: onSumbitPressed,
+      shape: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(32),
+        borderSide: BorderSide.none,
+      ),
+      color: blackishColor,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.white,
               ),
-            );
-          }
-        },
-        child: AnimatedCrossFade(
-          crossFadeState:
-              _isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-          firstChild: SpinKitThreeBounce(
-            color: yellowishColor,
-            size: 25,
-          ),
-          secondChild: Text(
-            'Delete Post',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 42.sp),
-          ),
-          duration: Duration(milliseconds: 150),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Future<void> _deletePost() async {
-    setState(() {
-      _isLoading = true;
-    });
+class LoadingOrFailedButton extends StatelessWidget {
+  const LoadingOrFailedButton({
+    @required this.onCancelPressed,
+    @required this.onRetryPressed,
+    @required this.status,
+  });
+  final Function() onCancelPressed;
+  final Function() onRetryPressed;
+  final PostDeletionStatus status;
 
-    FirestoreService firestoreUtil = FirestoreService();
-
-    String collectionName;
-
-    switch (_post.type) {
-      case 'lost':
-        collectionName = FirestoreConsts.LOST_DOGS;
-        break;
-      case 'adopt':
-        collectionName = FirestoreConsts.ADOPTION_DOGS;
-        break;
-      case 'mate':
-        collectionName = FirestoreConsts.MATE_DOGS;
-        break;
-    }
-
-    if (await isOnline()) {
-      try {
-        await firestoreUtil.deletePost(
-          id: _post.id,
-          collection: collectionName,
-        );
-
-        //notify the user of success
-
-        // AppBloc appBloc = Provider.of<AppBloc>(context, listen: false);
-        // TODO
-        // appBloc.notificationsSender.sink.add(
-        //   SnackBar(
-        //     duration: Duration(seconds: 3),
-        //     content: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //       children: <Widget>[
-        //         Text('Post Deleted'),
-        //         Icon(Icons.check_circle, color: Colors.green),
-        //       ],
-        //     ),
-        //   ),
-        // );
-
-        //delete images in storage
-        firestoreUtil.deleteImages(_post.dog.imagesUrls.cast<String>());
-
-        //refresh the list
-        widget.bloc.getPosts();
-
-        //any other functionality is passed(mainly from user posts screen or favs screen)
-        if (widget.onDeletePressed != null) {
-          widget.onDeletePressed();
-        }
-
-        Navigator.pop(context);
-      } on PlatformException catch (e) {
-        print(e.message ?? e.code);
-
-        Scaffold.of(context).showSnackBar(
-          errorSnackBar(
-            'We\'re having some errors on our side',
-            duration: Duration(seconds: 3),
-            onRetry: () => _deletePost(),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(200),
+        color: yellowishColor,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            width: 50,
+            height: double.maxFinite,
+            child: Material(
+              color: blackishColor,
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(200),
+              ),
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 250),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: status == PostDeletionStatus.failed
+                      ? Colors.red
+                      : blackishColor,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (status == PostDeletionStatus.failed) {
+                        return onCancelPressed != null
+                            ? InkWell(
+                                onTap: onCancelPressed,
+                                child: Icon(Icons.close, color: Colors.white),
+                              )
+                            : SizedBox.shrink();
+                      } else {
+                        return SpinKitThreeBounce(
+                          color: Colors.white,
+                          size: constraints.maxWidth / 2,
+                          duration: Duration(milliseconds: 1200),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
           ),
-        );
-      } on SocketException {
-        Scaffold.of(context).showSnackBar(
-          errorSnackBar(
-            'Poor Internet Connection',
-            duration: Duration(seconds: 3),
-            onRetry: () => _deletePost(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: 250),
+                child: status == PostDeletionStatus.failed
+                    ? Text(
+                        'Oops.. Something went wrong!',
+                        textAlign: TextAlign.center,
+                        softWrap: false,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 15,
+                        ),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(200),
+                        child: LinearProgressIndicator(
+                          backgroundColor: Colors.grey[200],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
           ),
-        );
-      }
-    } else {
-      Scaffold.of(context).showSnackBar(
-        noConnectionSnackbar(),
-      );
-    }
-    setState(() {
-      _isLoading = false;
-    });
+          AnimatedCrossFade(
+            duration: Duration(milliseconds: 250),
+            crossFadeState: status == PostDeletionStatus.failed
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: SizedBox(
+              height: double.maxFinite,
+              width: 50,
+              child: IconButton(
+                icon: Icon(Icons.replay),
+                onPressed: onRetryPressed,
+                color: Colors.black54,
+              ),
+            ),
+            secondChild: SizedBox.shrink(),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SuccessfulButton extends StatefulWidget {
+  const SuccessfulButton();
+
+  @override
+  _SuccessfulButtonState createState() => _SuccessfulButtonState();
+}
+
+class _SuccessfulButtonState extends State<SuccessfulButton>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      upperBound: 25,
+      lowerBound: 0,
+      duration: Duration(milliseconds: 250),
+    )..addListener(() {
+        if (mounted) setState(() {});
+      });
+
+    _animationController.forward();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 0.5,
+          color: Theme.of(context).primaryColor,
+        ),
+        borderRadius: BorderRadius.circular(200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Success',
+              style: TextStyle(
+                color: blackishColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Icon(
+                Icons.check_circle,
+                color: Theme.of(context).primaryColor,
+                size: _animationController.value,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

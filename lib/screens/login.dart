@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:flutter/gestures.dart';

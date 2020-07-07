@@ -7,8 +7,6 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({Key key}) : super(key: key);
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -23,17 +21,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
     var _localStorage = Provider.of<LocalStorage>(context, listen: false);
 
-    _localStorage.initLocalStorage().then((_) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _width = 75;
-          _height = 75;
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _width = 75;
+        _height = 75;
+      });
 
-        Future.delayed(Duration(seconds: 1)).then((_) {
-          Navigator.of(context)
-              .pushNamed(AppRoutes.DECISIONS_SCREEN, arguments: _localStorage);
-        });
+      Future.delayed(Duration(seconds: 1)).then((_) {
+        Navigator.of(context)
+            .pushNamed(AppRoutes.DECISIONS_SCREEN, arguments: _localStorage);
       });
     });
 

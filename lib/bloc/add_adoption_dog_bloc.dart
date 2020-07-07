@@ -7,6 +7,7 @@ import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/dog_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
@@ -74,7 +75,7 @@ class AddAdoptionDogBloc implements BlocBase {
     if (!_appBloc.currentlyAdding) {
       if (await isOnline()) {
         _stateCtrl.sink.add(PostAdditionState.shouldNavigate);
-        _appBloc.postsCtrl.sink.add(addPost);
+        _appBloc.postsToAddCtrl.sink.add(addPost);
       } else {
         _stateCtrl.sink.add(PostAdditionState.noInternet);
       }

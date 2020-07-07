@@ -1,4 +1,4 @@
-import 'package:dog_pal/models/dog_post_mode.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,7 @@
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/app_secrets.dart';
 import 'package:dog_pal/utils/constants_util.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/geocoding.dart';
@@ -10,11 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 //Google Places Api
 //https://developers.google.com/maps/documentation/geocoding/intro
 
-enum LocationType {
-  city,
-  town,
-  district,
-}
 
 //Singleton
 class LocationUtil {

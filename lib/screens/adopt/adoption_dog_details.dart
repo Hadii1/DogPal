@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:dog_pal/bloc/post_details_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog.dart';
 import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/laucnher_class.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -14,7 +16,6 @@ import 'package:provider/provider.dart';
 
 class AdoptDetailsArgs {
   AdoptPost post;
-  Function onDeletePressed;
   int activeImageIndex;
   String heroTag;
 
@@ -22,7 +23,6 @@ class AdoptDetailsArgs {
     @required this.post,
     this.activeImageIndex,
     this.heroTag,
-    this.onDeletePressed,
   });
 }
 
@@ -40,10 +40,25 @@ class AdoptionDogWall extends StatefulWidget {
 class _AdoptionDogWallState extends State<AdoptionDogWall> {
   int _imageScrollIndex;
 
+  PostDeletionBloc _bloc;
+
   @override
   void initState() {
+    _bloc = Provider.of<PostDeletionBloc>(context, listen: false);
+    _bloc.operationStatus.listen((status) async {
+      if (status == PostDeletionStatus.successful) {
+        await Future.delayed(Duration(seconds: 1))
+            .then((value) => Navigator.pop(context));
+      }
+    });
     _imageScrollIndex = widget.args.activeImageIndex ?? 0;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,9 +121,11 @@ class _AdoptionDogWallState extends State<AdoptionDogWall> {
                       localStorage.getUser().uid ==
                           widget.args.post.dog.owner.uid
                   ? DeletePostButton(
-                      post: widget.args.post,
-                      onDeletePressed: widget.args.onDeletePressed,
-                      bloc: null,
+                      fullWidth: MediaQuery.of(context).size.width * 0.8,
+                      onDeletePressed: () => _bloc.deletePost(widget.args.post),
+                      onRetryPressed: () => _bloc.deletePost(widget.args.post),
+                      onCancelPressed: () => _bloc.cancelOperation(),
+                      statusStream: _bloc.operationStatus,
                     )
                   : OwnerContactButton(widget.args.post.dog.owner),
             ],

@@ -2,13 +2,9 @@ import 'dart:convert';
 
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/models/user.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-enum FavoriteType {
-  adoption,
-  mating,
-}
 
 abstract class LocalDataRepositroy {
   bool isAuthenticated();
@@ -59,7 +55,11 @@ class LocalStorage implements LocalDataRepositroy {
 
   SharedPreferences _prefs;
 
-  Future<void> initLocalStorage() async {
+  LocalStorage() {
+    _initLocalStorage();
+  }
+
+  Future<void> _initLocalStorage() async {
     _prefs = await SharedPreferences.getInstance();
   }
 

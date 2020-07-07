@@ -5,24 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-enum DataState {
-  loading,
-  unknownError,
-  networkError,
-  postsAvailable,
-  noDataAvailable,
-  locationDenied,
-  locationNetworkError,
-  locationUnknownError,
-  locationServiceOff
-}
-
-enum PostAdditionState {
-  loading,
-  shouldNavigate,
-  noInternet,
-}
-
 Future<bool> checkAndAskPermission({
   @required Permission permission,
 }) async {

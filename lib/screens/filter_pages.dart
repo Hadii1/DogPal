@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/widgets/breed_filter_widget.dart';
 import 'package:dog_pal/widgets/coat_color_filter_widget.dart';

@@ -4,6 +4,7 @@ import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/navigators/profile_navigator.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/privacy_policy.dart';

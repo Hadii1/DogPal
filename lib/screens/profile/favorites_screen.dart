@@ -8,7 +8,7 @@ import 'package:dog_pal/screens/dogs_screen.dart';
 import 'package:dog_pal/screens/mate/mate_list.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/custom_animated_list.dart';
-import 'package:dog_pal/utils/local_storage.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/fade_in_widget.dart';

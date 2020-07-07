@@ -1,5 +1,9 @@
 import 'package:dog_pal/bloc/add_adoption_dog_bloc.dart';
 import 'package:dog_pal/bloc/add_lost_dog_bloc.dart';
+import 'package:dog_pal/bloc/dog_posts_bloc.dart';
+import 'package:dog_pal/bloc/post_details_bloc.dart';
+import 'package:dog_pal/bloc/profile_bloc.dart';
+import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/screens/mate/add_mate_dog.dart';
 import 'package:dog_pal/bloc/add_mate_dog_bloc.dart';
 import 'package:dog_pal/bloc/app_bloc.dart';
@@ -23,6 +27,11 @@ class DogsScreenNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appBloc = Provider.of<AppBloc>(context);
+    var localStorage = Provider.of<LocalStorage>(context);
+    var dogPostsBloc = Provider.of<DogPostsBloc>(context);
+    var profileBloc = Provider.of<ProfileBloc>(context);
+
     return Navigator(
       observers: [HeroController()],
       key: navigatorKey,
@@ -35,8 +44,9 @@ class DogsScreenNavigator extends StatelessWidget {
               case DogsScreenRoutes.ADD_MATE_DOG:
                 return Provider(
                   create: (_) => AddMateDogBloc(
-                      Provider.of<AppBloc>(context, listen: false),
-                      Provider.of<LocalStorage>(context, listen: false)),
+                    appBloc,
+                    localStorage,
+                  ),
                   child: AddMateDogScreen(),
                 );
                 break;
@@ -47,36 +57,55 @@ class DogsScreenNavigator extends StatelessWidget {
 
               case DogsScreenRoutes.MATE_DOG_WALL:
                 assert(setting.arguments is MateDetailsArgs);
-                return MateDogDetailsScreen(setting.arguments);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: MateDogDetailsScreen(setting.arguments),
+                );
                 break;
 
               case DogsScreenRoutes.ADD_ADOPTION_POST:
                 return Provider(
-                  create: (_) => AddAdoptionDogBloc(
-                    Provider.of<AppBloc>(context, listen: false),
-                    Provider.of<LocalStorage>(context, listen: false),
-                  ),
+                  create: (_) => AddAdoptionDogBloc(appBloc, localStorage),
                   child: AddAdoptPostScreen(),
                 );
                 break;
 
               case DogsScreenRoutes.ADOPTION_DOG_WALL:
                 assert(setting.arguments is AdoptDetailsArgs);
-                return AdoptionDogWall(setting.arguments);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: AdoptionDogWall(setting.arguments),
+                );
                 break;
 
               case DogsScreenRoutes.ADD_LOST_DOG:
                 return Provider(
                   create: (_) => AddLostDogBloc(
-                      Provider.of<AppBloc>(context, listen: false),
-                      Provider.of<LocalStorage>(context, listen: false)),
+                    appBloc,
+                    localStorage,
+                  ),
                   child: AddLostDogScreen(),
                 );
                 break;
 
               case DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN:
-                assert(setting.arguments is LostDetailsArgs);
-                return LostDogDetailsScreen(setting.arguments);
+                assert(setting.arguments is LostPost);
+                return Provider(
+                  create: (_) => PostDeletionBloc(
+                    appBloc: appBloc,
+                    profileBloc: profileBloc,
+                    dogPostsBloc: dogPostsBloc,
+                  ),
+                  child: LostDogDetailsScreen(post: setting.arguments),
+                );
                 break;
 
               case DogsScreenRoutes.POST_LOCATION:

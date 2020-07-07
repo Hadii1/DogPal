@@ -1,6 +1,5 @@
 import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/navigators/dogs_screen_navigator.dart';
-import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:extended_image/extended_image.dart';
@@ -83,10 +82,7 @@ class LostPostCard extends StatelessWidget {
       child: InkWell(
         onTap: () => Navigator.of(context).pushNamed(
           DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN,
-          arguments: LostDetailsArgs(
-            post: post,
-            onDeletePressed: onDeletePressed,
-          ),
+          arguments: post,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
