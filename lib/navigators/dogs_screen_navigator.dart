@@ -33,7 +33,9 @@ class DogsScreenNavigator extends StatelessWidget {
     var profileBloc = Provider.of<ProfileBloc>(context);
 
     return Navigator(
-      observers: [HeroController()],
+      observers: [
+        HeroController(),
+      ],
       key: navigatorKey,
       onGenerateRoute: (RouteSettings setting) {
         return MaterialPageRoute(
@@ -96,7 +98,7 @@ class DogsScreenNavigator extends StatelessWidget {
                 );
                 break;
 
-              case DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN:
+              case DogsScreenRoutes.LOST_DOG_WALL:
                 assert(setting.arguments is LostPost);
                 return Provider(
                   create: (_) => PostDeletionBloc(
@@ -109,11 +111,14 @@ class DogsScreenNavigator extends StatelessWidget {
                 break;
 
               case DogsScreenRoutes.POST_LOCATION:
-                assert(setting.arguments is LocalStorage);
+                assert(setting.arguments is Function(String));
                 return Provider(
-                  create: (_) => PostLocationBloc(setting.arguments),
-                  child: PostLocation(),
+                  create: (_) => PostLocationBloc(localStorage),
+                  child: PostLocation(
+                    onLocationChanged: setting.arguments,
+                  ),
                 );
+                break;
 
               default:
                 return DogsScreen();
@@ -130,7 +135,7 @@ class DogsScreenRoutes {
   static const String ADD_MATE_DOG = '/addMateDog';
   static const String MATE_DOG_WALL = '/mateDogWall';
   static const String MATE_WARNING = '/mateWarning';
-  static const String LOST_DOG_DETAILS_SCREEN = '/detailsScreen';
+  static const String LOST_DOG_WALL = '/lostDetailsScreen';
   static const String ADD_LOST_DOG = '/addLostDog';
   static const String ADD_ADOPTION_POST = '/addAdoptionPost';
   static const String ADOPTION_DOG_WALL = '/adoptDogWall';

@@ -40,7 +40,7 @@ class ProfileNavigator extends StatelessWidget {
           settings: setting,
           builder: (context) {
             switch (setting.name) {
-              case DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN:
+              case DogsScreenRoutes.LOST_DOG_WALL:
                 assert(setting.arguments is LostPost);
                 return Provider(
                   create: (_) => PostDeletionBloc(

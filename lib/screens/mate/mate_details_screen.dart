@@ -3,6 +3,7 @@ import 'package:dog_pal/bloc/post_details_bloc.dart';
 import 'package:dog_pal/models/mate_post.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/widgets/delete_post_button.dart';
 import 'package:dog_pal/widgets/image_preview_widget.dart';
@@ -37,6 +38,14 @@ class _MateDogDetailsScreenState extends State<MateDogDetailsScreen> {
   @override
   void initState() {
     _bloc = Provider.of<PostDeletionBloc>(context, listen: false);
+
+    _bloc.operationStatus.listen((status) async {
+      if (status == PostDeletionStatus.successful) {
+        await Future.delayed(Duration(seconds: 1))
+            .then((value) => Navigator.pop(context));
+      }
+    });
+
     _imageScrollIndex = widget.args.activeImageIndex ?? 0;
     super.initState();
   }

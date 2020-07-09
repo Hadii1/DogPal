@@ -45,12 +45,10 @@ class AppRoutes {
               break;
 
             case HOME:
-              LocalStorage localStorage = settings.arguments;
-              DogPostsBloc _dogPostsBloc =
-                  DogPostsBloc(localStorage: localStorage);
-              ProfileBloc _profileBloc =
-                  ProfileBloc(localStorage: localStorage);
-              AppBloc _appBloc = AppBloc(_dogPostsBloc);
+              var localStorage = settings.arguments;
+              var _dogPostsBloc = DogPostsBloc(localStorage: localStorage);
+              var _profileBloc = ProfileBloc(localStorage: localStorage);
+              var _appBloc = AppBloc(_dogPostsBloc);
               return MultiProvider(
                 providers: [
                   Provider<DogPostsBloc>(

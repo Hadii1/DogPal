@@ -70,7 +70,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
             content: Text(
-                'Showing results in ${_localStorage.getUserLocationData().userDisplay}'),
+                'Showing results in ${_localStorage.getUserLocationData().display}'),
           ),
         );
       },
@@ -243,6 +243,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
     );
   }
 
+  //TODO: put into the app router class
   void _navigateToPost(BuildContext context) {
     Widget child;
 
@@ -272,18 +273,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
       default:
         throw PlatformException(code: 'post type isn\'t valid');
     }
-
-    Navigator.of(
-      context,
-    ).push(
+    Navigator.of(context).push(
       MaterialPageRoute(
-        fullscreenDialog: true,
         builder: (_) {
           return Provider(
             create: (_) => PostDeletionBloc(
-              appBloc: Provider.of<AppBloc>(context),
-              profileBloc: Provider.of<ProfileBloc>(context),
+              appBloc: _appBloc,
               dogPostsBloc: Provider.of<DogPostsBloc>(context),
+              profileBloc: Provider.of<ProfileBloc>(context),
             ),
             child: child,
           );

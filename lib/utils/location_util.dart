@@ -154,7 +154,7 @@ class LocationUtil {
   }
 
   //A convenience function to directly get the city and district
-  Future<UserLocationData> getInfoFromPosition() async {
+  Future<LocationData> getInfoFromPosition() async {
     //We try lower accuracy in case the first fails
     Position position = await getLocation(
           LocationAccuracy.high,
@@ -203,11 +203,11 @@ class LocationUtil {
       if (town == null && city == null && district == null) {
         return null;
       } else {
-        return UserLocationData(
-          userCity: city,
-          userDistrict: district,
-          userTown: town,
-          userDisplay: town ?? city ?? district,
+        return LocationData(
+          city: city,
+          district: district,
+          town: town,
+          display: town ?? city ?? district,
         );
       }
     }

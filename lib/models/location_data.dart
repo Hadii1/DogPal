@@ -1,63 +1,31 @@
-class UserLocationData {
-  final String userTown;
-  final String userCity;
-  final String userDistrict;
-  final String userDisplay;
+class LocationData {
+  final String town;
+  final String city;
+  final String district;
+  final String display;
 
-  UserLocationData({
-    this.userCity,
-    this.userDistrict,
-    this.userTown,
-    this.userDisplay,
+  LocationData({
+    this.city,
+    this.district,
+    this.town,
+    this.display,
   });
 
-  static Map<String, String> toJson(UserLocationData data) {
+  static Map<String, String> toJson(LocationData data) {
     return {
-      'userTown': data.userTown,
-      'userCity': data.userCity,
-      'userDistrict': data.userDistrict,
-      'userLocationDisplay': data.userDisplay
+      'town': data.town,
+      'city': data.city,
+      'district': data.district,
+      'display': data.display
     };
   }
 
-  factory UserLocationData.fromJson(Map<String, String> map) {
-    return UserLocationData(
-      userCity: map['userCity'],
-      userTown: map['userTown'],
-      userDistrict: map['userDistrict'],
-      userDisplay: map['userLocationDisplay'],
-    );
-  }
-}
-
-class PostLocationData {
-  String postTown;
-  String postDistrict;
-  String postCity;
-  String postDisplay;
-
-  PostLocationData({
-    this.postCity,
-    this.postDistrict,
-    this.postTown,
-    this.postDisplay,
-  });
-
-  static Map<String, String> toJson(PostLocationData data) {
-    return {
-      'postTown': data.postTown,
-      'postCity': data.postCity,
-      'postDistrict': data.postDistrict,
-      'postLocationDisplay': data.postDisplay,
-    };
-  }
-
-  factory PostLocationData.fromJson(Map<String, String> map) {
-    return PostLocationData(
-      postCity: map['postCity'],
-      postDistrict: map['postDistrict'],
-      postTown: map['postTown'],
-      postDisplay: map['postLocationDisplay'],
+  factory LocationData.fromJson(Map<String, String> map) {
+    return LocationData(
+      city: map['city'],
+      town: map['town'],
+      district: map['district'],
+      display: map['display'],
     );
   }
 }

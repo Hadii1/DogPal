@@ -27,10 +27,10 @@ class DogPostsBloc implements BlocBase {
   DogPostsBloc({
     @required this.localStorage,
   }) {
-    UserLocationData data = localStorage.getUserLocationData();
-    _town = data.userTown;
-    _city = data.userCity;
-    _district = data.userDistrict;
+    LocationData data = localStorage.getUserLocationData();
+    _town = data.town;
+    _city = data.city;
+    _district = data.district;
 
     pageController.addListener(
       () {
@@ -106,6 +106,7 @@ class DogPostsBloc implements BlocBase {
   void dispose() {
     stateCtrl.close();
     _shouldShowHeader.close();
+    pageController.dispose();
     _postTypeCtrl.close();
     _locationCtrl.close();
     _activeFilterCtrl.close();
@@ -190,6 +191,7 @@ class DogPostsBloc implements BlocBase {
 
   void onPostTypeChanded(PostType type) {
     String typeDisplay;
+
     switch (type) {
       case PostType.lost:
         typeDisplay = 'Lost Dogs';
@@ -204,6 +206,7 @@ class DogPostsBloc implements BlocBase {
 
     _postTypeCtrl.sink.add(typeDisplay);
     postsType = type;
+    getPosts();
     clearAllFilters();
   }
 
@@ -439,7 +442,7 @@ class DogPostsBloc implements BlocBase {
             return;
           }
 
-          UserLocationData locationData =
+          LocationData locationData =
               await LocationUtil().getInfoFromPosition().timeout(
                     Duration(seconds: 10),
                     onTimeout: () => null,
@@ -448,13 +451,13 @@ class DogPostsBloc implements BlocBase {
           if (locationData == null) {
             stateCtrl.sink.add(DataState.locationUnknownError);
           } else {
-            _town = locationData.userTown;
-            _city = locationData.userCity;
-            _district = locationData.userDistrict;
+            _town = locationData.town;
+            _city = locationData.city;
+            _district = locationData.district;
 
             localStorage.setUserLocationData(locationData);
 
-            _locationCtrl.sink.add(locationData.userDisplay);
+            _locationCtrl.sink.add(locationData.display);
             _notificationCtrl.sink
                 .add('Showing results in ${_town ?? _city ?? _district}');
 
@@ -480,9 +483,9 @@ class DogPostsBloc implements BlocBase {
     //to search for the last post added we edit the
     //location we're searching in to the last post location
 
-    _town = localStorage.getPostLocationData().postTown;
-    _city = localStorage.getPostLocationData().postCity;
-    _district = localStorage.getPostLocationData().postDistrict;
+    _town = localStorage.getPostLocationData().town;
+    _city = localStorage.getPostLocationData().city;
+    _district = localStorage.getPostLocationData().district;
 
     PostType type;
     //check last post type we added to query for this type
@@ -501,7 +504,5 @@ class DogPostsBloc implements BlocBase {
     }
 
     onPostTypeChanded(type);
-
-    getPosts();
   }
 }

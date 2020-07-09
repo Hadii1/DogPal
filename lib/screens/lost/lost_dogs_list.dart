@@ -23,7 +23,6 @@ class LostList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 8),
-      height: double.maxFinite,
       child: RefreshIndicator(
         onRefresh: () => onRefresh(),
         child: Scrollbar(
@@ -69,19 +68,18 @@ class LostList extends StatelessWidget {
 class LostPostCard extends StatelessWidget {
   const LostPostCard({
     @required this.post,
-    this.onDeletePressed,
   });
+
   final LostPost post;
-  final Function onDeletePressed;
   @override
   Widget build(BuildContext context) {
-    final _cardHeight = MediaQuery.of(context).size.height * 0.24;
+    final _cardHeight = MediaQuery.of(context).size.height * 0.2;
     return Container(
       padding: const EdgeInsets.all(8),
       height: _cardHeight,
       child: InkWell(
         onTap: () => Navigator.of(context).pushNamed(
-          DogsScreenRoutes.LOST_DOG_DETAILS_SCREEN,
+          DogsScreenRoutes.LOST_DOG_WALL,
           arguments: post,
         ),
         child: Row(

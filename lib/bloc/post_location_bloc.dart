@@ -13,10 +13,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 class PostLocationBloc implements BlocBase {
   PostLocationBloc(this._localStorage) {
-    _city = _localStorage.getPostLocationData().postCity;
-    _town = _localStorage.getPostLocationData().postTown;
-    _district = _localStorage.getPostLocationData().postDistrict;
-    locationDisplay = _localStorage.getPostLocationData().postDisplay;
+    _city = _localStorage.getPostLocationData().city;
+    _town = _localStorage.getPostLocationData().town;
+    _district = _localStorage.getPostLocationData().district;
+    locationDisplay = _localStorage.getPostLocationData().display;
   }
 
   String _city;
@@ -33,7 +33,7 @@ class PostLocationBloc implements BlocBase {
   StreamController<String> _errorCtrl = StreamController();
   Stream<String> get errorStream => _errorCtrl.stream;
 
-  StreamController<String> _cityNameCtrl = StreamController();
+  StreamController<String> _cityNameCtrl = StreamController.broadcast();
   Stream<String> get cityName => _cityNameCtrl.stream;
 
   bool _isFetchingLocation = false;
@@ -117,17 +117,17 @@ class PostLocationBloc implements BlocBase {
 
           LocationUtil locationUtil = LocationUtil();
 
-          UserLocationData data = await locationUtil
+          LocationData data = await locationUtil
               .getInfoFromPosition()
               .timeout(Duration(seconds: 12), onTimeout: () => null);
 
           if (data == null) {
             _errorCtrl.sink.add('An error occured on our side. Try again.');
           } else {
-            _town = data.userTown;
-            _city = data.userCity;
-            _district = data.userDistrict;
-            locationDisplay = data.userDisplay;
+            _town = data.town;
+            _city = data.city;
+            _district = data.district;
+            locationDisplay = data.display;
 
             _cityNameCtrl.sink.add(locationDisplay);
           }
@@ -149,11 +149,11 @@ class PostLocationBloc implements BlocBase {
 
   void onVerifyPressed() {
     _localStorage.setPostLocationData(
-      PostLocationData(
-        postCity: _city,
-        postDistrict: _district,
-        postTown: _town,
-        postDisplay: locationDisplay,
+      LocationData(
+        city: _city,
+        district: _district,
+        town: _town,
+        display: locationDisplay,
       ),
     );
   }

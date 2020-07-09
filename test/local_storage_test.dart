@@ -15,46 +15,46 @@ void main() {
   });
 
   test('User Location Data Parsing and reading', () async {
-    var data = UserLocationData(
-      userCity: 'Beirut',
-      userDisplay: 'Beirut',
-      userDistrict: 'Baabda',
-      userTown: 'Haret Hreik',
+    var data = LocationData(
+      city: 'Beirut',
+      display: 'Beirut',
+      district: 'Baabda',
+      town: 'Haret Hreik',
     );
 
     SharedPreferences.setMockInitialValues({
       LocalStorage.USER_LOCATION: json.encode(
-        UserLocationData.toJson(data),
+        LocationData.toJson(data),
       )
     });
 
-    UserLocationData locationData = localStorage.getUserLocationData();
-    expect(locationData.userCity, 'Beirut');
-    expect(locationData.userDisplay, 'Beirut');
-    expect(locationData.userDistrict, 'Baabda');
-    expect(locationData.userTown, 'Haret Hreik');
+    LocationData locationData = localStorage.getUserLocationData();
+    expect(locationData.city, 'Beirut');
+    expect(locationData.display, 'Beirut');
+    expect(locationData.district, 'Baabda');
+    expect(locationData.town, 'Haret Hreik');
   });
 
   test('Post Location Data Parsing and reading', () async {
-    var data = PostLocationData(
-      postCity: 'Beirut',
-      postDisplay: 'Beirut',
-      postDistrict: 'Baabda',
-      postTown: 'Haret Hreik',
+    var data = LocationData(
+      city: 'Beirut',
+      display: 'Beirut',
+      district: 'Baabda',
+      town: 'Haret Hreik',
     );
 
     SharedPreferences.setMockInitialValues({
       LocalStorage.POST_LOCATION: json.encode(
-        PostLocationData.toJson(data),
+        LocationData.toJson(data),
       )
     });
 
-    PostLocationData locationData = localStorage.getPostLocationData();
+    LocationData locationData = localStorage.getPostLocationData();
 
-    expect(locationData.postCity, 'Beirut');
-    expect(locationData.postDisplay, 'Beirut');
-    expect(locationData.postDistrict, 'Baabda');
-    expect(locationData.postTown, 'Haret Hreik');
+    expect(locationData.city, 'Beirut');
+    expect(locationData.display, 'Beirut');
+    expect(locationData.district, 'Baabda');
+    expect(locationData.town, 'Haret Hreik');
   });
 
   test('User parsing and reading', () async {

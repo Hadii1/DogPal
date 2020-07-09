@@ -552,7 +552,6 @@ class CredentialsScreen extends StatelessWidget {
   }
 
   Future<void> _launchUrl(BuildContext context, String url) async {
-    print('launching ');
     if (await canLaunch(url)) {
       launch(url);
     } else {

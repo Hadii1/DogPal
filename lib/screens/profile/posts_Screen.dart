@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
@@ -34,28 +33,26 @@ class _PostsScreenState extends State<PostsScreen> {
   void initState() {
     _bloc = Provider.of<ProfileBloc>(context, listen: false);
     _bloc.dataStateStream.listen((state) {
-      if (state == UserDataState.errorWithData) {
-        Scaffold.of(context).showSnackBar(
-          errorSnackBar(
-            _bloc.errorMsg,
-            onRetry: () {
-              if (mounted) {
-                _bloc.initUserPosts();
-              }
-            },
-            duration: Duration(seconds: 5),
-          ),
-        );
+      if (state == UserDataState.errorWithData ||
+          state == UserDataState.errorWithNoData) {
+        if (mounted) {
+          Scaffold.of(context).showSnackBar(
+            errorSnackBar(
+              _bloc.errorMsg,
+              onRetry: () {
+                if (mounted) {
+                  _bloc.initUserPosts();
+                }
+              },
+              duration: Duration(seconds: 5),
+            ),
+          );
+        }
       }
     });
     _bloc.initUserPosts();
 
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -199,9 +196,6 @@ class LostWidget extends StatelessWidget {
                       duration: Duration(milliseconds: 200),
                       child: LostPostCard(
                         post: posts[index],
-                        onDeletePressed: () =>
-                            Provider.of<ProfileBloc>(context, listen: false)
-                                .updatePostsList(posts[index].id),
                       ),
                     ),
                   );

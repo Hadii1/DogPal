@@ -17,7 +17,7 @@ class _LocationFieldState extends State<LocationField> {
   void initState() {
     _locationDisplay = Provider.of<LocalStorage>(context, listen: false)
         .getPostLocationData()
-        .postDisplay;
+        .display;
     super.initState();
   }
 
@@ -38,15 +38,12 @@ class _LocationFieldState extends State<LocationField> {
               borderRadius: BorderRadius.circular(10),
             ),
             onPressed: () async {
-              _locationDisplay = await Navigator.of(context).pushNamed(
-                    DogsScreenRoutes.POST_LOCATION,
-                    arguments:
-                        Provider.of<LocalStorage>(context, listen: false),
-                  ) ??
-                  _locationDisplay ??
-                  '';
-
-              setState(() {});
+              await Navigator.of(context)
+                  .pushNamed(DogsScreenRoutes.POST_LOCATION, arguments: (city) {
+                setState(() {
+                  _locationDisplay = city;
+                });
+              });
             },
             label: Row(
               mainAxisSize: MainAxisSize.min,

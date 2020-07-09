@@ -33,18 +33,21 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     _bloc = Provider.of<ProfileBloc>(context, listen: false);
     _bloc.adoptFavsScrollPos = 0;
     _bloc.dataStateStream.listen((state) {
-      if (state == UserDataState.errorWithData) {
-        Scaffold.of(context).showSnackBar(
-          errorSnackBar(
-            _bloc.errorMsg,
-            onRetry: () {
-              if (mounted) {
-                _bloc.initFavs();
-              }
-            },
-            duration: Duration(seconds: 5),
-          ),
-        );
+      if (state == UserDataState.errorWithData ||
+          state == UserDataState.errorWithNoData) {
+        if (mounted) {
+          Scaffold.of(context).showSnackBar(
+            errorSnackBar(
+              _bloc.errorMsg,
+              onRetry: () {
+                if (mounted) {
+                  _bloc.initFavs();
+                }
+              },
+              duration: Duration(seconds: 5),
+            ),
+          );
+        }
       }
     });
 

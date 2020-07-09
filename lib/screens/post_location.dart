@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dog_pal/bloc/post_location_bloc.dart';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/constants_util.dart';
@@ -15,6 +14,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class PostLocation extends StatefulWidget {
+  const PostLocation({@required this.onLocationChanged});
+  final Function(String) onLocationChanged;
   @override
   LocationWidgetDialog createState() => LocationWidgetDialog();
 }
@@ -28,6 +29,9 @@ class LocationWidgetDialog extends State<PostLocation> {
   void initState() {
     _bloc = Provider.of<PostLocationBloc>(context, listen: false);
 
+    _bloc.cityName.listen((city) {
+      widget.onLocationChanged(city);
+    });
     _bloc.errorStream.listen(
       (error) {
         if (error == GeneralConstants.LOCATION_PERMISSION_ERROR) {
@@ -97,11 +101,11 @@ class LocationWidgetDialog extends State<PostLocation> {
   }
 
   Widget _locationName() {
-    PostLocationData postLocData =
+    LocationData postLocData =
         Provider.of<LocalStorage>(context, listen: false).getPostLocationData();
     return StreamBuilder<String>(
       stream: _bloc.cityName,
-      initialData: postLocData.postDisplay,
+      initialData: postLocData.display,
       builder: (_, AsyncSnapshot<String> snapshot) {
         return Padding(
           padding:

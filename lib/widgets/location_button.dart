@@ -29,7 +29,7 @@ class LocationButton extends StatelessWidget {
               stream: location,
               initialData: Provider.of<LocalStorage>(context, listen: false)
                   .getUserLocationData()
-                  .userDisplay,
+                  .display,
               builder: (context, snapshot) {
                 return Text(
                   'Searching in:  ${snapshot.data}',

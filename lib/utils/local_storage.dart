@@ -13,11 +13,11 @@ abstract class LocalDataRepositroy {
   bool isFirstLaunch();
   void setFirstLaunch(bool value);
 
-  UserLocationData getUserLocationData();
-  void setUserLocationData(UserLocationData data);
+  LocationData getUserLocationData();
+  void setUserLocationData(LocationData data);
 
-  PostLocationData getPostLocationData();
-  void setPostLocationData(PostLocationData data);
+  LocationData getPostLocationData();
+  void setPostLocationData(LocationData data);
 
   List<String> getFavorites(FavoriteType type);
   void toggleFavorites(String id, FavoriteType type);
@@ -38,19 +38,19 @@ class LocalStorage implements LocalDataRepositroy {
   static const String FAVORITE_MATING = 'favoriteMating';
 
   @visibleForTesting
-  UserLocationData defaultUserLocation = UserLocationData(
-    userCity: 'Maricopa County',
-    userTown: 'Scottsdale',
-    userDisplay: 'Scottsdale',
-    userDistrict: 'Arizona',
+  LocationData defaultUserLocation = LocationData(
+    city: 'Maricopa County',
+    town: 'Scottsdale',
+    display: 'Scottsdale',
+    district: 'Arizona',
   );
 
   @visibleForTesting
-  PostLocationData defaultPostLocation = PostLocationData(
-    postCity: 'Maricopa County',
-    postTown: 'Scottsdale',
-    postDisplay: 'Scottsdale',
-    postDistrict: 'Arizona',
+  LocationData defaultPostLocation = LocationData(
+    city: 'Maricopa County',
+    town: 'Scottsdale',
+    display: 'Scottsdale',
+    district: 'Arizona',
   );
 
   SharedPreferences _prefs;
@@ -133,11 +133,11 @@ class LocalStorage implements LocalDataRepositroy {
   }
 
   @override
-  UserLocationData getUserLocationData() {
+  LocationData getUserLocationData() {
     if (_prefs.getString(USER_LOCATION) == null) {
       return defaultUserLocation;
     } else {
-      return UserLocationData.fromJson(
+      return LocationData.fromJson(
         Map<String, String>.from(
           json.decode(_prefs.getString(USER_LOCATION)),
         ),
@@ -146,16 +146,16 @@ class LocalStorage implements LocalDataRepositroy {
   }
 
   @override
-  Future<void> setUserLocationData(UserLocationData data) async {
-    _prefs.setString(USER_LOCATION, json.encode(UserLocationData.toJson(data)));
+  Future<void> setUserLocationData(LocationData data) async {
+    _prefs.setString(USER_LOCATION, json.encode(LocationData.toJson(data)));
   }
 
   @override
-  PostLocationData getPostLocationData() {
+  LocationData getPostLocationData() {
     if (_prefs.getString(POST_LOCATION) == null) {
       return defaultPostLocation;
     } else {
-      return PostLocationData.fromJson(
+      return LocationData.fromJson(
         Map<String, String>.from(
           json.decode(
             _prefs.getString(POST_LOCATION),
@@ -166,8 +166,8 @@ class LocalStorage implements LocalDataRepositroy {
   }
 
   @override
-  void setPostLocationData(PostLocationData data) {
-    _prefs.setString(POST_LOCATION, json.encode(PostLocationData.toJson(data)));
+  void setPostLocationData(LocationData data) {
+    _prefs.setString(POST_LOCATION, json.encode(LocationData.toJson(data)));
   }
 
   @override

@@ -66,7 +66,7 @@ class _AddMateDogScreenState extends State<AddMateDogScreen> {
         if (!node.hasPrimaryFocus) {
           node.unfocus();
         }
-        print('tapped');
+
         // FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(

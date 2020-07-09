@@ -7,11 +7,7 @@ import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/location_util.dart';
 import 'package:dog_pal/utils/sentry_util.dart';
-import 'package:dog_pal/utils/ui_functions.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class DecisionsBloc implements BlocBase {
   DecisionsBloc(this._localStorage);
@@ -26,8 +22,6 @@ class DecisionsBloc implements BlocBase {
   Stream<bool> get shouldNavigate => _navigationCtrl.stream;
 
   bool _fetchingLoc = false;
-
-  SnackBar locationNotification;
 
   @override
   void dispose() {
@@ -57,16 +51,7 @@ class DecisionsBloc implements BlocBase {
               .isLocationServiceEnabled()
               .timeout(Duration(seconds: 6), onTimeout: () => true);
 
-          if (isServiceEnabled == null) {
-            locationNotification = errorSnackBar(
-              'Fetching location took more time than expected so we passed. Please press Nearby to retry.',
-            );
-            _navigationCtrl.sink.add(true);
-            return;
-          }
-
           if (!isServiceEnabled) {
-            locationNotification = locationServiceSnackbar();
             _navigationCtrl.sink.add(true);
             return;
           }
@@ -81,19 +66,20 @@ class DecisionsBloc implements BlocBase {
           }
 
           await accessLocation();
+
           _navigationCtrl.sink.add(true);
         }
       } else {
-        locationNotification = noConnectionSnackbar();
         _navigationCtrl.sink.add(true);
       }
     } on SocketException {
-      locationNotification = errorSnackBar('Poor Internet Connection.');
       _navigationCtrl.sink.add(true);
-    } on PlatformException {
-      locationNotification =
-          errorSnackBar('Something went wrong while retrieving location.');
+    } on PlatformException catch (e, s) {
       _navigationCtrl.sink.add(true);
+      sentry.captureException(
+        exception: e,
+        stackTrace: s,
+      );
     }
   }
 
@@ -109,7 +95,7 @@ class DecisionsBloc implements BlocBase {
       _stateCtrl.sink.add(DecisionState.fetchingLocation);
 
       try {
-        UserLocationData locationData =
+        LocationData locationData =
             await _locationUtil.getInfoFromPosition().timeout(
           Duration(seconds: 10),
           onTimeout: () {
@@ -117,36 +103,17 @@ class DecisionsBloc implements BlocBase {
           },
         );
 
+        //Save as default value for adding or querying posts
+
         if (locationData != null) {
           _localStorage.setUserLocationData(locationData);
-
-          locationNotification = SnackBar(
-            content: Text(
-              'Showing results in ${locationData.userTown ?? locationData.userCity ?? locationData.userDistrict}',
-              style: TextStyle(fontSize: 45.sp),
-            ),
-          );
-        } else {
-          locationNotification =
-              errorSnackBar('An error occured while retrieving location');
+          _localStorage.setPostLocationData(locationData);
         }
-      } on SocketException {
-        locationNotification = errorSnackBar(
-            'Couldn\'t retrieve location. Poor Internet Connection.');
       } on PlatformException catch (e, s) {
         sentry.captureException(
           exception: e,
           stackTrace: s,
         );
-        String error;
-
-        if (e.code == 'PERMISSION_DENIED') {
-          error = 'Couldn\'t retrieve location. Access was denied';
-        } else {
-          error = 'Something went wrong while retrieving location';
-        }
-
-        locationNotification = errorSnackBar(error);
       }
 
       _fetchingLoc = false;

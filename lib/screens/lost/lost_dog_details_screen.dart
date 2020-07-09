@@ -5,6 +5,7 @@ import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/models/lost_post.dart';
 import 'package:dog_pal/models/user.dart';
 import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
+import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/general_functions.dart';
 import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
@@ -31,6 +32,13 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
   void initState() {
     super.initState();
     _bloc = Provider.of<PostDeletionBloc>(context, listen: false);
+
+    _bloc.operationStatus.listen((status) async {
+      if (status == PostDeletionStatus.successful) {
+        await Future.delayed(Duration(seconds: 1))
+            .then((value) => Navigator.pop(context));
+      }
+    });
   }
 
   @override
@@ -99,10 +107,8 @@ class _LostDogDetailsScreenState extends State<LostDogDetailsScreen> {
                         user.uid == widget.post.dog.owner.uid
                     ? DeletePostButton(
                         fullWidth: MediaQuery.of(context).size.width * 0.8,
-                        onDeletePressed: () =>
-                            _bloc.deletePost(widget.post),
-                        onRetryPressed: () =>
-                            _bloc.deletePost(widget.post),
+                        onDeletePressed: () => _bloc.deletePost(widget.post),
+                        onRetryPressed: () => _bloc.deletePost(widget.post),
                         onCancelPressed: () => _bloc.cancelOperation(),
                         statusStream: _bloc.operationStatus,
                       )
