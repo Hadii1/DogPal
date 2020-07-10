@@ -105,6 +105,7 @@ class _AddMateDogScreenState extends State<AddMateDogScreen> {
                           ),
                           Divider(),
                           GenderFilter(
+                            isRequired: true,
                             onChanged: (gender) =>
                                 _bloc.mateDog.gender = gender,
                             initialValue: _bloc.mateDog.gender,
@@ -116,6 +117,7 @@ class _AddMateDogScreenState extends State<AddMateDogScreen> {
                           ),
                           Divider(),
                           SizeFilter(
+                            isRequired: true,
                             onChanged: (size) => _bloc.mateDog.size = size,
                             initialValue: _bloc.mateDog.size,
                           ),

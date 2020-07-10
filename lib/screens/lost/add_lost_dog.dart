@@ -102,6 +102,7 @@ class _AddLostDogScreenState extends State<AddLostDogScreen> {
                         ),
                         Divider(),
                         GenderFilter(
+                          isRequired: true,
                           onChanged: (String gender) =>
                               _bloc.dog.gender = gender,
                           initialValue: _bloc.dog.gender,

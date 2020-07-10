@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 class GenderFilter extends StatefulWidget {
   const GenderFilter({
     @required this.onChanged,
+    @required this.isRequired,
     this.initialValue,
   });
 
   final Function(String) onChanged;
   final String initialValue;
+  final bool isRequired;
 
   @override
   _GenderFilterState createState() => _GenderFilterState();
@@ -43,7 +45,9 @@ class _GenderFilterState extends State<GenderFilter> {
                   onChanged: (value) {
                     setState(() {
                       if (_groupValue == value) {
-                        _groupValue = '';
+                        if (!widget.isRequired) {
+                          _groupValue = '';
+                        }
                       } else {
                         _groupValue = value;
                       }
@@ -66,7 +70,9 @@ class _GenderFilterState extends State<GenderFilter> {
                   onChanged: (value) {
                     setState(() {
                       if (_groupValue == value) {
-                        _groupValue = '';
+                        if (!widget.isRequired) {
+                          _groupValue = '';
+                        }
                       } else {
                         _groupValue = value;
                       }
@@ -102,6 +108,8 @@ class CustomRadio extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: () {
         onChanged(value);
       },

@@ -39,6 +39,7 @@ class AdoptFilterSheet extends StatelessWidget {
                         ),
                         Divider(),
                         GenderFilter(
+                          isRequired: false,
                           onChanged: (value) {
                             _bloc.gender = value;
                             print(value);
@@ -52,11 +53,13 @@ class AdoptFilterSheet extends StatelessWidget {
                         ),
                         Divider(),
                         SizeFilter(
+                          isRequired: false,
                           onChanged: (String size) => _bloc.size = size,
                           initialValue: _bloc.size,
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: false,
                           initialValue: _bloc.energyLevel,
                           onChanged: (String value) =>
                               _bloc.energyLevel = value,
@@ -65,6 +68,7 @@ class AdoptFilterSheet extends StatelessWidget {
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: false,
                           initialValue: _bloc.barkTendencies,
                           onChanged: (String value) =>
                               _bloc.barkTendencies = value,
@@ -73,6 +77,7 @@ class AdoptFilterSheet extends StatelessWidget {
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: false,
                           initialValue: _bloc.trainingLevel,
                           onChanged: (String value) =>
                               _bloc.trainingLevel = value,
@@ -94,6 +99,9 @@ class AdoptFilterSheet extends StatelessWidget {
 
                 Navigator.pop(context);
               },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               color: Theme.of(context).primaryColor,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -134,6 +142,7 @@ class MateFilterPage extends StatelessWidget {
                       ),
                       Divider(),
                       GenderFilter(
+                        isRequired: false,
                         onChanged: (value) => _bloc.gender = value,
                         initialValue: _bloc.gender,
                       ),
@@ -144,6 +153,7 @@ class MateFilterPage extends StatelessWidget {
                       ),
                       Divider(),
                       SizeFilter(
+                        isRequired: false,
                         onChanged: (String size) => _bloc.size = size,
                         initialValue: _bloc.size,
                       ),
@@ -158,6 +168,9 @@ class MateFilterPage extends StatelessWidget {
                     _bloc.getPosts();
                     Navigator.pop(context);
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   color: Theme.of(context).primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -195,6 +208,7 @@ class LostFilterPage extends StatelessWidget {
               ),
               Divider(),
               GenderFilter(
+                isRequired: false,
                 onChanged: (value) => _bloc.gender = value,
                 initialValue: _bloc.gender,
               ),
@@ -206,6 +220,9 @@ class LostFilterPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                 child: FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   onPressed: () {
                     _bloc.getPosts();
                     Navigator.pop(context);

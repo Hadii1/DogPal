@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SizeFilter extends StatefulWidget {
   const SizeFilter({
-    this.onChanged,
+    @required this.onChanged,
     this.initialValue,
+    @required this.isRequired,
   });
   final Function(String) onChanged;
   final String initialValue;
+  final bool isRequired;
 
   @override
   _SizeFilterState createState() => _SizeFilterState();
@@ -111,7 +113,9 @@ class _SizeFilterState extends State<SizeFilter> {
                                 if (selected) {
                                   _selectedSize = size;
                                 } else {
-                                  _selectedSize = '';
+                                  if (!widget.isRequired) {
+                                    _selectedSize = '';
+                                  }
                                 }
                                 widget.onChanged(_selectedSize);
                               });

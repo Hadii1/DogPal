@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:dog_pal/bloc/post_location_bloc.dart';
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/local_storage.dart';
-import 'package:dog_pal/utils/styles.dart';
 import 'package:dog_pal/utils/ui_functions.dart';
 import 'package:dog_pal/widgets/location_search_bar.dart';
 import 'package:flutter/material.dart';

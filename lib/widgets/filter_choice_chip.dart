@@ -8,11 +8,13 @@ class FilterChoiceChip extends StatefulWidget {
     @required this.title,
     @required this.values,
     @required this.initialValue,
+    @required this.isRequired,
   });
 
   final List<String> values;
   final String initialValue;
   final String title;
+  final bool isRequired;
   final Function(String) onChanged;
 
   @override
@@ -57,7 +59,9 @@ class _FilterChoiceChipState extends State<FilterChoiceChip> {
                       if (selected) {
                         _selectedValue = e;
                       } else {
-                        _selectedValue = '';
+                        if (!widget.isRequired) {
+                          _selectedValue = '';
+                        }
                       }
                       widget.onChanged(_selectedValue);
                     });

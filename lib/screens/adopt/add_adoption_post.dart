@@ -111,6 +111,7 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                         ),
                         Divider(),
                         GenderFilter(
+                          isRequired: true,
                           onChanged: (String gender) =>
                               _bloc.adoptionDog.gender = gender,
                           initialValue: _bloc.adoptionDog.gender,
@@ -122,12 +123,14 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                         ),
                         Divider(),
                         SizeFilter(
+                          isRequired: true,
                           onChanged: (String size) =>
                               _bloc.adoptionDog.size = size,
                           initialValue: 'Medium',
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: true,
                           initialValue: _bloc.adoptionDog.energyLevel,
                           onChanged: (String value) =>
                               _bloc.adoptionDog.energyLevel = value,
@@ -136,6 +139,7 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: true,
                           initialValue: _bloc.adoptionDog.barkTendencies,
                           onChanged: (String value) =>
                               _bloc.adoptionDog.barkTendencies = value,
@@ -144,6 +148,7 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: true,
                           initialValue: _bloc.adoptionDog.sheddingLevel,
                           onChanged: (value) =>
                               _bloc.adoptionDog.sheddingLevel = value,
@@ -152,6 +157,7 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                         ),
                         Divider(),
                         FilterChoiceChip(
+                          isRequired: true,
                           initialValue: _bloc.adoptionDog.trainingLevel,
                           onChanged: (String value) =>
                               _bloc.adoptionDog.trainingLevel = value,
