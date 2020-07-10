@@ -213,7 +213,7 @@ class _AskLocationWidget extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 24),
               child: InkWell(
                 onTap: () => bloc.skipPressed(),
                 splashColor: Colors.transparent,

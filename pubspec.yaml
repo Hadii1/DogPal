@@ -25,10 +25,12 @@ dependencies:
   photo_view: ^0.9.2
   cloud_firestore_mocks: ^0.4.4
   connectivity: ^0.4.8+6
+  url_launcher: ^5.4.10
+
   flutter_staggered_animations:
     git:
       url: https://github.com/Hadii1/flutter_staggered_animations
-  url_launcher: ^5.4.10
+      
   shimmer: ^1.1.1
   google_maps_webservice: ^0.0.16
   firebase_storage: ^3.1.5

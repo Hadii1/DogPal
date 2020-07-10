@@ -366,7 +366,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: c2346bbc2adca221331e29ecbef02428280a69b6
+      resolved-ref: fd5dcdb8fa86cca22bf1d92d996e350c78b0f65b
       url: "https://github.com/Hadii1/flutter_staggered_animations"
     source: git
     version: "0.1.2"

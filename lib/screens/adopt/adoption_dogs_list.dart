@@ -31,9 +31,9 @@ class AdoptionList extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8),
       height: double.maxFinite,
       child: RefreshIndicator(
-        onRefresh: () => onRefresh(),
-        child: AnimationLimiter(
-          child: Scrollbar(
+        onRefresh: onRefresh,
+        child: Scrollbar(
+          child: AnimationLimiter(
             child: ListView.builder(
               controller: scrollController,
               itemCount: posts.length,

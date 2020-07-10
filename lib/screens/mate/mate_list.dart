@@ -33,11 +33,11 @@ class MateList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 8),
       height: double.maxFinite,
-      child: RefreshIndicator(
-        onRefresh: onRetry,
-        child: Scrollbar(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 52),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 52),
+        child: RefreshIndicator(
+          onRefresh: onRetry,
+          child: Scrollbar(
             child: AnimationLimiter(
               child: PageView.builder(
                 controller: pageController,
@@ -127,7 +127,7 @@ class _MateCardState extends State<MateCard> {
                     stops: [0.1, 0.4],
                     colors: [
                       Colors.transparent,
-                      blackishColor.withOpacity(0.4),
+                      blackishColor.withOpacity(0.6),
                     ],
                   ),
                 ),
