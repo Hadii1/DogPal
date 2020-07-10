@@ -100,6 +100,7 @@ class _DogsScreenState extends State<DogsScreen> {
                       onNearbyPressed: _bloc.nearByPressed,
                       suggestionCallback: _bloc.onLocationSearch,
                       onSuggestionSelected: _bloc.onSuggestionSelected,
+                      isLoading: _bloc.isFetchingLocationSuggestions,
                     ),
                   ),
                   AnimatedHeader(

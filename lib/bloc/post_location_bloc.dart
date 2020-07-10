@@ -16,13 +16,13 @@ class PostLocationBloc implements BlocBase {
     _city = _localStorage.getPostLocationData().city;
     _town = _localStorage.getPostLocationData().town;
     _district = _localStorage.getPostLocationData().district;
-    locationDisplay = _localStorage.getPostLocationData().display;
+    _locationDisplay = _localStorage.getPostLocationData().display;
   }
 
   String _city;
   String _town;
   String _district;
-  String locationDisplay;
+  String _locationDisplay;
 
   final LocalDataRepositroy _localStorage;
   final LocationUtil _locationUtil = LocationUtil();
@@ -33,8 +33,15 @@ class PostLocationBloc implements BlocBase {
   StreamController<String> _errorCtrl = StreamController();
   Stream<String> get errorStream => _errorCtrl.stream;
 
-  StreamController<String> _cityNameCtrl = StreamController.broadcast();
-  Stream<String> get cityName => _cityNameCtrl.stream;
+  StreamController<String> _displayCtrl = StreamController();
+  Stream<String> get display => _displayCtrl.stream;
+
+  StreamController<String> _verificationCtrl = StreamController();
+  Stream<String> get verifiedPlace => _verificationCtrl.stream;
+
+  StreamController<bool> _isFetchingLocationSuggestions = StreamController();
+  Stream<bool> get isFetchingLocationSuggestions =>
+      _isFetchingLocationSuggestions.stream;
 
   bool _isFetchingLocation = false;
 
@@ -42,16 +49,21 @@ class PostLocationBloc implements BlocBase {
   void dispose() {
     _shouldLoadCtrl.close();
     _errorCtrl.close();
-    _cityNameCtrl.close();
+    _isFetchingLocationSuggestions.close();
+    _displayCtrl.close();
+    _verificationCtrl.close();
   }
 
   Future<List<Prediction>> onLocationSearch(String input) async {
-    return await _locationUtil.completePlacesQuery(input);
+    _isFetchingLocationSuggestions.sink.add(true);
+    var predictions = await _locationUtil.completePlacesQuery(input);
+    _isFetchingLocationSuggestions.sink.add(false);
+    return predictions;
   }
 
   void onSuggesstionSelected(Prediction prediction) async {
     try {
-      Map<String, String> info =
+      LocationData info =
           await _locationUtil.getDetailsFromPrediction(prediction);
 
       if (info == null) {
@@ -59,11 +71,12 @@ class PostLocationBloc implements BlocBase {
         return;
       }
 
-      _town = info[PostsConsts.TOWN];
-      _city = info[PostsConsts.CITY];
-      _district = info[PostsConsts.DISTRICT];
+      _town = info.town;
+      _city = info.city;
+      _district = info.district;
+      _locationDisplay = prediction.description;
 
-      _cityNameCtrl.sink.add(prediction.description);
+      _displayCtrl.sink.add(prediction.description);
     } on SocketException {
       _errorCtrl.sink.add('Poor Internet Connection');
     } on PlatformException {
@@ -127,9 +140,9 @@ class PostLocationBloc implements BlocBase {
             _town = data.town;
             _city = data.city;
             _district = data.district;
-            locationDisplay = data.display;
+            _locationDisplay = data.display;
 
-            _cityNameCtrl.sink.add(locationDisplay);
+            _displayCtrl.sink.add(_locationDisplay);
           }
         } else {
           _errorCtrl.sink
@@ -148,12 +161,13 @@ class PostLocationBloc implements BlocBase {
   }
 
   void onVerifyPressed() {
+    _verificationCtrl.sink.add(_locationDisplay);
     _localStorage.setPostLocationData(
       LocationData(
         city: _city,
         district: _district,
         town: _town,
-        display: locationDisplay,
+        display: _locationDisplay,
       ),
     );
   }

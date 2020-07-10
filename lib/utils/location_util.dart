@@ -1,6 +1,5 @@
 import 'package:dog_pal/models/location_data.dart';
 import 'package:dog_pal/utils/app_secrets.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/enums.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 //Google Places Api
 //https://developers.google.com/maps/documentation/geocoding/intro
-
 
 //Singleton
 class LocationUtil {
@@ -46,8 +44,7 @@ class LocationUtil {
     return response.predictions;
   }
 
-  Future<Map<String, String>> getDetailsFromPrediction(
-      Prediction prediction) async {
+  Future<LocationData> getDetailsFromPrediction(Prediction prediction) async {
     PlacesDetailsResponse pdr = await _places.getDetailsByPlaceId(
       prediction.placeId,
       fields: [
@@ -97,11 +94,12 @@ class LocationUtil {
       response.results,
     );
 
-    return {
-      UserConsts.TOWN: town,
-      UserConsts.CITY: city,
-      UserConsts.DISTRICT: district,
-    };
+    return LocationData(
+      city: city,
+      district: district,
+      town: town,
+      display: prediction.description,
+    );
   }
 
   String _getLocationName(

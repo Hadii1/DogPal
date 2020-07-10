@@ -29,9 +29,11 @@ class LocationWidgetDialog extends State<PostLocation> {
   void initState() {
     _bloc = Provider.of<PostLocationBloc>(context, listen: false);
 
-    _bloc.cityName.listen((city) {
+    _bloc.verifiedPlace.listen((city) {
       widget.onLocationChanged(city);
+      Navigator.pop(context);
     });
+
     _bloc.errorStream.listen(
       (error) {
         if (error == GeneralConstants.LOCATION_PERMISSION_ERROR) {
@@ -73,14 +75,6 @@ class LocationWidgetDialog extends State<PostLocation> {
             fontSize: 65.sp,
           ),
         ),
-        leading: InkWell(
-          onTap: () => Navigator.of(context).pop(),
-          child: Icon(
-            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
-            size: 75.sp,
-            color: blackishColor,
-          ),
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(21),
@@ -92,7 +86,7 @@ class LocationWidgetDialog extends State<PostLocation> {
               _currentLocationButton(),
               _progressIndicator(),
               _locationName(),
-              _verifyButton()
+              _verifyButton(),
             ],
           ),
         ),
@@ -104,7 +98,7 @@ class LocationWidgetDialog extends State<PostLocation> {
     LocationData postLocData =
         Provider.of<LocalStorage>(context, listen: false).getPostLocationData();
     return StreamBuilder<String>(
-      stream: _bloc.cityName,
+      stream: _bloc.display,
       initialData: postLocData.display,
       builder: (_, AsyncSnapshot<String> snapshot) {
         return Padding(
@@ -144,10 +138,7 @@ class LocationWidgetDialog extends State<PostLocation> {
       padding: const EdgeInsets.all(24),
       child: FlatButton(
         color: Color(0xff2F4858),
-        onPressed: () {
-          _bloc.onVerifyPressed();
-          Navigator.pop(context, _bloc.locationDisplay);
-        },
+        onPressed: () => _bloc.onVerifyPressed(),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Text(
@@ -233,6 +224,7 @@ class LocationWidgetDialog extends State<PostLocation> {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: LocationSeachBar(
+        isLoading: _bloc.isFetchingLocationSuggestions,
         cityController: TextEditingController(),
         suggestionCallback: (input) => _bloc.onLocationSearch(input),
         onNearbyPressed: () => _bloc.onCurrentLocationPressed(),

@@ -11,11 +11,13 @@ class LocationSeachBar extends StatefulWidget {
     @required this.suggestionCallback,
     @required this.onNearbyPressed,
     @required this.cityController,
+    @required this.isLoading,
   });
 
   final Function(Prediction prediction) onSuggestionSelected;
   final Future<List<Prediction>> Function(String input) suggestionCallback;
   final TextEditingController cityController;
+  final Stream<bool> isLoading;
   final Function() onNearbyPressed;
   @override
   _LocationSeachBarState createState() => _LocationSeachBarState();
@@ -25,16 +27,17 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
   TextEditingController get _nameCtrl => widget.cityController;
 
   FocusNode _focusNode = FocusNode();
-  bool _isLoading = false;
 
   @override
   void initState() {
-    _nameCtrl.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {});
-      });
-    });
     super.initState();
+
+    //To toggle the trailer icon which depends on the text being empty or not
+    _nameCtrl.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -58,8 +61,11 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
             children: <Widget>[
               Expanded(
                 child: TypeAheadField(
-                  animationDuration: Duration(milliseconds: 600),
+                  animationDuration: Duration(milliseconds: 300),
+                  suggestionsBoxVerticalOffset: 10,
                   suggestionsBoxDecoration: SuggestionsBoxDecoration(
+                    offsetX: 10,
+                    elevation: 20,
                     color: yellowishColor,
                     constraints: BoxConstraints(
                       maxHeight: MediaQuery.of(context).size.height * 0.5,
@@ -109,16 +115,8 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                   hideSuggestionsOnKeyboardHide: true,
                   suggestionsCallback: (input) async {
                     if (input.isNotEmpty) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-
                       List<Prediction> predictions =
                           await widget.suggestionCallback(input);
-
-                      setState(() {
-                        _isLoading = false;
-                      });
 
                       return predictions;
                     } else {
@@ -173,7 +171,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                           focusColor: Colors.transparent,
                           onTap: () {
                             widget.onNearbyPressed();
-                            FocusScope.of(context).unfocus();
+                            _focusNode.unfocus();
                           },
                           child: Icon(
                             Icons.location_on,
@@ -187,7 +185,9 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                                 WidgetsBinding.instance.addPostFrameCallback(
                               (_) {
                                 _nameCtrl.clear();
-                                _focusNode.requestFocus();
+                                if (!_focusNode.hasFocus) {
+                                  _focusNode.requestFocus();
+                                }
                               },
                             ),
                             child: Icon(
@@ -198,30 +198,37 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                           ),
                         ),
                 ),
-              )
+              ),
             ],
           ),
         ),
-        AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 8.sp),
-            child: Container(
-              height: 3,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _isLoading
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(24)),
-                      child: LinearProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).accentColor,
+        StreamBuilder<bool>(
+          stream: widget.isLoading,
+          initialData: false,
+          builder: (_, snapshot) {
+            return AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: snapshot.data
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: 12.sp),
+                      child: Container(
+                        height: 3,
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                          child: LinearProgressIndicator(
+                            backgroundColor:
+                                Theme.of(context).primaryColorLight,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColorDark,
+                            ),
+                          ),
                         ),
                       ),
                     )
-                  : Container(),
-            ),
-          ),
+                  : SizedBox.shrink(),
+            );
+          },
         )
       ],
     );

@@ -44,43 +44,46 @@ class DeletePostButton extends StatelessWidget {
       initialData: PostDeletionStatus.unInitiated,
       stream: statusStream,
       builder: (_, snapshot) {
-        return Material(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(200),
-          ),
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 250),
-            width: _getActiveWidth(snapshot.data, context),
-            height: 50,
-            child: (() {
-              switch (snapshot.data) {
-                case PostDeletionStatus.unInitiated:
-                  return UninitiatedButton(
-                    onSumbitPressed: onDeletePressed,
-                  );
-                  break;
-                case PostDeletionStatus.successful:
-                  return SuccessfulButton();
-                  break;
-                case PostDeletionStatus.failed:
-                  return LoadingOrFailedButton(
-                    onCancelPressed: onCancelPressed,
-                    onRetryPressed: onRetryPressed,
-                    status: PostDeletionStatus.failed,
-                  );
-                  break;
-                case PostDeletionStatus.loading:
-                  return LoadingOrFailedButton(
-                    onCancelPressed: onCancelPressed,
-                    onRetryPressed: onRetryPressed,
-                    status: PostDeletionStatus.loading,
-                  );
-                  break;
-                default:
-                  return null;
-              }
-            }()),
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Material(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(200),
+            ),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 250),
+              width: _getActiveWidth(snapshot.data, context),
+              height: 50,
+              child: (() {
+                switch (snapshot.data) {
+                  case PostDeletionStatus.unInitiated:
+                    return UninitiatedButton(
+                      onSumbitPressed: onDeletePressed,
+                    );
+                    break;
+                  case PostDeletionStatus.successful:
+                    return SuccessfulButton();
+                    break;
+                  case PostDeletionStatus.failed:
+                    return LoadingOrFailedButton(
+                      onCancelPressed: onCancelPressed,
+                      onRetryPressed: onRetryPressed,
+                      status: PostDeletionStatus.failed,
+                    );
+                    break;
+                  case PostDeletionStatus.loading:
+                    return LoadingOrFailedButton(
+                      onCancelPressed: onCancelPressed,
+                      onRetryPressed: onRetryPressed,
+                      status: PostDeletionStatus.loading,
+                    );
+                    break;
+                  default:
+                    return null;
+                }
+              }()),
+            ),
           ),
         );
       },
@@ -112,7 +115,7 @@ class UninitiatedButton extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 4.0),
+              padding: const EdgeInsets.only(left: 16.0),
               child: Icon(
                 Icons.delete,
                 color: Colors.white,
@@ -151,7 +154,7 @@ class LoadingOrFailedButton extends StatelessWidget {
             height: double.maxFinite,
             child: Material(
               color: blackishColor,
-              elevation: 5,
+              elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(200),
               ),

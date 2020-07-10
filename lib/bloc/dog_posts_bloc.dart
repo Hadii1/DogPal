@@ -11,7 +11,6 @@ import 'package:dog_pal/repo/adopt_repo.dart';
 import 'package:dog_pal/repo/lost_repo.dart';
 import 'package:dog_pal/repo/mate_repo.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
-import 'package:dog_pal/utils/constants_util.dart';
 import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/firestore_util.dart';
 import 'package:dog_pal/utils/general_functions.dart';
@@ -61,6 +60,11 @@ class DogPostsBloc implements BlocBase {
   StreamController<bool> _shouldShowHeader = StreamController.broadcast();
   Stream<bool> get showHeader => _shouldShowHeader.stream;
 
+  StreamController<bool> _isFetchingLocationSuggestions =
+      StreamController.broadcast();
+  Stream<bool> get isFetchingLocationSuggestions =>
+      _isFetchingLocationSuggestions.stream;
+
   StreamController<int> _activeFilterCtrl = StreamController.broadcast();
   Stream<int> get activeFilters => _activeFilterCtrl.stream;
 
@@ -107,6 +111,7 @@ class DogPostsBloc implements BlocBase {
     stateCtrl.close();
     _shouldShowHeader.close();
     pageController.dispose();
+    _isFetchingLocationSuggestions.close();
     _postTypeCtrl.close();
     _locationCtrl.close();
     _activeFilterCtrl.close();
@@ -115,9 +120,9 @@ class DogPostsBloc implements BlocBase {
 
   void onFavoritePressed(DogPost post) async {
     FavoriteType type;
-    if (post.runtimeType == MatePost) {
+    if (post.type == 'mate') {
       type = FavoriteType.mating;
-    } else if (post.runtimeType == AdoptPost) {
+    } else if (post.type == 'adopt') {
       type = FavoriteType.adoption;
     } else {
       throw PlatformException(code: '${post.runtimeType} is Not allowed');
@@ -162,12 +167,16 @@ class DogPostsBloc implements BlocBase {
   }
 
   Future<List<Prediction>> onLocationSearch(String input) async {
-    return await _locationUtil.completePlacesQuery(input);
+    _isFetchingLocationSuggestions.sink.add(true);
+    var predictions = await _locationUtil.completePlacesQuery(input);
+    _isFetchingLocationSuggestions.sink.add(false);
+    return predictions;
   }
 
   Future<void> onSuggestionSelected(Prediction prediction) async {
+    stateCtrl.sink.add(DataState.loading);
     try {
-      Map<String, String> info =
+      LocationData info =
           await _locationUtil.getDetailsFromPrediction(prediction);
 
       if (info == null) {
@@ -175,9 +184,9 @@ class DogPostsBloc implements BlocBase {
         return;
       }
 
-      _town = info[UserConsts.TOWN];
-      _city = info[UserConsts.CITY];
-      _district = info[UserConsts.DISTRICT];
+      _town = info.town;
+      _city = info.city;
+      _district = info.district;
 
       _locationCtrl.sink.add(prediction.description);
 
