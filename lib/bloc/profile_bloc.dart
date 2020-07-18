@@ -100,6 +100,8 @@ class ProfileBloc implements BlocBase {
     }
   }
 
+  Future<void> onUserPostAdded() => initUserPosts();
+
   Future<void> deleteAccountPressed() async {
     String uid = localStorage.getUser().uid;
     if (!_deletingAccount) {

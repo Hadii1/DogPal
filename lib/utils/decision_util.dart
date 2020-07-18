@@ -203,7 +203,7 @@ class _AskLocationWidget extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
-                    bloc.accessLocation();
+                    bloc.onPermissionGranted();
                   },
                   color: Theme.of(context).primaryColor,
                 ),

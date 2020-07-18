@@ -67,10 +67,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
         //Show first location:
+
+        String display = _localStorage.getUserLocationData().display;
+        String town = _localStorage.getUserLocationData().town;
+
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
-            content: Text(
-                'Showing results in ${_localStorage.getUserLocationData().display}'),
+            content: Text('Showing results in ${display ?? town}'),
           ),
         );
       },
@@ -211,7 +214,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
     return BottomNavigationBar(
       unselectedFontSize: 35.sp,
       elevation: 12,
-      iconSize: 75.sp,
+      iconSize: 70.sp,
       currentIndex: _bottomNavIndex,
       showUnselectedLabels: true,
       type: BottomNavigationBarType.shifting,

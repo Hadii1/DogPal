@@ -49,28 +49,17 @@ class DecisionsBloc implements BlocBase {
         } else {
           bool isServiceEnabled = await _locationUtil
               .isLocationServiceEnabled()
-              .timeout(Duration(seconds: 6), onTimeout: () => true);
-
-          if (!isServiceEnabled) {
-            _navigationCtrl.sink.add(true);
-            return;
-          }
+              .timeout(Duration(seconds: 6), onTimeout: () => false);
 
           bool isPermissionGranted = await _locationUtil
               .isLocationPermissionGranted()
               .timeout(Duration(seconds: 4), onTimeout: () => false);
 
-          if (!isPermissionGranted) {
-            _navigationCtrl.sink.add(true);
-            return;
+          if (isPermissionGranted && isServiceEnabled) {
+            await _accessLocation();
           }
-
-          await accessLocation();
-
           _navigationCtrl.sink.add(true);
         }
-      } else {
-        _navigationCtrl.sink.add(true);
       }
     } on SocketException {
       _navigationCtrl.sink.add(true);
@@ -88,36 +77,38 @@ class DecisionsBloc implements BlocBase {
     _localStorage.setFirstLaunch(false);
   }
 
-  Future<void> accessLocation() async {
+  Future<void> onPermissionGranted() async {
+    try {
+      await _accessLocation();
+      _navigationCtrl.sink.add(true);
+    } on PlatformException catch (e, s) {
+      _navigationCtrl.sink.add(true);
+      sentry.captureException(
+        exception: e,
+        stackTrace: s,
+      );
+    }
+  }
+
+  Future<void> _accessLocation() async {
     if (!_fetchingLoc) {
       _fetchingLoc = true;
 
       _stateCtrl.sink.add(DecisionState.fetchingLocation);
 
-      try {
-        LocationData locationData =
-            await _locationUtil.getInfoFromPosition().timeout(
-          Duration(seconds: 10),
-          onTimeout: () {
-            return null;
-          },
-        );
+      LocationData locationData =
+          await _locationUtil.getInfoFromPosition().timeout(
+                Duration(seconds: 10),
+                onTimeout: () => null,
+              );
 
-        //Save as default value for adding or querying posts
+      //Save as default value for adding or querying posts
 
-        if (locationData != null) {
-          _localStorage.setUserLocationData(locationData);
-          _localStorage.setPostLocationData(locationData);
-        }
-      } on PlatformException catch (e, s) {
-        sentry.captureException(
-          exception: e,
-          stackTrace: s,
-        );
+      if (locationData != null) {
+        _localStorage.setUserLocationData(locationData);
       }
 
       _fetchingLoc = false;
-      _navigationCtrl.sink.add(true);
     }
   }
 }

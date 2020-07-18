@@ -94,58 +94,56 @@ class _AddMateDogScreenState extends State<AddMateDogScreen> {
                       initialAge: _bloc.mateDog.age,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          BreedFilterWidget(
-                            onChanged: (breed) => _bloc.mateDog.breed = breed,
-                            orientation: WidgetOrientation.horizontal,
-                            initalBreed: _bloc.mateDog.breed,
-                          ),
-                          Divider(),
-                          GenderFilter(
-                            isRequired: true,
-                            onChanged: (gender) =>
-                                _bloc.mateDog.gender = gender,
-                            initialValue: _bloc.mateDog.gender,
-                          ),
-                          Divider(),
-                          CoatColor(
-                            onChanged: (colors) =>
-                                _bloc.mateDog.coatColors = colors,
-                          ),
-                          Divider(),
-                          SizeFilter(
-                            isRequired: true,
-                            onChanged: (size) => _bloc.mateDog.size = size,
-                            initialValue: _bloc.mateDog.size,
-                          ),
-                          Divider(),
-                          FilterCheckBox(
-                            label: 'Vaccinated',
-                            initialValue: _bloc.mateDog.vaccinated,
-                            onChanged: (value) =>
-                                _bloc.mateDog.vaccinated = value,
-                          ),
-                          FilterCheckBox(
-                            label: 'Pedigree',
-                            initialValue: _bloc.mateDog.pedigree,
-                            onChanged: (bool value) =>
-                                _bloc.mateDog.pedigree = value,
-                          ),
-                          Divider(),
-                          DescriptionField(
-                            onChanged: (desc) => _bloc.description = desc,
-                          ),
-                          LocationField(),
-                          Divider(),
-                          PhoneField(
-                            onChanged: (number) =>
-                                _bloc.mateDog.owner.phoneNumber = number,
-                          )
-                        ],
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: BreedFilterWidget(
+                        onChanged: (breed) => _bloc.mateDog.breed = breed,
+                        orientation: WidgetOrientation.horizontal,
+                        initalBreed: _bloc.mateDog.breed,
                       ),
+                    ),
+                    Divider(),
+                    GenderFilter(
+                      isRequired: true,
+                      onChanged: (gender) => _bloc.mateDog.gender = gender,
+                      initialValue: _bloc.mateDog.gender,
+                    ),
+                    Divider(),
+                    CoatColor(
+                      onChanged: (colors) => _bloc.mateDog.coatColors = colors,
+                    ),
+                    Divider(),
+                    SizeFilter(
+                      isRequired: true,
+                      onChanged: (size) => _bloc.mateDog.size = size,
+                      initialValue: _bloc.mateDog.size,
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 32.0),
+                      child: FilterCheckBox(
+                        label: 'Vaccinated',
+                        initialValue: _bloc.mateDog.vaccinated,
+                        onChanged: (value) => _bloc.mateDog.vaccinated = value,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: FilterCheckBox(
+                        label: 'Pedigree',
+                        initialValue: _bloc.mateDog.pedigree,
+                        onChanged: (bool value) =>
+                            _bloc.mateDog.pedigree = value,
+                      ),
+                    ),
+                    Divider(),
+                    DescriptionField(
+                      onChanged: (desc) => _bloc.description = desc,
+                    ),
+                    LocationField(),
+                    Divider(),
+                    PhoneField(
+                      onChanged: (number) =>
+                          _bloc.mateDog.owner.phoneNumber = number,
                     ),
                     _addButton(),
                   ],

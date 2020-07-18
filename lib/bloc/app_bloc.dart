@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:dog_pal/bloc/dog_posts_bloc.dart';
+import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:dog_pal/utils/bloc_disposal.dart';
 import 'package:dog_pal/utils/enums.dart';
 
 class AppBloc implements BlocBase {
-  AppBloc(this._dogPostsBloc) {
+  AppBloc(this._dogPostsBloc, this._profileBloc) {
     postsToAddStream.listen(
       (addPost) async {
         if (addPost != null) {
@@ -21,6 +22,7 @@ class AppBloc implements BlocBase {
             //Operatoin Success
             _operationCtrl.sink.add(PostAdditionStatus.successful);
             _dogPostsBloc.onUserPostAdded(dogPost);
+            _profileBloc.onUserPostAdded();
             lastFunction = null;
           } else {
             //Operatoin Failed
@@ -33,7 +35,8 @@ class AppBloc implements BlocBase {
     );
   }
 
-  DogPostsBloc _dogPostsBloc;
+  final DogPostsBloc _dogPostsBloc;
+  final ProfileBloc _profileBloc;
 
   bool currentlyAdding = false;
 

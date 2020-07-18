@@ -32,9 +32,12 @@ class _CoatColorState extends State<CoatColor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            'Coat Color(s)',
-            style: subHeaderStyle,
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Text(
+              'Coat Color(s)',
+              style: subHeaderStyle,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 12.0),

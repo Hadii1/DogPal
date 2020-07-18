@@ -87,7 +87,7 @@ class _AddLostDogScreenState extends State<AddLostDogScreen> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -95,10 +95,13 @@ class _AddLostDogScreenState extends State<AddLostDogScreen> {
                           nameKey: _nameKey,
                           onChanged: (name) => _bloc.dog.dogName = name,
                         ),
-                        BreedFilterWidget(
-                          orientation: WidgetOrientation.horizontal,
-                          initalBreed: _bloc.dog.breed,
-                          onChanged: (breed) => _bloc.dog.breed = breed,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: BreedFilterWidget(
+                            orientation: WidgetOrientation.horizontal,
+                            initalBreed: _bloc.dog.breed,
+                            onChanged: (breed) => _bloc.dog.breed = breed,
+                          ),
                         ),
                         Divider(),
                         GenderFilter(

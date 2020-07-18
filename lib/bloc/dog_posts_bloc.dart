@@ -423,7 +423,11 @@ class DogPostsBloc implements BlocBase {
               .isLocationServiceEnabled()
               .timeout(Duration(seconds: 5), onTimeout: () => null);
 
-          if (isServiceEnabled == null) {
+          bool permissionGranted = await checkAndAskPermission(
+                  permission: Permission.locationWhenInUse)
+              .timeout(Duration(seconds: 5), onTimeout: () => null);
+
+          if (isServiceEnabled == null || permissionGranted == null) {
             stateCtrl.sink.add(DataState.locationUnknownError);
             _fetchingLocation = false;
             return;
@@ -431,16 +435,6 @@ class DogPostsBloc implements BlocBase {
 
           if (!isServiceEnabled) {
             stateCtrl.sink.add(DataState.locationServiceOff);
-            _fetchingLocation = false;
-            return;
-          }
-
-          bool permissionGranted = await checkAndAskPermission(
-                  permission: Permission.locationWhenInUse)
-              .timeout(Duration(seconds: 5), onTimeout: () => null);
-
-          if (permissionGranted == null) {
-            stateCtrl.sink.add(DataState.locationUnknownError);
             _fetchingLocation = false;
             return;
           }

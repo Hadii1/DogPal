@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:dog_pal/bloc/auth_bloc.dart';
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/navigators/app_navigator.dart';
 import 'package:dog_pal/navigators/profile_navigator.dart';
@@ -229,8 +228,7 @@ class ProfileWidget extends StatelessWidget {
           onPressed: () {
             Navigator.of(context, rootNavigator: true).pushNamed(
               AppRoutes.AUTH_SCREEN,
-              arguments:
-                  AuthBloc(Provider.of<LocalStorage>(context, listen: false)),
+              arguments: Provider.of<LocalStorage>(context, listen: false),
             );
           },
         ),
@@ -415,7 +413,11 @@ class CredentialsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 24.0),
                     child: RichText(
                       text: TextSpan(
-                        style: normalTextStyle,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 45.sp,
+                          color: Colors.black,
+                        ),
                         text:
                             '''This project is developed and maintained on personal efforts. As it is with most individual software projects, the project makes use of many open source libraries and graphical content that was given for the world to enjoy. Here we mention some of these uses: ''',
                       ),
@@ -423,13 +425,19 @@ class CredentialsScreen extends StatelessWidget {
                   ),
                   RichText(
                     text: TextSpan(
-                      style: normalTextStyle,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 45.sp,
+                        color: Colors.black,
+                      ),
                       children: [
                         TextSpan(
                             text:
                                 '• The tips to consider before adding your dog to mating was written by'),
                         TextSpan(
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                           text: ' Dobie Houson.',
                         ),
                       ],
@@ -439,7 +447,11 @@ class CredentialsScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: RichText(
                       text: TextSpan(
-                        style: normalTextStyle,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 45.sp,
+                          color: Colors.black,
+                        ),
                         children: [
                           TextSpan(
                               text:
@@ -461,26 +473,36 @@ class CredentialsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: RichText(
-                      text: TextSpan(style: normalTextStyle, children: [
-                        TextSpan(
-                            text:
-                                '• The cautious dog and the good doggy images were designed by:'),
-                        TextSpan(
+                      text: TextSpan(
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            fontFamily: 'OpenSans',
+                            fontSize: 45.sp,
+                            color: Colors.black,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => _launchUrl(
-                                context, 'https://www.freepik.com/stories'),
-                          text: ' Stories / Freepik .',
-                        ),
-                      ]),
+                          children: [
+                            TextSpan(
+                                text:
+                                    '• The cautious dog and the good doggy images were designed by:'),
+                            TextSpan(
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => _launchUrl(
+                                    context, 'https://www.freepik.com/stories'),
+                              text: ' Stories / Freepik .',
+                            ),
+                          ]),
                     ),
                   ),
                   RichText(
                     text: TextSpan(
-                      style: normalTextStyle,
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 45.sp,
+                        color: Colors.black,
+                      ),
                       children: [
                         TextSpan(
                             text:
@@ -502,7 +524,11 @@ class CredentialsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 16.0),
                     child: RichText(
                       text: TextSpan(
-                        style: normalTextStyle,
+                        style: TextStyle(
+                          fontFamily: 'OpenSans',
+                          fontSize: 45.sp,
+                          color: Colors.black,
+                        ),
                         children: [
                           TextSpan(
                               text:

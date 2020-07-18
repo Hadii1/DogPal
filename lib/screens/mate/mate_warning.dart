@@ -55,7 +55,10 @@ class _MateWarningScreenState extends State<MateWarningScreen> {
                     const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4),
                 child: Text(
                   MATE_WARNING,
-                  style: normalTextStyle,
+                  style: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 45.sp,
+                  ),
                 ),
               ),
               Row(
@@ -99,7 +102,8 @@ class _MateWarningScreenState extends State<MateWarningScreen> {
                   ),
                 ),
                 onPressed: () => _documentRead
-                    ? Navigator.of(context).pushNamed(DogsScreenRoutes.ADD_MATE_DOG)
+                    ? Navigator.of(context)
+                        .pushNamed(DogsScreenRoutes.ADD_MATE_DOG)
                     : null,
               )
             ],

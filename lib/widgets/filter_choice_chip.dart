@@ -38,7 +38,7 @@ class _FilterChoiceChipState extends State<FilterChoiceChip> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
+              padding: const EdgeInsets.only(bottom: 12.0, left: 12.0),
               child: Text(
                 widget.title,
                 style: subHeaderStyle,

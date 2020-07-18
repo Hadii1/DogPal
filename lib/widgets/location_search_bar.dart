@@ -19,6 +19,7 @@ class LocationSeachBar extends StatefulWidget {
   final TextEditingController cityController;
   final Stream<bool> isLoading;
   final Function() onNearbyPressed;
+
   @override
   _LocationSeachBarState createState() => _LocationSeachBarState();
 }
@@ -61,6 +62,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
             children: <Widget>[
               Expanded(
                 child: TypeAheadField(
+                  debounceDuration: Duration(milliseconds: 0),
                   animationDuration: Duration(milliseconds: 300),
                   suggestionsBoxVerticalOffset: 10,
                   suggestionsBoxDecoration: SuggestionsBoxDecoration(
@@ -171,7 +173,6 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                           focusColor: Colors.transparent,
                           onTap: () {
                             widget.onNearbyPressed();
-                            _focusNode.unfocus();
                           },
                           child: Icon(
                             Icons.location_on,

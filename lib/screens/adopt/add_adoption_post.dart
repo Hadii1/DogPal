@@ -91,7 +91,7 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -103,11 +103,14 @@ class _AddAdoptPostScreenState extends State<AddAdoptPostScreen> {
                           onChanged: (age) => _bloc.adoptionDog.age = age,
                           initialAge: _bloc.adoptionDog.age,
                         ),
-                        BreedFilterWidget(
-                          orientation: WidgetOrientation.horizontal,
-                          initalBreed: _bloc.adoptionDog.breed,
-                          onChanged: (String breed) =>
-                              _bloc.adoptionDog.breed = breed,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: BreedFilterWidget(
+                            orientation: WidgetOrientation.horizontal,
+                            initalBreed: _bloc.adoptionDog.breed,
+                            onChanged: (String breed) =>
+                                _bloc.adoptionDog.breed = breed,
+                          ),
                         ),
                         Divider(),
                         GenderFilter(

@@ -156,16 +156,10 @@ class LocationUtil {
     //We try lower accuracy in case the first fails
     Position position = await getLocation(
           LocationAccuracy.high,
-        ).timeout(
-          Duration(seconds: 5),
-          onTimeout: () => null,
-        ) ??
+        ).timeout(Duration(seconds: 6), onTimeout: () => null) ??
         await getLocation(
           LocationAccuracy.medium,
-        ).timeout(
-          Duration(seconds: 5),
-          onTimeout: () => null,
-        );
+        ).timeout(Duration(seconds: 6), onTimeout: () => null);
 
     if (position == null) {
       return null;
