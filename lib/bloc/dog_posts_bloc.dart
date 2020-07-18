@@ -23,10 +23,10 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DogPostsBloc implements BlocBase {
-  DogPostsBloc({
-    @required this.localStorage,
-  }) {
-    LocationData data = localStorage.getUserLocationData();
+  DogPostsBloc(
+    this._localStorage,
+  ) {
+    LocationData data = _localStorage.getUserLocationData();
     _town = data.town;
     _city = data.city;
     _district = data.district;
@@ -43,7 +43,8 @@ class DogPostsBloc implements BlocBase {
       filters = i;
     });
   }
-  final LocalStorage localStorage;
+
+  final LocalStorage _localStorage;
   final MateRepo _mateRepo = MateRepo();
   final AdoptRepo _adoptRepo = AdoptRepo();
   final LostRepo _lostRepo = LostRepo();
@@ -130,25 +131,25 @@ class DogPostsBloc implements BlocBase {
 
     try {
       //Save locally
-      localStorage.toggleFavorites(
+      _localStorage.toggleFavorites(
         post.id,
         type,
       );
 
       //update the local and online user object with the new favs list
 
-      User user = localStorage.getUser();
+      User user = _localStorage.getUser();
 
       if (type == FavoriteType.adoption) {
-        user.favAdoptionPosts = localStorage.getFavorites(type);
+        user.favAdoptionPosts = _localStorage.getFavorites(type);
       } else {
-        user.favMatingPosts = localStorage.getFavorites(type);
+        user.favMatingPosts = _localStorage.getFavorites(type);
       }
 
-      localStorage.editUser(user);
+      _localStorage.editUser(user);
 
       //Save to network
-      if (localStorage.isAuthenticated()) {
+      if (_localStorage.isAuthenticated()) {
         if (type == FavoriteType.adoption) {
           FirestoreService().saveUserFavs(
               userId: user.uid, adoptionList: user.favAdoptionPosts);
@@ -258,7 +259,6 @@ class DogPostsBloc implements BlocBase {
         break;
     }
 
-    print(i);
     _activeFilterCtrl.sink.add(i);
   }
 
@@ -458,11 +458,9 @@ class DogPostsBloc implements BlocBase {
             _city = locationData.city;
             _district = locationData.district;
 
-            localStorage.setUserLocationData(locationData);
+            _localStorage.setUserLocationData(locationData);
 
             _locationCtrl.sink.add(locationData.display);
-            _notificationCtrl.sink
-                .add('Showing results in ${_town ?? _city ?? _district}');
 
             await getPosts();
           }
@@ -486,9 +484,9 @@ class DogPostsBloc implements BlocBase {
     //to search for the last post added we edit the
     //location we're searching in to the last post location
 
-    _town = localStorage.getPostLocationData().town;
-    _city = localStorage.getPostLocationData().city;
-    _district = localStorage.getPostLocationData().district;
+    _town = _localStorage.getPostLocationData().town;
+    _city = _localStorage.getPostLocationData().city;
+    _district = _localStorage.getPostLocationData().district;
 
     PostType type;
     //check last post type we added to query for this type

@@ -1,6 +1,7 @@
 import 'package:dog_pal/utils/enums.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,57 +9,63 @@ class PostTypeField extends StatelessWidget {
   const PostTypeField({
     @required this.onTypePressed,
     @required this.type,
+    @required this.location,
+    @required this.initialLocation,
+    @required this.intialType,
   });
   final Function(PostType) onTypePressed;
   final Stream<String> type;
+  final Stream<String> location;
+  final String intialType;
+  final String initialLocation;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 24),
-      child: InkWell(
-        splashColor: Colors.transparent,
-        onTap: () => _showPostTypeSheet(context),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Searching for: ',
-              style: TextStyle(
-                color: blackishColor,
-                fontFamily: 'Montserrat',
-                fontSize: 54.sp,
-              ),
-            ),
-            Expanded(
-              child: StreamBuilder<String>(
-                stream: type,
-                initialData: 'Adoption Dogs',
-                builder: (context, snapshot) {
-                  return Row(
-                    children: <Widget>[
-                      Text(
-                        ' ${snapshot.data}',
+      padding: const EdgeInsets.only(left: 24.0, top: 12),
+      child: StreamBuilder<String>(
+        stream: location,
+        initialData: initialLocation,
+        builder: (_, locationSnapshot) {
+          return StreamBuilder<String>(
+            stream: type,
+            initialData: intialType,
+            builder: (_, typeSnapshot) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
                         style: TextStyle(
                           color: blackishColor,
-                          fontWeight: FontWeight.w700,
                           fontFamily: 'Montserrat',
-                          fontSize: 54.sp,
+                          fontSize: 52.sp,
                         ),
+                        children: [
+                          TextSpan(text: 'Showing '),
+                          TextSpan(
+                            text: typeSnapshot.data,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => _showPostTypeSheet(context),
+                          ),
+                          TextSpan(text: ' in '),
+                          TextSpan(text: locationSnapshot.data),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Icon(
-                          Icons.arrow_drop_down,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+                    ),
+                  ),
+                  Divider(),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }

@@ -44,7 +44,7 @@ class FilterButtons extends StatelessWidget {
                       borderSide: BorderSide(color: Colors.grey, width: 0.5),
                       highlightedBorderColor: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         snapshot.data == 0
@@ -74,7 +74,7 @@ class FilterButtons extends StatelessWidget {
                           borderSide:
                               BorderSide(color: Colors.grey, width: 0.5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             'Clear',

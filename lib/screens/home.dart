@@ -8,7 +8,6 @@ import 'package:dog_pal/screens/adopt/adoption_dog_details.dart';
 import 'package:dog_pal/screens/lost/lost_dog_details_screen.dart';
 import 'package:dog_pal/screens/mate/mate_details_screen.dart';
 import 'package:dog_pal/utils/enums.dart';
-import 'package:dog_pal/utils/local_storage.dart';
 import 'package:dog_pal/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +33,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
 
   AppBloc _appBloc;
 
-  LocalStorage _localStorage;
-
   final List<String> _errorMsgs = [
     'Couldnt\'t add post. There seems to be an error from our side.',
     'Oops.. we couldn\'t add your post. Looks like somethings went wrong.',
@@ -45,7 +42,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   @override
   void initState() {
     _appBloc = Provider.of<AppBloc>(context, listen: false);
-    _localStorage = Provider.of<LocalStorage>(context, listen: false);
 
     _navigatorsKeys = List.generate(
       2,
@@ -63,21 +59,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
     );
 
     _faders[_bottomNavIndex].value = 1;
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) async {
-        //Show first location:
-
-        String display = _localStorage.getUserLocationData().display;
-        String town = _localStorage.getUserLocationData().town;
-
-        _scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            content: Text('Showing results in ${display ?? town}'),
-          ),
-        );
-      },
-    );
 
     _appBloc.operationStatus.listen((status) {
       switch (status) {

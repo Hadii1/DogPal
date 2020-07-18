@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AnimatedHeader extends StatefulWidget {
   AnimatedHeader({
     @required this.child,
     @required this.didPressSuggestion,
     @required this.scrollController,
+    @required this.height,
   });
   final ScrollController scrollController;
   final Stream<bool> didPressSuggestion;
   final Widget child;
-
+  final double height;
   @override
   _AnimatedHeaderState createState() => _AnimatedHeaderState();
 }
@@ -48,7 +48,7 @@ class _AnimatedHeaderState extends State<AnimatedHeader> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      height: _shouldShow ? 230.sp : 0,
+      height: _shouldShow ? widget.height : 0,
       duration: Duration(milliseconds: 200),
       child: AnimatedOpacity(
         duration: Duration(milliseconds: 150),

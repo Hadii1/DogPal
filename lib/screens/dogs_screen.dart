@@ -77,6 +77,7 @@ class _DogsScreenState extends State<DogsScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: AnimatedHeader(
+            height: 150.sp,
             scrollController: _bloc.pageController,
             didPressSuggestion: _bloc.showHeader,
             child: FloatingActionButton(
@@ -106,6 +107,7 @@ class _DogsScreenState extends State<DogsScreen> {
                   AnimatedHeader(
                     didPressSuggestion: _bloc.showHeader,
                     scrollController: _bloc.pageController,
+                    height: MediaQuery.of(context).size.height * 0.15,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +123,12 @@ class _DogsScreenState extends State<DogsScreen> {
                           flex: 1,
                           child: PostTypeField(
                             onTypePressed: _bloc.onPostTypeChanded,
+                            location: _bloc.location,
+                            initialLocation: Provider.of<LocalStorage>(context)
+                                .getUserLocationData()
+                                .display,
                             type: _bloc.postType,
+                            intialType: 'Adoption Dogs',
                           ),
                         ),
                       ],

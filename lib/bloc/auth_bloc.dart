@@ -13,7 +13,6 @@ import 'package:dog_pal/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:dog_pal/utils/extensions_util.dart';
 
-
 class AuthBloc implements BlocBase {
   AuthBloc(this._localStorage);
   AuthService _authService = AuthService();
@@ -133,17 +132,14 @@ class AuthBloc implements BlocBase {
         localUser.favMatingPosts
             .addAll(_localStorage.getFavorites(FavoriteType.mating));
 
-
         //resync the device favorites to account for the online added ones and avoid multiples
         _localStorage.clearFavorites(FavoriteType.mating);
         _localStorage.clearFavorites(FavoriteType.adoption);
 
         for (String id in localUser.favAdoptionPosts) {
-          print(id);
           _localStorage.addFavorite(id, FavoriteType.adoption);
         }
         for (String id in localUser.favMatingPosts) {
-          print(id);
           _localStorage.addFavorite(id, FavoriteType.mating);
         }
       }

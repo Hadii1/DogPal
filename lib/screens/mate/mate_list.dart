@@ -43,6 +43,7 @@ class MateList extends StatelessWidget {
                 controller: pageController,
                 scrollDirection: Axis.vertical,
                 itemCount: posts.length,
+                pageSnapping: false,
                 itemBuilder: (_, index) {
                   return AnimationConfiguration.staggeredList(
                     position: index,
@@ -137,35 +138,37 @@ class _MateCardState extends State<MateCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.0.sp),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              widget.post.dog.dogName,
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                color: yellowishColor,
-                                fontFamily: 'Montserrat',
-                                fontSize: 75.sp,
-                                fontWeight: FontWeight.w700,
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.0.sp),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.post.dog.dogName,
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  color: yellowishColor,
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 75.sp,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            widget.post.dog.breed != null &&
-                                    widget.post.dog.breed.isNotEmpty
-                                ? Text(
-                                    widget.post.dog.breed,
-                                    style: TextStyle(
-                                      color: yellowishColor,
-                                      fontSize: 60.sp,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Montserrat',
-                                    ),
-                                  )
-                                : SizedBox.shrink()
-                          ],
+                              widget.post.dog.breed != null &&
+                                      widget.post.dog.breed.isNotEmpty
+                                  ? Text(
+                                      widget.post.dog.breed,
+                                      style: TextStyle(
+                                        color: yellowishColor,
+                                        fontSize: 60.sp,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Montserrat',
+                                      ),
+                                    )
+                                  : SizedBox.shrink()
+                            ],
+                          ),
                         ),
                       ),
                       InkWell(
