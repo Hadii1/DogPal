@@ -121,6 +121,7 @@ class _PostsScreenState extends State<PostsScreen> {
                   isLoading: false,
                 );
                 break;
+
               default:
                 return null;
             }

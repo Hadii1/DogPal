@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:dog_pal/bloc/profile_bloc.dart';
 import 'package:dog_pal/models/adopt_post.dart';
@@ -16,6 +15,7 @@ import 'package:dog_pal/widgets/no_connection_widget.dart';
 import 'package:dog_pal/widgets/unknown_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -71,14 +71,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             'Favorites',
             style: TextStyle(fontSize: 65.sp),
           ),
-          leading: InkWell(
-            onTap: () => Navigator.of(context).pop(),
-            child: Icon(
-              Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
-              size: 75.sp,
-              color: blackishColor,
-            ),
-          ),
           bottom: TabBar(
             tabs: <Widget>[
               Tab(
@@ -100,16 +92,19 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               case UserDataState.loadingWithNoData:
                 return LoadingWidget();
                 break;
+
               case UserDataState.loadingWithData:
                 return _ListsWidget(
                   isLoading: true,
                 );
                 break;
+
               case UserDataState.postsReady:
                 return _ListsWidget(
                   isLoading: false,
                 );
                 break;
+
               case UserDataState.errorWithNoData:
                 return _bloc.errorMsg == GeneralConstants.NO_INTERNET_CONNECTION
                     ? NoInternetWidget(
@@ -144,7 +139,6 @@ class _ListsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProfileBloc _bloc = Provider.of<ProfileBloc>(context, listen: false);
     return Column(
       children: <Widget>[
         Padding(
@@ -162,12 +156,8 @@ class _ListsWidget extends StatelessWidget {
         Expanded(
           child: TabBarView(
             children: <Widget>[
-              _AdoptPostsWidget(
-                bloc: _bloc,
-              ),
-              _MatePostsWidget(
-                bloc: _bloc,
-              ),
+              _AdoptPostsWidget(),
+              _MatePostsWidget(),
             ],
           ),
         ),
@@ -177,67 +167,47 @@ class _ListsWidget extends StatelessWidget {
 }
 
 class _MatePostsWidget extends StatelessWidget {
-  _MatePostsWidget({
-    @required this.bloc,
-  });
-
-  final ProfileBloc bloc;
-
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of<ProfileBloc>(context);
     final mateFavs = bloc.filterFavs(FavoriteType.mating);
     return mateFavs.isNotEmpty
-        ? CustomAnimatedList(
-            list: mateFavs,
-            scrollPosition: bloc.mateFavsScrollPos,
-            onScrollPositionChanged: (double nb) {
-              bloc.mateFavsScrollPos = nb;
-            },
-            child: (index, key) {
-              return Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                child: MateCard(
-                    post: mateFavs[index],
-                    heroTag: 'favorites',
-                    onDeletePressed: () =>
-                        bloc.removeFromFavs(mateFavs[index].id),
-                    onFavPressed: (MatePost post) {
-                      bloc.onFavoritePressed(post);
-
-                      //Animate post removal
-                      key.currentState.removeItem(
-                        index,
-                        (_, anim) {
-                          return FadeTransition(
-                            opacity: anim,
-                            child: SizeTransition(
-                              sizeFactor: anim,
-                              child: MateCard(
-                                post: mateFavs[index],
-                                heroTag: Random().nextInt(999).toString(),
-                                onFavPressed: (_) {},
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }),
-              );
-            },
+        ? AnimationLimiter(
+            child: ListView.builder(
+              itemCount: mateFavs.length,
+              itemBuilder: (_, index) {
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: FadeInAnimation(
+                    duration: Duration(milliseconds: 220),
+                    child: SlideAnimation(
+                      duration: Duration(milliseconds: 250),
+                      verticalOffset: 75,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                        child: MateCard(
+                          post: mateFavs[index],
+                          heroTag: 'favorites',
+                          onDeletePressed: () =>
+                              bloc.removeFromFavs(mateFavs[index].id),
+                          onFavPressed: (MatePost post) =>
+                              bloc.onFavoritePressed(post),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           )
         : EmptyPage(displayText: 'No favorites were added here');
   }
 }
 
 class _AdoptPostsWidget extends StatelessWidget {
-  _AdoptPostsWidget({
-    @required this.bloc,
-  });
-
-  final ProfileBloc bloc;
-
   Widget build(BuildContext context) {
+    final bloc = Provider.of<ProfileBloc>(context);
     final List<AdoptPost> adoptFavs = bloc.filterFavs(FavoriteType.adoption);
     return adoptFavs.isNotEmpty
         ? CustomAnimatedList(

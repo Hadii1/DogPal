@@ -222,8 +222,6 @@ class ProfileBloc implements BlocBase {
   }
 
   Future<void> initFavs() async {
-    favs.clear();
-
     _dataStateCtrl.sink.add(UserDataState.loadingWithNoData);
     try {
       if (await isOnline()) {
@@ -243,6 +241,7 @@ class ProfileBloc implements BlocBase {
         List<DocumentSnapshot> matePosts = await FirestoreService()
             .getFavroiteList(mateFavs, FirestoreConsts.MATE_DOGS);
 
+        favs.clear();
         favs.addAll(matePosts);
         favs.addAll(adoptPosts);
 
@@ -331,9 +330,9 @@ class ProfileBloc implements BlocBase {
 
   void onFavoritePressed(DogPost post) async {
     FavoriteType type;
-    if (post.runtimeType == MatePost) {
+    if (post.type == 'mate') {
       type = FavoriteType.mating;
-    } else if (post.runtimeType == AdoptPost) {
+    } else if (post.type == 'adopt') {
       type = FavoriteType.adoption;
     } else {
       throw PlatformException(code: '${post.runtimeType} is Not allowed');
@@ -345,10 +344,9 @@ class ProfileBloc implements BlocBase {
         type,
       );
 
-      //update the local and online user object with the new favs list
-
       User user = localStorage.getUser();
 
+      //edit the local user object
       if (type == FavoriteType.adoption) {
         user.favAdoptionPosts = localStorage.getFavorites(type);
       } else {
@@ -373,5 +371,7 @@ class ProfileBloc implements BlocBase {
     } on SocketException {
       _notificationsCtrl.sink.add('Network error while saving favorites');
     }
+
+    _dataStateCtrl.sink.add(UserDataState.postsReady);
   }
 }

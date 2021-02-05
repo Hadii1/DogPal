@@ -2,7 +2,7 @@ import 'package:dog_pal/models/dog_post_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-//Used in user posts and user favs
+//Used in user favs
 class CustomAnimatedList extends StatefulWidget {
   const CustomAnimatedList({
     @required this.list,

@@ -62,7 +62,6 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
             children: <Widget>[
               Expanded(
                 child: TypeAheadField(
-                  debounceDuration: Duration(milliseconds: 0),
                   animationDuration: Duration(milliseconds: 300),
                   suggestionsBoxVerticalOffset: 10,
                   suggestionsBoxDecoration: SuggestionsBoxDecoration(
@@ -113,7 +112,7 @@ class _LocationSeachBarState extends State<LocationSeachBar> {
                       title: Text('Nothing Found'),
                     );
                   },
-                  hideOnEmpty: false,
+                  hideOnEmpty: true,
                   hideSuggestionsOnKeyboardHide: true,
                   suggestionsCallback: (input) async {
                     if (input.isNotEmpty) {

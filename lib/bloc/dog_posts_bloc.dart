@@ -169,7 +169,13 @@ class DogPostsBloc implements BlocBase {
 
   Future<List<Prediction>> onLocationSearch(String input) async {
     _isFetchingLocationSuggestions.sink.add(true);
-    var predictions = await _locationUtil.completePlacesQuery(input);
+
+    var predictions = await _locationUtil.completePlacesQuery(input).timeout(
+      Duration(seconds: 8),
+      onTimeout: () {
+        throw SocketException('location suggestions query timed out');
+      },
+    );
     _isFetchingLocationSuggestions.sink.add(false);
     return predictions;
   }

@@ -52,7 +52,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
       2,
       (ind) {
         return AnimationController(
-          vsync: this,
+          TickerProvider: this,
           duration: Duration(milliseconds: 300),
         );
       },
@@ -204,12 +204,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
       items: [
         BottomNavigationBarItem(
           icon: Icon(MdiIcons.dog),
-          title: Text('Dogs'),
+          label: 'Dogs',
           backgroundColor: yellowishColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(MdiIcons.account),
-          title: Text('Profile'),
+          label: 'Profile',
           backgroundColor: yellowishColor,
         )
       ],

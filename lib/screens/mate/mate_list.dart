@@ -33,34 +33,33 @@ class MateList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 8),
       height: double.maxFinite,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 52),
-        child: RefreshIndicator(
-          onRefresh: onRetry,
-          child: Scrollbar(
-            child: AnimationLimiter(
-              child: PageView.builder(
-                controller: pageController,
-                scrollDirection: Axis.vertical,
-                itemCount: posts.length,
-                pageSnapping: false,
-                itemBuilder: (_, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    child: SlideAnimation(
-                      duration: Duration(milliseconds: 300),
-                      verticalOffset: 150,
-                      child: FadeInAnimation(
-                        duration: Duration(milliseconds: 250),
+      child: RefreshIndicator(
+        onRefresh: onRetry,
+        child: Scrollbar(
+          child: AnimationLimiter(
+            child: PageView.builder(
+              controller: pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: posts.length,
+              itemBuilder: (_, index) {
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: SlideAnimation(
+                    duration: Duration(milliseconds: 300),
+                    verticalOffset: 150,
+                    child: FadeInAnimation(
+                      duration: Duration(milliseconds: 250),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 52),
                         child: MateCard(
                           post: posts[index],
                           onFavPressed: onFavPressed,
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),

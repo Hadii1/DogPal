@@ -1,0 +1,145 @@
+Date : 2020-09-08 01:34:04
+Directory : /Users/hadihammoud/development/flutter projects/dog_pal
+Total : 99 files,  13669 codes, 113 comments, 1499 blanks, all 15281 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Dart     |         94 |     13,562 |        103 |      1,467 |     15,132 |
+| YAML     |          1 |         79 |         10 |         25 |        114 |
+| XML      |          3 |         18 |          0 |          0 |         18 |
+| Markdown |          1 |         10 |          0 |          7 |         17 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                                        |         99 |     13,669 |        113 |      1,499 |     15,281 |
+| ios                                                                                                                                                      |          3 |         18 |          0 |          0 |         18 |
+| ios/.symlinks                                                                                                                                            |          3 |         18 |          0 |          0 |         18 |
+| ios/.symlinks/plugins                                                                                                                                    |          3 |         18 |          0 |          0 |         18 |
+| ios/.symlinks/plugins/flutter_keyboard_visibility                                                                                                        |          3 |         18 |          0 |          0 |         18 |
+| ios/.symlinks/plugins/flutter_keyboard_visibility/.idea                                                                                                  |          3 |         18 |          0 |          0 |         18 |
+| ios/.symlinks/plugins/flutter_keyboard_visibility/.idea/runConfigurations                                                                                |          3 |         18 |          0 |          0 |         18 |
+| lib                                                                                                                                                      |         91 |     13,100 |         94 |      1,362 |     14,556 |
+| lib/bloc                                                                                                                                                 |         10 |      1,540 |         34 |        309 |      1,883 |
+| lib/models                                                                                                                                               |          8 |        473 |          0 |         89 |        562 |
+| lib/navigators                                                                                                                                           |          3 |        314 |          0 |         35 |        349 |
+| lib/repo                                                                                                                                                 |          3 |        196 |          0 |         32 |        228 |
+| lib/screens                                                                                                                                              |         21 |      5,224 |         13 |        325 |      5,562 |
+| lib/screens/adopt                                                                                                                                        |          3 |        726 |          1 |         36 |        763 |
+| lib/screens/lost                                                                                                                                         |          3 |        759 |          2 |         45 |        806 |
+| lib/screens/mate                                                                                                                                         |          4 |        691 |          2 |         39 |        732 |
+| lib/screens/profile                                                                                                                                      |          3 |      1,315 |          2 |         63 |      1,380 |
+| lib/utils                                                                                                                                                |         19 |      2,441 |         37 |        337 |      2,815 |
+| lib/widgets                                                                                                                                              |         25 |      2,800 |          6 |        200 |      3,006 |
+| test                                                                                                                                                     |          3 |        462 |          9 |        105 |        576 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                                                                 | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/hadihammoud/development/flutter projects/dog_pal/README.md                                                                                        | Markdown |         10 |          0 |          7 |         17 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/ios/.symlinks/plugins/flutter_keyboard_visibility/.idea/runConfigurations/demo_with_provider.xml | XML      |          6 |          0 |          0 |          6 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/ios/.symlinks/plugins/flutter_keyboard_visibility/.idea/runConfigurations/example.xml            | XML      |          6 |          0 |          0 |          6 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/ios/.symlinks/plugins/flutter_keyboard_visibility/.idea/runConfigurations/example_old.xml        | XML      |          6 |          0 |          0 |          6 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/auth_service.dart                                                                            | Dart     |         67 |          1 |         30 |         98 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/add_adoption_dog_bloc.dart                                                              | Dart     |        111 |          1 |         23 |        135 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/add_lost_dog_bloc.dart                                                                  | Dart     |         99 |          1 |         23 |        123 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/add_mate_dog_bloc.dart                                                                  | Dart     |        101 |          1 |         22 |        124 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/app_bloc.dart                                                                           | Dart     |         56 |          3 |         16 |         75 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/auth_bloc.dart                                                                          | Dart     |        132 |          5 |         31 |        168 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/decisions_bloc.dart                                                                     | Dart     |         94 |          1 |         20 |        115 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/dog_posts_bloc.dart                                                                     | Dart     |        425 |         10 |         81 |        516 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/post_details_bloc.dart                                                                  | Dart     |         60 |          1 |         13 |         74 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/post_location_bloc.dart                                                                 | Dart     |        147 |          0 |         28 |        175 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/bloc/profile_bloc.dart                                                                       | Dart     |        315 |         11 |         52 |        378 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/main.dart                                                                                    | Dart     |         45 |          3 |          5 |         53 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/adopt_post.dart                                                                       | Dart     |        102 |          0 |         13 |        115 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/dog.dart                                                                              | Dart     |         90 |          0 |         23 |        113 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/dog_post_mode.dart                                                                    | Dart     |         13 |          0 |         10 |         23 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/favorite_post.dart                                                                    | Dart     |         18 |          0 |          5 |         23 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/location_data.dart                                                                    | Dart     |         28 |          0 |          4 |         32 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/lost_post.dart                                                                        | Dart     |         82 |          0 |         13 |         95 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/mate_post.dart                                                                        | Dart     |         90 |          0 |         14 |        104 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/models/user.dart                                                                             | Dart     |         50 |          0 |          7 |         57 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/navigators/app_navigator.dart                                                                | Dart     |         87 |          0 |          8 |         95 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/navigators/dogs_screen_navigator.dart                                                        | Dart     |        131 |          0 |         14 |        145 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/navigators/profile_navigator.dart                                                            | Dart     |         96 |          0 |         13 |        109 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/repo/adopt_repo.dart                                                                         | Dart     |         78 |          0 |         11 |         89 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/repo/lost_repo.dart                                                                          | Dart     |         53 |          0 |         11 |         64 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/repo/mate_repo.dart                                                                          | Dart     |         65 |          0 |         10 |         75 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/adopt/add_adoption_post.dart                                                         | Dart     |        265 |          1 |          8 |        274 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/adopt/adoption_dog_details.dart                                                      | Dart     |        289 |          0 |         18 |        307 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/adopt/adoption_dogs_list.dart                                                        | Dart     |        172 |          0 |         10 |        182 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/dogs_screen.dart                                                                     | Dart     |        374 |          2 |         32 |        408 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/filter_pages.dart                                                                    | Dart     |        265 |          0 |          9 |        274 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/full_screen_image.dart                                                               | Dart     |        245 |          0 |         21 |        266 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/home.dart                                                                            | Dart     |        249 |          1 |         26 |        276 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/login.dart                                                                           | Dart     |        300 |          3 |         25 |        328 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/lost/add_lost_dog.dart                                                               | Dart     |        194 |          1 |         12 |        207 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/lost/lost_dog_details_screen.dart                                                    | Dart     |        370 |          1 |         22 |        393 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/lost/lost_dogs_list.dart                                                             | Dart     |        195 |          0 |         11 |        206 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/mate/add_mate_dog.dart                                                               | Dart     |        218 |          2 |         14 |        234 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/mate/mate_details_screen.dart                                                        | Dart     |        150 |          0 |         12 |        162 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/mate/mate_list.dart                                                                  | Dart     |        212 |          0 |          8 |        220 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/mate/mate_warning.dart                                                               | Dart     |        111 |          0 |          5 |        116 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/post_location.dart                                                                   | Dart     |        221 |          0 |         15 |        236 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/profile/favorites_screen.dart                                                        | Dart     |        261 |          2 |         22 |        285 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/profile/posts_Screen.dart                                                            | Dart     |        268 |          0 |         21 |        289 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/profile/profile_screen.dart                                                          | Dart     |        786 |          0 |         20 |        806 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/splash_screen.dart                                                                   | Dart     |         60 |          0 |         11 |         71 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/screens/welcome_screen.dart                                                                  | Dart     |         19 |          0 |          3 |         22 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/bloc_disposal.dart                                                                     | Dart     |          3 |          0 |          1 |          4 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/constants_util.dart                                                                    | Dart     |         68 |         12 |          8 |         88 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/custom_animated_list.dart                                                              | Dart     |         64 |          1 |          8 |         73 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/decision_util.dart                                                                     | Dart     |        210 |          5 |         21 |        236 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/dog_util.dart                                                                          | Dart     |        522 |          0 |          7 |        529 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/enums.dart                                                                             | Dart     |         66 |          0 |         15 |         81 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/extensions_util.dart                                                                   | Dart     |        166 |          0 |         26 |        192 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/firestore_util.dart                                                                    | Dart     |        155 |          3 |         38 |        196 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/general_functions.dart                                                                 | Dart     |         93 |          1 |          9 |        103 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/laucnher_class.dart                                                                    | Dart     |        228 |          0 |          6 |        234 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/local_storage.dart                                                                     | Dart     |        170 |          0 |         31 |        201 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/location_util.dart                                                                     | Dart     |        169 |          6 |         33 |        208 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/mate_warnings.dart                                                                     | Dart     |         12 |          0 |         11 |         23 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/pagination_util.dart                                                                   | Dart     |         96 |          2 |         25 |        123 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/privacy_policy.dart                                                                    | Dart     |         48 |          0 |         26 |         74 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/sentry_util.dart                                                                       | Dart     |         23 |          7 |          9 |         39 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/styles.dart                                                                            | Dart     |        104 |          0 |          8 |        112 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/terms_and_conditions.dart                                                              | Dart     |        104 |          0 |         48 |        152 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/utils/ui_functions.dart                                                                      | Dart     |        140 |          0 |          7 |        147 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/animated_header.dart                                                                 | Dart     |         53 |          0 |          8 |         61 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/breed_filter_widget.dart                                                             | Dart     |        229 |          1 |         19 |        249 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/circle_indicator_widget.dart                                                         | Dart     |         38 |          0 |          2 |         40 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/coat_color_filter_widget.dart                                                        | Dart     |         84 |          0 |          8 |         92 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/delete_post_button.dart                                                              | Dart     |        295 |          0 |         16 |        311 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/fade_in_widget.dart                                                                  | Dart     |         29 |          0 |          6 |         35 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/filter_buttons_widget.dart                                                           | Dart     |        126 |          1 |          5 |        132 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/filter_check_box.dart                                                                | Dart     |         87 |          0 |          7 |         94 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/filter_choice_chip.dart                                                              | Dart     |         69 |          0 |          7 |         76 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/gender_filter_widget.dart                                                            | Dart     |        138 |          0 |         11 |        149 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/image_preview_widget.dart                                                            | Dart     |        179 |          1 |         19 |        199 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/image_slide_widget.dart                                                              | Dart     |        157 |          1 |         18 |        176 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/input_fields.dart                                                                    | Dart     |        304 |          1 |         17 |        322 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/location_access_denied.dart                                                          | Dart     |        100 |          0 |          4 |        104 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/location_bottom_sheet.dart                                                           | Dart     |          0 |          0 |          1 |          1 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/location_button.dart                                                                 | Dart     |         44 |          0 |          3 |         47 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/location_search_bar.dart                                                             | Dart     |        225 |          1 |         11 |        237 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/location_widget.dart                                                                 | Dart     |         58 |          0 |          5 |         63 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/no_connection_widget.dart                                                            | Dart     |         47 |          0 |          4 |         51 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/no_data_widget.dart                                                                  | Dart     |         81 |          0 |          5 |         86 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/post_type_button.dart                                                                | Dart     |        136 |          0 |          4 |        140 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/progress_card_widget.dart                                                            | Dart     |         58 |          0 |          3 |         61 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/sign_in_snackbar_widget.dart                                                         | Dart     |          0 |          0 |          1 |          1 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/size_filter_widget.dart                                                              | Dart     |        200 |          0 |         10 |        210 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/lib/widgets/unknown_error_widget.dart                                                            | Dart     |         63 |          0 |          6 |         69 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/pubspec.yaml                                                                                     | YAML     |         79 |         10 |         25 |        114 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/test/firestore_pagination_test.dart                                                              | Dart     |        309 |          6 |         70 |        385 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/test/local_storage_test.dart                                                                     | Dart     |         87 |          2 |         19 |        108 |
+| /Users/hadihammoud/development/flutter projects/dog_pal/test/utility_test.dart                                                                           | Dart     |         66 |          1 |         16 |         83 |
+| Total                                                                                                                                                    |          |     13,669 |        113 |      1,499 |     15,281 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

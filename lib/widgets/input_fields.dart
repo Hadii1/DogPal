@@ -110,7 +110,7 @@ class PhoneField extends StatelessWidget {
               autocorrect: false,
               autofocus: false,
               style: TextStyle(fontSize: 55.sp),
-              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.phone,
               onChanged: (number) => onChanged(number),
               decoration: InputDecoration(
